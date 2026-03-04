@@ -1,2 +1,2 @@
 # CheckMateGPS
-ChechMate GPS
+CheckMate GPS
