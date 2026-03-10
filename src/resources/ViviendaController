@@ -1,0 +1,30 @@
+package com.tuapp.controllers;
+
+import com.tuapp.dto.ViviendaDTO;
+import com.tuapp.models.Vivienda;
+import com.tuapp.services.ViviendaService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/viviendas")
+@CrossOrigin(origins = "*")
+public class ViviendaController {
+
+    @Autowired
+    private ViviendaService viviendaService;
+
+    // Usamos @ModelAttribute porque estamos recibiendo multipart/form-data (archivos + texto)
+    @PostMapping
+    public ResponseEntity<?> crearVivienda(@Valid @ModelAttribute ViviendaDTO viviendaDTO) {
+        try {
+            Vivienda creada = viviendaService.crearVivienda(viviendaDTO);
+            return new ResponseEntity<>("Vivienda '" + creada.getNombre() + "' creada con éxito.", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
