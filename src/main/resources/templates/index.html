@@ -2,51 +2,64 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Spring Boot Demo</title>
+<title>CheckMate - Crear Vivienda</title>
 
 <style>
-body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: linear-gradient(135deg,#6a11cb,#2575fc);
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212; /* Fondo oscuro moderno */
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
 }
 
-.card{
-    background:white;
-    padding:40px;
-    border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    text-align:center;
-    width:300px;
+.card {
+    background: #1e1e1e;
+    padding: 50px 40px;
+    border-radius: 16px;
+    border: 1px solid #333;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    text-align: center;
+    width: 320px;
 }
 
-h1{
-    margin-bottom:20px;
-    color:#333;
+h1 {
+    margin-bottom: 10px;
+    font-size: 28px;
+    color: #ffffff;
 }
 
-button{
-    background:#2575fc;
-    color:white;
-    border:none;
-    padding:12px 25px;
-    border-radius:8px;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
+p.subtitle {
+    color: #aaaaaa;
+    margin-bottom: 30px;
+    font-size: 15px;
 }
 
-button:hover{
-    background:#1a5ed8;
-    transform:scale(1.05);
+button {
+    background: #00d26a; /* Verde vibrante */
+    color: #121212;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 30px; /* Botón en forma de píldora */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    width: 100%;
 }
 
-button:active{
-    transform:scale(0.97);
+button:hover {
+    background: #00ff80;
+    box-shadow: 0 0 15px rgba(0, 255, 128, 0.4); /* Efecto de brillo al pasar el ratón */
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(1px);
 }
 </style>
 
@@ -55,10 +68,11 @@ button:active{
 <body>
 
 <div class="card">
-    <h1>Crea una casa!</h1>
-
+    <h1>🏠 Nueva Vivienda</h1>
+    <p class="subtitle">Empieza a organizar con CheckMate</p>
+    
     <form action="/submit" method="post">
-        <button type="submit">Click Me 🥺</button>
+        <button type="submit">Crear Casa</button>
     </form>
 </div>
 
