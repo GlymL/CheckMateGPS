@@ -8,7 +8,8 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121212;
+    /* Fondo difuminado entre el morado y el rosa de CheckMate */
+    background: linear-gradient(135deg, #5b4cbb 0%, #d25bc5 100%); 
     height: 100vh;
     display: flex;
     align-items: center;
@@ -17,11 +18,18 @@ body {
 }
 
 .card {
-    background: #1e1e1e;
+    /* Degradado brillante mezclando el rosa y morado de CheckMate, un poco transparente */
+    background: linear-gradient(135deg, rgba(210, 91, 197, 0.85) 0%, rgba(91, 76, 187, 0.85) 100%);
+    /* Efecto difuminado cristalino */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    /* Borde sutil blanquecino para dar volumen */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    /* Resplandor exterior en tonos rosas y morados (el efecto brillante) */
+    box-shadow: 0 0 40px rgba(210, 91, 197, 0.5), 0 15px 30px rgba(91, 76, 187, 0.6);
+    
     padding: 50px 40px;
-    border-radius: 16px;
-    border: 1px solid #333;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    border-radius: 20px;
     text-align: center;
     width: 320px;
 }
@@ -33,31 +41,24 @@ h1 {
     color: #00d26a; 
 }
 
-/* Estilo para la foto de Miguel */
+/* Estilo para la foto de Miguel con borde rosa fosforito */
 .miguel-img {
-    max-width: 150px; /* Tamaño máximo */
+    max-width: 140px; 
     height: auto;
-    border-radius: 50%; /* Foto circular */
-    border: 4px solid #333; /* Borde para que resalte */
+    border-radius: 50%;
+    /* Borde rosa fosforito (magenta neón) */
+    border: 4px solid #ff00ff; 
     margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    /* Le añadimos un poco de brillo fosforito también a la sombra */
+    box-shadow: 0 0 20px #ff00ff; 
 }
 
-/* El texto de bienvenida que me has pedido */
-p.detailed-text {
-    color: #ffffff;
-    margin-bottom: 30px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    line-height: 1.4;
-}
-
-/* Botón para volver al inicio */
+/* Botón para volver al inicio en verde */
 .btn-back {
     display: inline-block;
-    background: #333333;
-    color: #ffffff;
+    /* Verde brillante */
+    background: #00d26a; 
+    color: #121212; /* Texto oscuro para que se lea perfecto */
     text-decoration: none;
     padding: 15px 30px;
     border-radius: 30px;
@@ -69,8 +70,19 @@ p.detailed-text {
 }
 
 .btn-back:hover {
-    background: #555555;
+    background: #00ff80; /* Verde más clarito al pasar el ratón */
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 210, 106, 0.4);
+}
+
+/* El texto de bienvenida que me has pedido */
+p.detailed-text {
+    color: #ffffff;
+    margin-bottom: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 1.4;
 }
 </style>
 
@@ -79,7 +91,7 @@ p.detailed-text {
 <body>
 
 <div class="card">
-    <h1>¡Casa Creada! ✨</h1>
+    <h1>¡VIVIENDA CREADA!</h1>
     
     <img src="/images/miguel.png" alt="Miguel te da la bienvenida" class="miguel-img">
     

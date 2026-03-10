@@ -8,7 +8,8 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #121212; /* Fondo oscuro moderno */
+    /* Fondo difuminado entre el morado y el rosa de CheckMate */
+    background: linear-gradient(135deg, #5b4cbb 0%, #d25bc5 100%); 
     height: 100vh;
     display: flex;
     align-items: center;
@@ -17,11 +18,18 @@ body {
 }
 
 .card {
-    background: #1e1e1e;
+    /* Degradado brillante mezclando el rosa y morado de CheckMate, un poco transparente */
+    background: linear-gradient(135deg, rgba(210, 91, 197, 0.85) 0%, rgba(91, 76, 187, 0.85) 100%);
+    /* Efecto difuminado cristalino */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    /* Borde sutil blanquecino para dar volumen */
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    /* Resplandor exterior en tonos rosas y morados (el efecto brillante) */
+    box-shadow: 0 0 40px rgba(210, 91, 197, 0.5), 0 15px 30px rgba(91, 76, 187, 0.6);
+    
     padding: 50px 40px;
-    border-radius: 16px;
-    border: 1px solid #333;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    border-radius: 20px;
     text-align: center;
     width: 320px;
 }
@@ -68,7 +76,7 @@ button:active {
 <body>
 
 <div class="card">
-    <h1>🏠 Nueva Vivienda</h1>
+    <h1>CREAR VIVIENDA</h1>
     <p class="subtitle">Empieza a organizar con CheckMate</p>
     
     <form action="/submit" method="post">
