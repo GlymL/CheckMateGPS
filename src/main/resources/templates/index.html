@@ -4,18 +4,20 @@
 <meta charset="UTF-8">
 <title>CheckMate - Crear Vivienda</title>
 
+
 <style>
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     /* Fondo difuminado entre el morado y el rosa de CheckMate */
-    background: linear-gradient(135deg, #5b4cbb 0%, #d25bc5 100%); 
+    background: linear-gradient(135deg, #5b4cbb 0%, #d25bc5 100%);
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #ffffff;
 }
+
 
 .card {
     /* Degradado brillante mezclando el rosa y morado de CheckMate, un poco transparente */
@@ -27,12 +29,13 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.4);
     /* Resplandor exterior en tonos rosas y morados (el efecto brillante) */
     box-shadow: 0 0 40px rgba(210, 91, 197, 0.5), 0 15px 30px rgba(91, 76, 187, 0.6);
-    
+   
     padding: 50px 40px;
     border-radius: 20px;
     text-align: center;
     width: 320px;
 }
+
 
 h1 {
     margin-bottom: 10px;
@@ -40,11 +43,13 @@ h1 {
     color: #ffffff;
 }
 
+
 p.subtitle {
     color: #aaaaaa;
     margin-bottom: 30px;
     font-size: 15px;
 }
+
 
 button {
     background: #00d26a; /* Verde vibrante */
@@ -60,29 +65,40 @@ button {
     width: 100%;
 }
 
+
 button:hover {
     background: #00ff80;
     box-shadow: 0 0 15px rgba(0, 255, 128, 0.4); /* Efecto de brillo al pasar el ratón */
     transform: translateY(-2px);
 }
 
+
 button:active {
     transform: translateY(1px);
 }
 </style>
 
+
 </head>
 
+
 <body>
+
 
 <div class="card">
     <h1>CREAR VIVIENDA</h1>
     <p class="subtitle">Empieza a organizar con CheckMate</p>
-    
     <form action="/submit" method="post">
+        
+        <input type="text" name="nombreCasa" placeholder="Nombre de tu vivienda..." required
+               style="padding: 12px; border-radius: 8px; border: none; margin-bottom: 20px; width: 85%; font-size: 16px; outline: none; box-sizing: border-box;">
+        
         <button type="submit">Crear Casa</button>
+        
     </form>
+    
 </div>
+
 
 </body>
 </html>
