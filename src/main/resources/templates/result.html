@@ -1,39 +1,97 @@
 <!DOCTYPE html>
-
-
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>CheckMate | Confirmación</title>
 <style>
-body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: linear-gradient(135deg,#6a11cb,#2575fc);
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
-.card{
-    background:white;
-    padding:40px;
-    border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    text-align:center;
-    width:300px;
-}
+    body {
+        margin: 0;
+        background-color: #0f111a;
+        font-family: 'Inter', sans-serif;
+        color: #e2e8f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
 
-.card .button{
-    height: 500px;
-    width: 500px;
-}
+    .container {
+        background: #1a1d2d;
+        border: 1px solid #2d3748;
+        border-radius: 16px;
+        padding: 50px 40px;
+        width: 350px;
+        text-align: center;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
 
-h1{
-    margin-bottom:20px;
-    color:#333;
-}
+    .check-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(224, 96, 160, 0.1);
+        border: 2px solid #e060a0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 24px;
+        box-shadow: 0 0 20px rgba(224, 96, 160, 0.3);
+    }
 
+    h2 {
+        font-size: 22px;
+        margin: 0 0 10px 0;
+        color: #ffffff;
+    }
+
+    .dynamic-name {
+        background: linear-gradient(90deg, #9b59d0 0%, #e060a0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
+    p.desc {
+        font-size: 14px;
+        color: #a0aec0;
+        margin-bottom: 30px;
+        line-height: 1.5;
+    }
+
+    .btn-return {
+        display: inline-block;
+        padding: 12px 30px;
+        border-radius: 8px;
+        background: transparent;
+        border: 1px solid #4a5568;
+        color: #cbd5e0;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-return:hover {
+        background: #2d3748;
+        color: white;
+    }
 </style>
+</head>
+<body>
 
-
-<div class="card">
-    <h1 style="color:coral;">Casa Creada!</h1>
+<div class="container">
+    <div class="check-circle">✓</div>
+    
+    <h2>Vivienda <span class="dynamic-name" th:text="${tituloConfirmado}">Designada</span> Guardada</h2>
+    
+    <p class="desc">La base de datos se ha actualizado correctamente. Ya puedes comenzar a organizar las tareas.</p>
+    
+    <a href="/" class="btn-return">Volver al Panel</a>
 </div>
+
+</body>
+</html>

@@ -2,63 +2,128 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Spring Boot Demo</title>
-
+<title>CheckMate | Nueva Vivienda</title>
 <style>
-body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: linear-gradient(135deg,#6a11cb,#2575fc);
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
-.card{
-    background:white;
-    padding:40px;
-    border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    text-align:center;
-    width:300px;
-}
+    body {
+        margin: 0;
+        background-color: #0f111a;
+        font-family: 'Inter', sans-serif;
+        color: #e2e8f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
 
-h1{
-    margin-bottom:20px;
-    color:#333;
-}
+    .container {
+        background: #1a1d2d;
+        border: 1px solid #2d3748;
+        border-radius: 16px;
+        padding: 40px;
+        width: 350px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
 
-button{
-    background:#2575fc;
-    color:white;
-    border:none;
-    padding:12px 25px;
-    border-radius:8px;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
-}
+    .logo-container {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-button:hover{
-    background:#1a5ed8;
-    transform:scale(1.05);
-}
+    .logo-container svg {
+        width: 100px;
+        height: 50px;
+    }
 
-button:active{
-    transform:scale(0.97);
-}
+    h2 {
+        font-size: 22px;
+        margin: 0 0 8px 0;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    p.desc {
+        font-size: 13px;
+        color: #a0aec0;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 25px;
+    }
+
+    label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #cbd5e0;
+    }
+
+    input {
+        background: #0f111a;
+        border: 1px solid #4a5568;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #e060a0;
+        box-shadow: 0 0 0 2px rgba(224, 96, 160, 0.2);
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #9b59d0 0%, #e060a0 100%);
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
 </style>
-
 </head>
-
 <body>
 
-<div class="card">
-    <h1>Crea una casa!</h1>
+<div class="container">
+    <div class="logo-container">
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <image width="800" height="800" id="img1logo" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIGZpbGw9IiNmZmZmZmYiIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTQwMCw0OEgxMTJhNjQuMDcsNjQuMDcsMCwwLDAtNjQsNjRWNDAwYTY0LjA3LDY0LjA3LDAsMCwwLDY0LDY0SDQwMGE2NC4wNyw2NC4wNywwLDAsMCw2NC02NFYxMTJBNjQuMDcsNjQuMDcsMCwwLDAsNDAwLDQ4Wk0zNjQuMjUsMTg2LjI5bC0xMzQuNCwxNjBhMTYsMTYsMCwwLDEtMTIsNS43MWgtLjI3YTE2LDE2LDAsMCwxLTExLjg5LTUuM2wtNTcuNi02NGExNiwxNiwwLDEsMSwyMy43OC0yMS40bDQ1LjI5LDUwLjMyTDMzOS43NSwxNjUuNzFhMTYsMTYsMCwwLDEsMjQuNSwyMC41OFoiLz48L3N2Zz4="/>
+            </defs>
+            <path fill="url(#grad1)" d="m78.4 26h-35c-19.3 0-35 15.7-35 35 0 19.3 15.7 35 35 35h35v-33.2h-12.6v-3.6h12.6zm44.9 70h32l-0.1-70h-31.9v12.6c0 0-1.9 0-3.6 0v-12.6h-31.9v70h31.9v-12.6c0 0 1.7 0 3.6 0zm110.2-30.5v-9h-12.7v-3.5h12.7v-27h-67.5v70h67.5v-27h-12.7v-3.5zm77.9-39.5h-35c-19.3 0-35 15.7-35 35 0 19.3 15.7 35 35 35h35v-33.2h-12.6v-3.6h12.6zm80.6 0h-70v70h70l-19.2-35zm-232 80l-35 19.2-35-19.2v70h70zm83.5 70l-38.5-70-38.4 70zm70.7-70h-70v35h9.1v35h51.8v-35h9.1zm77.3 39.5v-9h-12.7v-3.5h12.7v-27h-67.5v70h67.5v-27h-12.7v-3.5z"/>
+            <use href="#img1logo" transform="matrix(.11,0,0,.11,1,97)"/>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#9b59d0;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#e060a0;stop-opacity:1" />
+            </linearGradient>
+        </svg>
+    </div>
 
-    <form action="/submit" method="post">
-        <button type="submit">Click Me 🥺</button>
+    <h2>Crear Nueva Vivienda</h2>
+    <p class="desc">Añade tu espacio para invitar a tus compañeros.</p>
+
+    <form action="/registrar" method="post">
+        <div class="form-group">
+            <label>Identificador de la Vivienda</label>
+            <input type="text" name="nombreVivienda" placeholder="Ej: Piso de estudiantes..." required />
+        </div>
+        <button type="submit">Siguiente Paso</button>
     </form>
 </div>
 
