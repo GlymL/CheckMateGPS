@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckMate - Nueva Vivienda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header-app { background-color: #0d6efd; color: white; padding: 20px 0; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+    <header class="header-app text-center">
+        <h1>CheckMate GPS</h1>
+        <p>Gestión Inteligente de Tareas del Hogar</p>
+    </header>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <h2 class="text-center mb-4">🏠 Registrar Vivienda</h2>
+                    
+                    <form th:action="@{/vivienda/guardar}" th:object="${vivienda}" method="post">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nombre de la Vivienda</label>
+                            <input type="text" th:field="*{nombre}" class="form-control" 
+                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
+                                   placeholder="Ej: Apartamento 402">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Descripción</label>
+                            <textarea th:field="*{descripcion}" class="form-control" rows="3"
+                                      th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''"
+                                      placeholder="Reglas básicas o ubicación..."></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Foto de la vivienda (Opcional)</label>
+                            <input type="file" class="form-control" accept=".png, .jpeg, .jpg">
+                            <div class="form-text">Formatos permitidos: .png, .jpg</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Crear Vivienda</button>
+                            <a href="/" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
