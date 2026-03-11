@@ -4,7 +4,7 @@ public class Dot {
 
 
     public Dot (){
-        System.out.println("La la, lala, lalalalalalla~");
+        System.out.println("La la, lala, lalalalalallaa~");
 
     }
 }
