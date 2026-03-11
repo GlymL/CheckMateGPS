@@ -1,0 +1,29 @@
+body{
+font-family: Arial, sans-serif;
+background:#f2f2f2;
+text-align:center;
+}
+
+.center{
+display:flex;
+justify-content:center;
+margin:30px;
+}
+
+.crear-btn{
+background: linear-gradient(135deg,#d40edb,#e267bd);
+color:white;
+border:none;
+padding:14px 30px;
+font-size:17px;
+font-weight:600;
+border-radius:30px;
+cursor:pointer;
+box-shadow:0 6px 15px rgba(0,0,0,0.15);
+transition:all 0.25s ease;
+}
+
+.crear-btn:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}

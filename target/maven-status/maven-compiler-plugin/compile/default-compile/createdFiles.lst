@@ -1,0 +1,5 @@
+com\example\demo\DemoApplication.class
+com\example\demo\ViviendaValidator.class
+com\example\demo\Vivienda.class
+com\example\demo\ViviendaController.class
+com\example\demo\ViviendaRepository.class
