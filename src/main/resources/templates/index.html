@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Spring Boot Demo</title>
+<title>Spring Boot Demo - REST</title>
 
 <style>
 body {
@@ -21,7 +21,7 @@ body {
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     text-align: center;
-    width: 300px; /* Un poco más de espacio si es necesario */
+    width: 320px; 
 }
 
 h1 {
@@ -30,26 +30,51 @@ h1 {
     font-size: 24px;
 }
 
-/* --- Nuevo CSS para el campo de texto --- */
-input[type="text"] {
+input[type="text"], textarea, input[type="file"] {
     width: 100%;
     padding: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    box-sizing: border-box; /* Evita que el padding rompa el ancho */
+    box-sizing: border-box; 
     font-size: 14px;
     transition: 0.3s;
+    font-family: inherit;
 }
 
-input[type="text"]:focus {
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+input[type="text"]:focus, textarea:focus, input[type="file"]:focus {
     outline: none;
     border-color: #2575fc;
     box-shadow: 0 0 8px rgba(37, 117, 252, 0.3);
 }
-/* --------------------------------------- */
 
-button {
+input[type="file"] {
+    padding: 9px;
+    background-color: #f8f9fa;
+    color: #555;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    background: #e9ecef;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: #dde0e3;
+}
+
+button[type="submit"] {
     background: #2575fc;
     color: white;
     border: none;
@@ -58,17 +83,30 @@ button {
     font-size: 16px;
     cursor: pointer;
     transition: 0.3s;
-    width: 100%; /* Hace que el botón ocupe todo el ancho */
+    width: 100%; 
+    margin-top: 10px;
 }
 
-button:hover {
+button[type="submit"]:hover {
     background: #1a5ed8;
-    transform: scale(1.03); /* Suavizado un poco el scale para que no se salga de la tarjeta */
+    transform: scale(1.03); 
 }
 
-button:active {
+button[type="submit"]:active {
     transform: scale(0.97);
 }
+
+
+#mensaje-respuesta {
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    display: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+.success { background-color: #d4edda; color: #155724; }
+.error { background-color: #f8d7da; color: #721c24; }
 </style>
 
 </head>
@@ -78,13 +116,53 @@ button:active {
 <div class="card">
     <h1>¡Crea una casa!</h1>
 
-    <form action="/crear-vivienda" method="post">
+    <form id="viviendaForm">
         
-        <input type="text" name="direccion" placeholder="Ej: Calle Gran Vía 42" required>
+        <input type="text" name="nombre" placeholder="Nombre (Ej: Villa Sol)" required>
+        
+        <textarea name="descripcion" placeholder="Descripción breve..." required></textarea>
+
+        <input type="file" name="foto" accept=".png, .jpeg, .jpg">
         
         <button type="submit">Guardar Vivienda 🏠</button>
     </form>
+
+    <div id="mensaje-respuesta"></div>
 </div>
+
+<script>
+    document.getElementById('viviendaForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+
+        const form = event.target;
+      
+        const formData = new FormData(form); 
+        const mensajeDiv = document.getElementById('mensaje-respuesta');
+
+        fetch('/crear-vivienda', {
+            method: 'POST',
+            body: formData 
+        })
+        .then(async response => {
+            const textoRespuesta = await response.text();
+            
+            mensajeDiv.style.display = 'block';
+            mensajeDiv.textContent = textoRespuesta;
+
+            if (response.ok) { 
+                mensajeDiv.className = 'success';
+                form.reset(); 
+            } else { 
+                mensajeDiv.className = 'error';
+            }
+        })
+        .catch(error => {
+            mensajeDiv.style.display = 'block';
+            mensajeDiv.className = 'error';
+            mensajeDiv.textContent = 'Error de red al intentar conectar con el servidor.';
+        });
+    });
+</script>
 
 </body>
 </html>

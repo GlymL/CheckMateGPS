@@ -3,82 +3,96 @@ package com.example.demo;
 import com.example.demo.model.Vivienda;
 import com.example.demo.repository.ViviendaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.dao.DataIntegrityViolationException;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Controlador MVC encargado de manejar las peticiones web tradicionales 
- * y devolver las plantillas HTML (vistas) correspondientes.
- */
-@Controller
+@RestController
 public class MyController {
 
     private final ViviendaRepository viviendaRepository;
 
-    /**
-     * Constructor del controlador que inyecta las dependencias necesarias.
-     * * @param viviendaRepository El repositorio que proporciona las operaciones de base de datos para la entidad Vivienda.
-     */
     @Autowired
     public MyController(ViviendaRepository viviendaRepository) {
         this.viviendaRepository = viviendaRepository;
     }
 
-    /**
-     * Maneja la petición GET a la ruta raíz y muestra la página de inicio.
-     *
-     * @param modelo El objeto Model proporcionado por Spring, utilizado para pasar datos desde el backend a la vista HTML.
-     * @return Un String que representa el nombre de la plantilla HTML a renderizar ("index").
-     */
-    @GetMapping("/")
-    public String home(Model modelo) {
-        return "index";
-    }
 
-    /**
-     * Maneja la petición POST a la ruta "/submit", ejecuta una acción en el servidor
-     * instanciando la clase Dot, y redirige al usuario a la página de resultados.
-     *
-     * @param modelo El objeto Model proporcionado por Spring para enviar mensajes de estado a la vista de resultados.
-     * @return Un String que representa el nombre de la plantilla HTML de destino ("result").
-     */
-    @PostMapping("/submit")
-    public String submit(Model modelo) {
-        System.out.println("Button clicked!");
-        
-        // Ejecuta la lógica auxiliar
-        new Dot(); 
-        
-        // Pasamos un mensaje a la vista para confirmar que funcionó
-        modelo.addAttribute("mensaje", "La acción de prueba se completó correctamente.");
-        
-        return "result";
-    }
+  @PostMapping("/crear-vivienda")
+    public ResponseEntity<String> crearVivienda(
+            @RequestParam(value = "nombre", required = false) String nombre,
+            @RequestParam(value = "descripcion", required = false) String descripcion,
+          
+            @RequestParam(value = "foto", required = false) MultipartFile foto) {
 
-    /**
-     * Intercepta la petición POST para crear una nueva vivienda, instanciando 
-     * el modelo, guardándolo en la base de datos y redirigiendo a la vista de resultados.
-     *
-     * @param direccion El texto ingresado por el usuario correspondiente a la dirección de la vivienda.
-     * @param modelo El objeto Model proporcionado por Spring para enviar mensajes de éxito a la vista.
-     * @return Un String que representa el nombre de la plantilla HTML de destino ("result").
-     */
-    @PostMapping("/crear-vivienda")
-    public String crearVivienda(@RequestParam("direccion") String direccion, Model modelo) {
-        
-        // 1. Instanciamos la nueva entidad Vivienda
-        Vivienda nuevaVivienda = new Vivienda();
-        nuevaVivienda.setDireccion(direccion);
-        
-        // 2. Guardamos la entidad en la base de datos usando el Repositorio
-        viviendaRepository.save(nuevaVivienda);
-        
-        // 3. Enviamos un mensaje de confirmación a la vista HTML
-        modelo.addAttribute("mensaje", "¡La vivienda en '" + direccion + "' ha sido guardada en la base de datos!");
-        
-        return "result";
+        List<String> errores = new ArrayList<>();
+
+     
+        if (nombre == null || nombre.trim().isEmpty()) {
+            errores.add("El nombre de la vivienda es obligatorio.");
+        } else if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 ]+$")) {
+            errores.add("El nombre solo puede contener letras, números y espacios.");
+        }
+
+      
+        if (descripcion == null || descripcion.trim().isEmpty()) {
+            errores.add("La descripción es obligatoria.");
+        } else if (!descripcion.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9 \\p{Punct}]+$")) {
+            errores.add("La descripción contiene caracteres no válidos.");
+        }
+
+     
+        String nombreArchivoFoto = null;
+        if (foto != null && !foto.isEmpty()) {
+            String nombreOriginal = foto.getOriginalFilename();
+            if (nombreOriginal != null) {
+                String fotoLower = nombreOriginal.toLowerCase();
+                if (!fotoLower.endsWith(".png") && !fotoLower.endsWith(".jpeg") && !fotoLower.endsWith(".jpg")) {
+                    errores.add("La foto debe ser en formato .png o .jpeg.");
+                } else {
+                 
+                    nombreArchivoFoto = nombreOriginal;
+                    
+                 
+                }
+            }
+        }
+
+     
+        if (!errores.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Errores: " + String.join(" ", errores));
+        }
+
+      if (viviendaRepository.existsByNombre(nombre.trim())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("La operación ha fallado y la vivienda no ha sido creada ya que el nombre debe ser único.");
+        }
+    try {
+            Vivienda nuevaVivienda = new Vivienda();
+            nuevaVivienda.setNombre(nombre.trim());
+            nuevaVivienda.setDescripcion(descripcion.trim());
+            nuevaVivienda.setFoto(nombreArchivoFoto); 
+
+            viviendaRepository.save(nuevaVivienda);
+
+            return ResponseEntity.ok("¡Vivienda '" + nombre + "' registrada con éxito!");
+            
+        } catch (DataIntegrityViolationException e) {
+          
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("La operación ha fallado y la vivienda no ha sido creada ya que el nombre debe ser único.");
+            
+        } catch (Exception e) {
+          
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno del servidor al intentar guardar la vivienda.");
+        }
     }
 }
