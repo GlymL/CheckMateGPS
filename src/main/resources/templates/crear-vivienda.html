@@ -2,62 +2,159 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>CheckMate - Nueva Vivienda</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>CheckMate GPS - Nueva Vivienda</title>
     <style>
-        body { background-color: #f8f9fa; }
-        .card { border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .header-app { background-color: #0d6efd; color: white; padding: 20px 0; margin-bottom: 30px; }
+        /* 1. Paleta de colores Morados */
+        :root {
+            --primary-color: #6a1b9a;    /* Morado principal */
+            --primary-hover: #4a148c;    /* Morado oscuro para hover */
+            --accent-color: #e1bee7;     /* Morado muy clarito */
+            --error-color: #d32f2f;
+            --bg-color: #f3e5f5;         /* Fondo lila suave */
+            --text-color: #311b92;       /* Texto morado profundo */
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 450px;
+            border: 1px solid var(--accent-color);
+        }
+
+        h2 { 
+            margin-top: 0; 
+            color: var(--primary-color); 
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+
+        label { 
+            display: block; 
+            margin-bottom: 0.6rem; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+        }
+
+        input[type="text"], textarea, input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--accent-color);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(106, 27, 154, 0.2);
+        }
+
+        .input-error { border-color: var(--error-color) !important; }
+        
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            font-style: italic;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            display: block;
+            text-align: center;
+            margin-top: 1.2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn-cancel:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <header class="header-app text-center">
-        <h1>CheckMate GPS</h1>
-        <p>Gestión Inteligente de Tareas del Hogar</p>
+    <header>
+        <h1>CheckMate</h1>
     </header>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card p-4">
-                    <h2 class="text-center mb-4">🏠 Registrar Vivienda</h2>
-                    
-                    <form th:action="@{/vivienda/guardar}" th:object="${vivienda}" method="post">
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nombre de la Vivienda</label>
-                            <input type="text" th:field="*{nombre}" class="form-control" 
-                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
-                                   placeholder="Ej: Apartamento 402">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Descripción</label>
-                            <textarea th:field="*{descripcion}" class="form-control" rows="3"
-                                      th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid' : ''"
-                                      placeholder="Reglas básicas o ubicación..."></textarea>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Foto de la vivienda (Opcional)</label>
-                            <input type="file" class="form-control" accept=".png, .jpeg, .jpg">
-                            <div class="form-text">Formatos permitidos: .png, .jpg</div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Crear Vivienda</button>
-                            <a href="/" class="btn btn-outline-secondary">Cancelar</a>
-                        </div>
-
-                    </form>
-                </div>
+    <div class="card">
+        <h2>Nueva Vivienda</h2>
+        
+        <form th:action="@{/vivienda/guardar}" th:object="${vivienda}" method="post">
+            
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" th:field="*{nombre}" 
+                       th:classappend="${#fields.hasErrors('nombre')} ? 'input-error' : ''"
+                       placeholder="Ej: Mansión Púrpura">
+                <div class="error-message" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea th:field="*{descripcion}" rows="3"
+                          th:classappend="${#fields.hasErrors('descripcion')} ? 'input-error' : ''"
+                          placeholder="¿Cómo es tu vivienda?"></textarea>
+                <div class="error-message" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Adjuntar foto</label>
+                <input type="file" accept=".png, .jpeg, .jpg">
+            </div>
+
+            <button type="submit" class="btn-submit">Guardar Vivienda</button>
+            <a href="/" class="btn-cancel">Cancelar y volver</a>
+        </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
