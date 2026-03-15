@@ -2,9 +2,6 @@ name: Vivienda CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build-and-test:
@@ -26,9 +23,3 @@ jobs:
 
     - name: Ejecutar Tests
       run: mvn verify
-
-    - name: 📦 Subir artefacto (Guardar el JAR)
-      uses: actions/upload-artifact@v4
-      with:
-        name: spring-boot-app
-        path: target/*.jar
