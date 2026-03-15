@@ -1,66 +1,59 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Spring Boot Demo</title>
-
-<style>
-body{
-    margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: linear-gradient(135deg,#6a11cb,#2575fc);
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.card{
-    background:white;
-    padding:40px;
-    border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    text-align:center;
-    width:300px;
-}
-
-h1{
-    margin-bottom:20px;
-    color:#333;
-}
-
-button{
-    background:#2575fc;
-    color:white;
-    border:none;
-    padding:12px 25px;
-    border-radius:8px;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-button:hover{
-    background:#1a5ed8;
-    transform:scale(1.05);
-}
-
-button:active{
-    transform:scale(0.97);
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckMate</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
+
 
 <div class="card">
     <h1>Crea una casa!</h1>
 
-    <form action="/submit" method="post">
-        <button type="submit">Click Me 🥺</button>
-    </form>
+    <div th:if="${errorMessage}" style="color:red; margin-bottom:10px;">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <button onclick="openMenu()">Pulsa este botón para crear tu casa</button>
+    
+    <a href="/listar" style="display: block; margin-top: 15px; padding: 16px 30px; text-decoration: none; text-align: center; border-radius: 14px; font-weight: 700; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);">
+        🏠 Ver viviendas registradas
+    </a>
+    
+</div>
+
+
+
+
+<div class="modal" id="houseMenu" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeMenu()">✖</span>
+
+        <h2>Create House</h2>
+
+        <form action="/submit" method="post" enctype="multipart/form-data">
+
+            <label>House Name<br></label>
+            <input type="text" name="houseName" required>
+
+            <label><br>Description<br></label>
+            <textarea name="description" required></textarea>
+
+            <label><br>House Image<br></label>
+            <input type="file" name="image" accept=".png, .jpeg">
+
+
+
+            <button type="submit">Create</button>
+
+        </form>
+
+    </div>
 </div>
 
 </body>
+<script src="/js/index.js" th:src="@{/js/index.js}"></script>
 </html>
