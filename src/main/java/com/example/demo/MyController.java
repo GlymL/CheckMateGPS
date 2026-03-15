@@ -1,7 +1,5 @@
 package com.example.demo;
 
-import java.util.HashSet;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,8 +10,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MyController {
-
-    private HashSet<String> nombreCasas = new HashSet<String>();
 
     @GetMapping("/")
     public String home() {
@@ -28,15 +24,16 @@ public class MyController {
             RedirectAttributes redirectAttributes) {
 
 
-        if (nombreCasas.contains(houseName)) {
-
+        try{
+            ListaViviendas.getInstance().InsertVivienda(new Vivienda(houseName, description, image));
+            return "redirect:/result";
+        } catch (Exception e){
             redirectAttributes.addFlashAttribute("errorMessage",
                     "El nombre de una casa no puede existir ya, por favor, introduzca uno nuevo.");
 
             return "redirect:/";
+            
         }
-        nombreCasas.add(houseName);
-        return "redirect:/result";
     }
 
     @GetMapping("/result")
