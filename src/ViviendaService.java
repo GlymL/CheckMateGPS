@@ -1,4 +1,4 @@
-package com.tuapp.services;
+package CheckMateGPS.src;
 
 import com.tuapp.dto.ViviendaDTO;
 import com.tuapp.models.Vivienda;

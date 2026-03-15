@@ -1,4 +1,4 @@
-package com.tuapp.repositories;
+package CheckMateGPS.src;
 
 import com.tuapp.models.Vivienda;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,8 +1,9 @@
+package CheckMateGPS.src;
 
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.web.multipart.MultipartFile;
 
 public class ViviendaDTO {
 
