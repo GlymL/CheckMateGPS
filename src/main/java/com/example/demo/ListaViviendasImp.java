@@ -6,11 +6,9 @@ public class ListaViviendasImp extends ListaViviendas{
     
     private final HashSet<Vivienda> lista;
 
-
     public ListaViviendasImp(){
         lista = new HashSet<>();
     }
-
 
     @Override
     public int InsertVivienda(Vivienda v) throws Exception {
@@ -21,5 +19,7 @@ public class ListaViviendasImp extends ListaViviendas{
             throw new Existing();
     }
 
-
+    public HashSet<Vivienda> getViviendas() {
+        return this.lista;
+    }
 }

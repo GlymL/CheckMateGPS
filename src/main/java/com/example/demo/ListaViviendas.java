@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import java.util.HashSet;
+
 public abstract class ListaViviendas {
 
     
@@ -18,5 +20,6 @@ public abstract class ListaViviendas {
 
     public abstract int InsertVivienda(Vivienda v) throws Exception;
 
+	public abstract HashSet<Vivienda> getViviendas();
 
 }
