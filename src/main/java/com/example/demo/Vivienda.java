@@ -9,6 +9,7 @@ public class Vivienda {
     private MultipartFile image;
     
     public Vivienda(String name, String desc, MultipartFile image) {
+        
         validarNombre(name);
         validarDescripcion(desc);
         validarFoto(image);
