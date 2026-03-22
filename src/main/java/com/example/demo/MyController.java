@@ -3,6 +3,7 @@ package com.example.demo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,5 +63,16 @@ public class MyController {
         }
         
         return "listarViviendas"; 
+    }
+  
+    //para poder probar el front de añadir roomate
+    @GetMapping("/viviendas/{id}/add-roommate")
+    public String mostrarFormularioRoommate(@PathVariable("id") String id, Model model) {
+        // Pasamos el ID de la casa al modelo para que Thymeleaf pueda construir 
+        // la ruta correcta en el action del formulario (th:action)
+        model.addAttribute("viviendaId", id);
+        
+        // Esto le dice a Spring Boot: "Busca el archivo addRoommate.html en la carpeta templates y devuélvelo"
+        return "addRoommate"; 
     }
 }

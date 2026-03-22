@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Roommate - CheckMate</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="card" style="max-width: 500px; margin: 40px auto;">
+    <h1>Añadir nuevo roommate</h1>
+
+    <div th:if="${errorVivienda}" style="color: red; background: rgba(255,0,0,0.1); border: 1px solid red; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+        <p>⚠️ La vivienda indicada no existe. Comprueba el nombre.</p>
+    </div>
+
+    <div th:if="${errorCampos}" style="color: red; background: rgba(255,0,0,0.1); border: 1px solid red; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+        <p>⚠️ Faltan campos obligatorios por rellenar.</p>
+    </div>
+
+    <div th:if="${errorFormato}" style="color: red; background: rgba(255,0,0,0.1); border: 1px solid red; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+        <p>⚠️ El campo nombre no cumple con el formato establecido.</p>
+    </div>
+
+    <div th:if="${errorDuplicado}" style="color: red; background: rgba(255,0,0,0.1); border: 1px solid red; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+        <p>⚠️ Ya hay un roommate en la vivienda con ese nombre.</p>
+    </div>
+
+    <form th:action="@{/add-roommate}" method="post">
+
+        <label>Nombre de la vivienda<br></label>
+        <input type="text" name="nombreVivienda" required placeholder="Ej: Piso Estudiantes">
+
+        <label><br>Nombre de usuario (Alias)<br></label>
+        <input type="text" name="nombreUsuario" required>
+
+        <label><br>Nombre real<br></label>
+        <input type="text" 
+               name="nombre" 
+               required 
+               pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" 
+               title="Sólo puede contener letras minúsculas, mayúsculas y espacios">
+
+        <button type="submit" style="margin-top: 20px;">Añadir Roommate</button>
+
+    </form>
+
+    <a th:href="@{/listar}" style="display: block; margin-top: 15px; padding: 10px; text-decoration: none; text-align: center; border-radius: 14px; font-weight: bold; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);">
+        🔙 Cancelar y Volver
+    </a>
+
+</div>
+
+</body>
+</html>
