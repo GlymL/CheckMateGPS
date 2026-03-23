@@ -1,16 +1,25 @@
 package com.example.demo;
 
+import java.util.Optional; // NECESARIO PARA LOS REPOSITORIOS
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // NECESARIO PARA BUSCAR EN LA BBDD
 
 @Controller
 public class MyController {
+
+    // --- CONEXIÓN CON LA BASE DE DATOS ---
+    @Autowired
+    private ViviendaRepository viviendaRepository;
+
+    @Autowired
+    private RoommateRepository roommateRepository;
 
     @GetMapping("/")
     public String home() {
@@ -25,24 +34,21 @@ public class MyController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // 1. Al hacer el "new Vivienda", si hay algún error de formato, 
-            // saltará directamente al primer "catch" (IllegalArgumentException)
+            // 1. Mantenemos tus validaciones originales
             Vivienda nuevaVivienda = new Vivienda(houseName, description, image);
             
-            // 2. Si el formato es correcto, intentamos meterlo en la lista.
-            // Si el nombre ya existe, saltará al segundo "catch" (Exception general)
-            ListaViviendas.getInstance().InsertVivienda(nuevaVivienda);
+            // 2. CAMBIO MÍNIMO: En lugar de ListaViviendas, lo guardamos en la BBDD
+            viviendaRepository.save(nuevaVivienda);
             
-            // 3. Si todo va bien, avanzamos al resultado (CM1-2)
+            // 3. Si todo va bien, avanzamos al resultado
             return "redirect:/result";
             
         } catch (IllegalArgumentException e) {
-            // Atrapa los errores de los métodos validarNombre, validarDescripcion y validarFoto (CM1-3)
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/";
             
         } catch (Exception e) {
-            // Atrapa el error de la lista cuando la vivienda ya existe
+            // Atrapa el error de la BBDD si el nombre (unique) ya existe
             redirectAttributes.addFlashAttribute("errorMessage",
                     "El nombre de una casa no puede existir ya, por favor, introduzca uno nuevo.");
             return "redirect:/";
@@ -57,22 +63,62 @@ public class MyController {
     @GetMapping("/listar")
     public String listarViviendas(Model model) {
         try {
-            model.addAttribute("listaCasas", ListaViviendas.getInstance().getViviendas());
+            // CAMBIO MÍNIMO: Leemos de la BBDD en lugar de ListaViviendas
+            model.addAttribute("listaCasas", viviendaRepository.findAll());
         } catch (Exception e) {
-            // Si el mapa está vacío o da error, no pasa nada
+            // Si da error, no pasa nada
         }
-        
         return "listarViviendas"; 
     }
   
-    //para poder probar el front de añadir roomate
-    @GetMapping("/viviendas/{id}/add-roommate")
-    public String mostrarFormularioRoommate(@PathVariable("id") String id, Model model) {
-        // Pasamos el ID de la casa al modelo para que Thymeleaf pueda construir 
-        // la ruta correcta en el action del formulario (th:action)
-        model.addAttribute("viviendaId", id);
-        
-        // Esto le dice a Spring Boot: "Busca el archivo addRoommate.html en la carpeta templates y devuélvelo"
+    //cosas de añadir Roommate
+
+    // 1. Muestra el formulario vacío
+    @GetMapping("/add-roommate")
+    public String mostrarFormularioRoommate() {
         return "addRoommate"; 
+    }
+
+    // 2. Recibe los datos del formulario y aplica tus reglas estrictas
+    @PostMapping("/add-roommate")
+    public String procesarAñadirRoommate(
+            @RequestParam("nombreVivienda") String nombreVivienda,
+            @RequestParam("nombreUsuario") String nombreUsuario,
+            @RequestParam("nombre") String nombreReal,
+            RedirectAttributes redirectAttributes) {
+
+        // Validar que no vengan vacíos (CM2-3)
+        if (nombreVivienda.isBlank() || nombreUsuario.isBlank() || nombreReal.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorCampos", true);
+            return "redirect:/add-roommate";
+        }
+
+        // Validar el formato del nombre real (CM2-4)
+        if (!nombreReal.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            redirectAttributes.addFlashAttribute("errorFormato", true);
+            return "redirect:/add-roommate";
+        }
+
+        // Comprobar que la vivienda existe
+       Optional<Vivienda> viviendaOpt = viviendaRepository.findByName(nombreVivienda);
+        if (viviendaOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorVivienda", true);
+            return "redirect:/add-roommate";
+        }
+        
+        Vivienda viviendaEncontrada = viviendaOpt.get();
+
+        // Comprobar si ya existe el roommate en esa casa (CM2-5)
+        boolean existeDuplicado = roommateRepository.existsByNombreRealAndVivienda(nombreReal, viviendaEncontrada);
+        if (existeDuplicado) {
+            redirectAttributes.addFlashAttribute("errorDuplicado", true);
+            return "redirect:/add-roommate";
+        }
+
+        // Crear y guardar (CM2-2)
+        Roommate nuevoRoommate = new Roommate(nombreUsuario, nombreReal, viviendaEncontrada);
+        roommateRepository.save(nuevoRoommate);
+
+        return "redirect:/listar";
     }
 }
