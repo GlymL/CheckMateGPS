@@ -1,0 +1,9 @@
+com\example\demo\DemoApplication.class
+com\example\demo\Vivienda.class
+com\example\demo\ListaViviendasImp.class
+com\example\demo\Existing.class
+com\example\demo\Roommate.class
+com\example\demo\ViviendaRepository.class
+com\example\demo\RoommateRepository.class
+com\example\demo\ListaViviendas.class
+com\example\demo\MyController.class
