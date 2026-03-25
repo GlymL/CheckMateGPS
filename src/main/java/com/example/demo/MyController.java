@@ -80,12 +80,12 @@ public class MyController {
     }
 
     // 2. Recibe los datos del formulario y aplica tus reglas estrictas
-    @PostMapping("/add-roommate")
-    public String procesarAñadirRoommate(
-            @RequestParam("nombreVivienda") String nombreVivienda,
-            @RequestParam("nombreUsuario") String nombreUsuario,
-            @RequestParam("nombre") String nombreReal,
-            RedirectAttributes redirectAttributes) {
+   @PostMapping("/add-roommate")
+public String procesarAñadirRoommate(
+        @RequestParam(value = "nombreVivienda", required = false, defaultValue = "") String nombreVivienda,
+        @RequestParam(value = "nombreUsuario", required = false, defaultValue = "") String nombreUsuario,
+        @RequestParam(value = "nombre", required = false, defaultValue = "") String nombreReal,
+        RedirectAttributes redirectAttributes) {
 
         // Validar que no vengan vacíos (CM2-3)
         if (nombreVivienda.isBlank() || nombreUsuario.isBlank() || nombreReal.isBlank()) {
@@ -94,9 +94,9 @@ public class MyController {
         }
 
         // Validar el formato del nombre real (CM2-4)
-        if (!nombreReal.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
-            redirectAttributes.addFlashAttribute("errorFormato", true);
-            return "redirect:/add-roommate";
+       if (!nombreReal.matches("^[a-zA-Z\\s]+$")) {
+        redirectAttributes.addFlashAttribute("errorFormato", true);
+         return "redirect:/add-roommate";
         }
 
         // Comprobar que la vivienda existe
