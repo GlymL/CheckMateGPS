@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // NECESARIO PARA BUSCAR EN LA BBDD
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; 
 
 @Controller
 public class MyController {
 
-    // --- CONEXIÓN CON LA BASE DE DATOS ---
     @Autowired
     private ViviendaRepository viviendaRepository;
 
@@ -37,13 +36,11 @@ public class MyController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // 1. Mantenemos tus validaciones originales
+            
             Vivienda nuevaVivienda = new Vivienda(houseName, description, image);
             
-            // 2. CAMBIO MÍNIMO: En lugar de ListaViviendas, lo guardamos en la BBDD
             viviendaRepository.save(nuevaVivienda);
             
-            // 3. Si todo va bien, avanzamos al resultado
             return "redirect:/result";
             
         } catch (IllegalArgumentException e) {
@@ -51,7 +48,7 @@ public class MyController {
             return "redirect:/";
             
         } catch (Exception e) {
-            // Atrapa el error de la BBDD si el nombre (unique) ya existe
+           
             redirectAttributes.addFlashAttribute("errorMessage",
                     "El nombre de una casa no puede existir ya, por favor, introduzca uno nuevo.");
             return "redirect:/";
@@ -66,10 +63,10 @@ public class MyController {
     @GetMapping("/listar")
     public String listarViviendas(Model model) {
         try {
-            // CAMBIO MÍNIMO: Leemos de la BBDD en lugar de ListaViviendas
+            
             model.addAttribute("listaCasas", viviendaRepository.findAll());
         } catch (Exception e) {
-            // Si da error, no pasa nada
+            
         }
         return "listarViviendas"; 
     }
