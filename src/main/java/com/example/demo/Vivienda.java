@@ -24,6 +24,9 @@ public class Vivienda {
     @OneToMany(mappedBy = "vivienda", cascade = CascadeType.ALL)
     private List<Roommate> roommates = new ArrayList<>();
 
+    @OneToMany(mappedBy = "vivienda", cascade = CascadeType.ALL)
+    private List<Tarea> tareas = new ArrayList<>();
+
     // 5. CONSTRUCTOR VACÍO OBLIGATORIO PARA JPA (La base de datos lo necesita para funcionar)
     public Vivienda() {
     }
@@ -107,6 +110,14 @@ public class Vivienda {
 
     public void setRoommates(List<Roommate> roommates) {
         this.roommates = roommates;
+    }
+
+    public List<Tarea> getTareas() {
+        return tareas;
+    }
+
+    public void setTareas(List<Tarea> tareas) {
+        this.tareas = tareas;
     }
 
     // --- EQUALS & HASHCODE ORIGINALES ---
