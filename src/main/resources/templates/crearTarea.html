@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckMate - Crear Tarea</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="card" style="width: 400px;">
+    <h1>Nueva Tarea 🧹</h1>
+    
+    <form th:action="@{/guardarTarea}" th:object="${tarea}" method="post">
+        <input type="hidden" th:field="*{viviendaId}">
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label>Nombre de la tarea (Obligatorio):</label>
+            <input type="text" th:field="*{name}" 
+                   required 
+                   pattern="^[a-zA-Z0-9 ]+$" 
+                   title="CM3-4: Solo letras, números y espacios"
+                   style="width: 100%; padding: 8px; margin-top: 5px;">
+        </div>
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label>Descripción (Opcional):</label>
+            <textarea th:field="*{descripcion}" 
+                      pattern="^[a-zA-Z0-9 ,.!?;:]*$"
+                      title="CM3-4: Letras, números y signos de puntuación"
+                      style="width: 100%; padding: 8px; margin-top: 5px; height: 80px;"></textarea>
+        </div>
+
+        <button type="submit" style="background: #9b59d0; color: white;">Crear Tarea</button>
+        <button type="button" onclick="window.history.back()" style="background: #eee; color: #333; margin-top: 10px;">Cancelar</button>
+    </form>
+</div>
+</body>
+</html>
