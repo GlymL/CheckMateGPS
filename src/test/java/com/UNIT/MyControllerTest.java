@@ -1,4 +1,4 @@
-package com.controller;
+package com.UNIT;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class MyControllerTest {
         }
 
     @Test
-    void home_devuelveVistaIndex() throws Exception {
+    void home_returnsViewIndex() throws Exception {
 
         // 1. Arrange
         // No se necesitan datos previos
@@ -58,7 +58,7 @@ class MyControllerTest {
     }
 
     @Test
-    void listarViviendas_devuelveVistaListarViviendas() throws Exception {
+    void listViviendas_returnsViewListHomes() throws Exception {
 
         // 1. Arrange
         // No se necesitan datos
@@ -73,7 +73,7 @@ class MyControllerTest {
     }
 
     @Test
-    void submitHouse_creaViviendaCorrectamenteSinFoto() throws Exception {
+    void submitHouse_createHousingCorrectlyWithoutPhoto() throws Exception {
 
         // 1. Arrange
         MockMultipartFile mockFoto = new MockMultipartFile(
@@ -96,7 +96,7 @@ class MyControllerTest {
     }
 
     @Test
-    void submitHouse_lanzaErrorPorNombreVacio() throws Exception {
+    void submitHouse_throwsErrorForEmptyName() throws Exception {
 
         // 1. Arrange
         MockMultipartFile mockFoto = new MockMultipartFile(
@@ -119,7 +119,7 @@ class MyControllerTest {
     }
 
     @Test
-    void submitHouse_lanzaErrorPorFormatoFotoIncorrecto() throws Exception {
+    void submitHouse_throwsErrorByPhotoFormatIncorrect() throws Exception {
 
         // 1. Arrange
         MockMultipartFile mockFoto = new MockMultipartFile(
@@ -144,7 +144,7 @@ class MyControllerTest {
     // CM2: Test para verificar los campos para añadir un nuevo roommate 
         // CM2-2: datos correctos → se crea roommate
        @Test
-        void addRoommate_creaCorrectamente() throws Exception {
+        void addRoommate_createCorrectly() throws Exception {
 
         Vivienda vivienda = new Vivienda();
         vivienda.setName("Casa1");
@@ -168,7 +168,7 @@ class MyControllerTest {
         }
         // CM2-3: campos vacíos → error
         @Test
-        void addRoommate_camposVacios_error() throws Exception {
+        void addRoommate_empty_fields_error() throws Exception {
 
         MvcResult result = mockMvc.perform(post("/add-roommate")
                 .param("nombreVivienda", "Casa1")
@@ -183,7 +183,7 @@ class MyControllerTest {
         }
         // CM2-4: campos vacíos → error
         @Test
-        void addRoommate_formatoInvalido_error() throws Exception {
+        void addRoommate_Invalid_format_error() throws Exception {
 
         MvcResult result = mockMvc.perform(post("/add-roommate")
                 .param("nombreVivienda", "Casa1")
@@ -198,7 +198,7 @@ class MyControllerTest {
         }
     //CM 2-5
     @Test
-        void addRoommate_errorCuandoEsDuplicado() throws Exception {
+        void addRoommate_errorWhenDuplicated() throws Exception {
         Vivienda vivienda = new Vivienda();
         vivienda.setName("Casa1");
 

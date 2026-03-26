@@ -1,26 +1,25 @@
 package com.example.demo;
 
-import jakarta.persistence.*; // Importaciones necesarias para BBDD
+import jakarta.persistence.*; 
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.ArrayList;
 
-@Entity // 1. Indica a Spring que esto será una tabla en la BBDD
+@Entity 
 public class Vivienda {
 
-    @Id // 2. Indica que este es el identificador único (Clave primaria)
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Autoincremental (1, 2, 3...)
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true) // Hace que la BBDD rechace nombres duplicados automáticamente
+    @Column(unique = true) 
     private String name;
     
     private String description;
     
-    @Transient // 3. Le dice a la BBDD que ignore este campo (JPA no puede guardar un MultipartFile)
+    @Transient 
     private MultipartFile image;
 
-    // 4. Relación: Una vivienda tiene una lista de roommates
     @OneToMany(mappedBy = "vivienda", cascade = CascadeType.ALL)
     private List<Roommate> roommates = new ArrayList<>();
 
@@ -31,19 +30,17 @@ public class Vivienda {
     public Vivienda() {
     }
 
-    // 6. TU CONSTRUCTOR ORIGINAL (¡Intacto! Mantenemos tus excelentes validaciones)
     public Vivienda(String name, String desc, MultipartFile image) {
-        validarNombre(name);
-        validarDescripcion(desc);
-        validarFoto(image);
+        validateName(name);
+        validateDescription(desc);
+        validateImage(image);
         
         this.name = name;
         this.description = desc;
         this.image = image;
     }
 
-    // --- TUS MÉTODOS DE VALIDACIÓN ORIGINALES ---
-    private void validarNombre(String name) {
+    private void validateName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Faltan datos obligatorios por rellenar.");
         }
@@ -52,7 +49,7 @@ public class Vivienda {
         }
     }
 
-    private void validarDescripcion(String desc) {
+    private void validateDescription(String desc) {
         if (desc == null || desc.trim().isEmpty()) {
             throw new IllegalArgumentException("Faltan datos obligatorios por rellenar.");
         }
@@ -61,7 +58,7 @@ public class Vivienda {
         }
     }
 
-    private void validarFoto(MultipartFile image) {
+    private void validateImage(MultipartFile image) {
         if (image != null && !image.isEmpty()) {
             String contentType = image.getContentType();
             if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
@@ -70,7 +67,6 @@ public class Vivienda {
         }
     }
 
-    // --- GETTERS Y SETTERS ---
     
     public Long getId() {
         return id;

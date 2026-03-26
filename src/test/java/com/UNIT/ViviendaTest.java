@@ -1,4 +1,4 @@
-package com.logic;
+package com.UNIT;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 class ViviendaTest {
 
     @Test
-    void validarFoto_creaViviendaCorrectamenteSinFoto() {
+    void validateImage_createViviendaCorrectlyWithoutImage() {
 
         // 1. Arrange
         String nombreValido = "Piso Estudiantes 1";
@@ -30,7 +30,7 @@ class ViviendaTest {
     }
 
     @Test
-    void validarFoto_creaViviendaCorrectamenteConFotoPng() {
+    void validarFoto_createViviendaCorrectlyWithImagePNG() {
 
         // 1. Arrange 
         String nombreValido = "Chalet UCM";
@@ -47,7 +47,7 @@ class ViviendaTest {
     }
 
     @Test
-    void validarNombre_lanzaExcepcionPorNombreVacio() {
+    void validateName_throwExceptionForEmptyName() {
 
         // 1. Arrange 
         String nombreInvalido = "   "; 
@@ -61,7 +61,7 @@ class ViviendaTest {
     }
 
     @Test
-    void validarNombre_lanzaExcepcionPorFormatoNombreIncorrecto() {
+    void validateName_throwsExceptionDueToIncorrectNameFormat() {
 
         // 1. Arrange 
         String nombreInvalido = "Nombre incorrecto@!"; 
@@ -76,7 +76,7 @@ class ViviendaTest {
     }
 
     @Test
-    void validarFoto_lanzaExcepcionPorFormatoFotoIncorrecto() {
+    void validateImage_throwsExceptionByIncorrectPhotoFormat() {
 
         // 1. Arrange 
         String nombreValido = "Nombre correcto";
@@ -92,7 +92,7 @@ class ViviendaTest {
     }
 
     @Test
-    void equals_devuelveTrueSiTienenMismoNombre() {
+    void equals_returnsTrueIfTheyHaveTheSameName() {
 
         // 1. Arrange 
         MultipartFile mockFoto = mock(MultipartFile.class);
@@ -108,7 +108,7 @@ class ViviendaTest {
     }
 
     @Test
-    void validarDescripcion_lanzaExcepcionPorDescripcionVacia() {
+    void validateDescription_throwsExceptionForEmptyDescription() {
 
         // 1. Arrange 
         String nombreValido = "Nombre correcto";
@@ -122,7 +122,7 @@ class ViviendaTest {
     }
 
     @Test
-    void validarDescripcion_lanzaExcepcionPorFormatoDescripcionIncorrecto() {
+    void validateDescription_ThrowsExceptionDuetoIncorrectDescriptionFormat() {
 
         // 1. Arrange 
         String nombreValido = "Nombre correcto";
@@ -137,7 +137,7 @@ class ViviendaTest {
     }
 
     @Test
-    void hashCode_generaHashDiferentesParaViviendasDistintas() {
+    void hashCode_generateDifferentHashForDifferentDwellings() {
 
         // 1. Arrange
         MultipartFile mockFoto = mock(MultipartFile.class);
