@@ -1,20 +1,21 @@
 package com.example.demo;
 
-import java.util.Optional; // NECESARIO PARA LOS REPOSITORIOS
+import java.util.Optional; 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ModelAttribute; // Añadido para el objeto Tarea
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // NECESARIO PARA BUSCAR EN LA BBDD
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MyController {
 
-    // --- CONEXIÓN CON LA BASE DE DATOS ---
     @Autowired
     private ViviendaRepository viviendaRepository;
 
@@ -34,13 +35,8 @@ public class MyController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // 1. Mantenemos tus validaciones originales
             Vivienda nuevaVivienda = new Vivienda(houseName, description, image);
-            
-            // 2. CAMBIO MÍNIMO: En lugar de ListaViviendas, lo guardamos en la BBDD
             viviendaRepository.save(nuevaVivienda);
-            
-            // 3. Si todo va bien, avanzamos al resultado
             return "redirect:/result";
             
         } catch (IllegalArgumentException e) {
@@ -48,7 +44,6 @@ public class MyController {
             return "redirect:/";
             
         } catch (Exception e) {
-            // Atrapa el error de la BBDD si el nombre (unique) ya existe
             redirectAttributes.addFlashAttribute("errorMessage",
                     "El nombre de una casa no puede existir ya, por favor, introduzca uno nuevo.");
             return "redirect:/";
@@ -60,47 +55,40 @@ public class MyController {
         return "result";
     }
 
+    // ESTA ES TU RUTA PRINCIPAL DE LISTADO
     @GetMapping("/listar")
     public String listarViviendas(Model model) {
         try {
-            // CAMBIO MÍNIMO: Leemos de la BBDD en lugar de ListaViviendas
             model.addAttribute("listaCasas", viviendaRepository.findAll());
         } catch (Exception e) {
-            // Si da error, no pasa nada
+            // Manejo de error silencioso
         }
         return "listarViviendas"; 
     }
   
-    //cosas de añadir Roommate
-
-    // 1. Muestra el formulario vacío
     @GetMapping("/add-roommate")
     public String mostrarFormularioRoommate() {
         return "addRoommate"; 
     }
 
-    // 2. Recibe los datos del formulario y aplica tus reglas estrictas
-   @PostMapping("/add-roommate")
-public String procesarAñadirRoommate(
+    @PostMapping("/add-roommate")
+    public String procesarAñadirRoommate(
         @RequestParam(value = "nombreVivienda", required = false, defaultValue = "") String nombreVivienda,
         @RequestParam(value = "nombreUsuario", required = false, defaultValue = "") String nombreUsuario,
         @RequestParam(value = "nombre", required = false, defaultValue = "") String nombreReal,
         RedirectAttributes redirectAttributes) {
 
-        // Validar que no vengan vacíos (CM2-3)
         if (nombreVivienda.isBlank() || nombreUsuario.isBlank() || nombreReal.isBlank()) {
             redirectAttributes.addFlashAttribute("errorCampos", true);
             return "redirect:/add-roommate";
         }
 
-        // Validar el formato del nombre real (CM2-4)
-       if (!nombreReal.matches("^[a-zA-Z\\s]+$")) {
-        redirectAttributes.addFlashAttribute("errorFormato", true);
-         return "redirect:/add-roommate";
+        if (!nombreReal.matches("^[a-zA-Z\\s]+$")) {
+            redirectAttributes.addFlashAttribute("errorFormato", true);
+            return "redirect:/add-roommate";
         }
 
-        // Comprobar que la vivienda existe
-       Optional<Vivienda> viviendaOpt = viviendaRepository.findByName(nombreVivienda);
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findByName(nombreVivienda);
         if (viviendaOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorVivienda", true);
             return "redirect:/add-roommate";
@@ -108,17 +96,42 @@ public String procesarAñadirRoommate(
         
         Vivienda viviendaEncontrada = viviendaOpt.get();
 
-        // Comprobar si ya existe el roommate en esa casa (CM2-5)
         boolean existeDuplicado = roommateRepository.existsByNombreRealAndVivienda(nombreReal, viviendaEncontrada);
         if (existeDuplicado) {
             redirectAttributes.addFlashAttribute("errorDuplicado", true);
             return "redirect:/add-roommate";
         }
 
-        // Crear y guardar (CM2-2)
         Roommate nuevoRoommate = new Roommate(nombreUsuario, nombreReal, viviendaEncontrada);
         roommateRepository.save(nuevoRoommate);
 
+        return "redirect:/listar";
+    }
+    
+    // --- NUEVAS RUTAS PARA TAREAS (CM3) ---
+
+    @GetMapping("/vivienda/{id}")
+    public String verVivienda(@PathVariable("id") String id, Model model) {
+        // Pasamos el id a la vista detalleVivienda
+        model.addAttribute("viviendaId", id);
+        return "detalleVivienda"; 
+    }
+
+    @GetMapping("/vivienda/{id}/nueva-tarea")
+    public String nuevaTarea(@PathVariable("id") String id, Model model) {
+        Tarea tarea = new Tarea();
+        tarea.setViviendaId(id); 
+        
+        model.addAttribute("tarea", tarea);
+        return "crearTarea";
+    }
+    
+    // Ruta placeholder para que el botón de guardar no de error 404
+    @PostMapping("/guardarTarea")
+    public String guardarTarea(@ModelAttribute Tarea tarea, RedirectAttributes ra) {
+        // Aquí es donde trabajará tu compañero de Backend.
+        // Por ahora, solo redirigimos al listado para que no explote.
+        System.out.println("Tarea recibida: " + tarea.getName() + " para casa " + tarea.getViviendaId());
         return "redirect:/listar";
     }
 }

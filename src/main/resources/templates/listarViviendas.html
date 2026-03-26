@@ -5,64 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheckMate - Lista de Viviendas</title>
     <link rel="stylesheet" href="/css/style.css">
-    
     <style>
-        .list-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto; 
-        }
-        .house-item {
-            background: #f8f9fa;
-            border-left: 5px solid #9b59d0;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            text-align: left;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-        }
-        .house-item h3 {
-            margin: 0;
-            color: #2d3748;
-            font-size: 18px;
-        }
+        .list-container { background: rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 20px; margin-top: 20px; max-height: 400px; overflow-y: auto; }
+        .house-item { background: #f8f9fa; border-left: 5px solid #9b59d0; padding: 15px; margin-bottom: 10px; border-radius: 8px; text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; align-items: center; text-decoration: none; color: inherit; transition: 0.3s; }
+        .house-item:hover { background: #f0e6f7; transform: translateX(5px); }
+        .house-item h3 { margin: 0; color: #2d3748; font-size: 18px; }
     </style>
 </head>
 <body>
-
-<div class="brand">
-    <svg viewBox="0 0 400 200" width="130" height="65" xmlns="http://www.w3.org/2000/svg">
-        <defs><image width="800" height="800" id="img1logo" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIGZpbGw9IiNmZmZmZmYiIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTQwMCw0OEgxMTJhNjQuMDcsNjQuMDcsMCwwLDAtNjQsNjRWNDAwYTY0LjA3LDY0LjA3LDAsMCwwLDY0LDY0SDQwMGE2NC4wNyw2NC4wNywwLDAsMCw2NC02NFYxMTJBNjQuMDcsNjQuMDcsMCwwLDAsNDAwLDQ4Wk0zNjQuMjUsMTg2LjI5bC0xMzQuNCwxNjBhMTYsMTYsMCwwLDEtMTIsNS43MWgtLjI3YTE2LDE2LDAsMCwxLTExLjg5LTUuM2wtNTcuNi02NGExNiwxNiwwLDEsMSwyMy43OC0yMS40bDQ1LjI5LDUwLjMyTDMzOS43NSwxNjUuNzFhMTYsMTYsMCwwLDEsMjQuNSwyMC41OFoiLz48L3N2Zz4="/></defs>
-        <path fill="white" d="m78.4 26h-35c-19.3 0-35 15.7-35 35 0 19.3 15.7 35 35 35h35v-33.2h-12.6v-3.6h12.6zm44.9 70h32l-0.1-70h-31.9v12.6c0 0-1.9 0-3.6 0v-12.6h-31.9v70h31.9v-12.6c0 0 1.7 0 3.6 0zm110.2-30.5v-9h-12.7v-3.5h12.7v-27h-67.5v70h67.5v-27h-12.7v-3.5zm77.9-39.5h-35c-19.3 0-35 15.7-35 35 0 19.3 15.7 35 35 35h35v-33.2h-12.6v-3.6h12.6zm80.6 0h-70v70h70l-19.2-35zm-232 80l-35 19.2-35-19.2v70h70zm83.5 70l-38.5-70-38.4 70zm70.7-70h-70v35h9.1v35h51.8v-35h9.1zm77.3 39.5v-9h-12.7v-3.5h12.7v-27h-67.5v70h67.5v-27h-12.7v-3.5z"/>
-        <use href="#img1logo" transform="matrix(.11,0,0,.11,1,97)"/>
-    </svg>
-</div>
-
 <div class="card" style="width: 500px;">
     <h1>Casas Registradas 🏘️</h1>
-    <p class="subtitle">Lista de todas las viviendas en el sistema.</p>
-
     <div class="list-container">
-        
         <div th:if="${listaCasas == null or #lists.isEmpty(listaCasas)}" style="color: #666; padding: 20px;">
             <p>Todavía no hay ninguna vivienda registrada.</p>
         </div>
 
-        <div th:each="casa : ${listaCasas}" class="house-item">
+        <a th:each="casa : ${listaCasas}" th:href="@{/vivienda/{id}(id=${casa.id})}" class="house-item">
             <span style="font-size: 24px; margin-right: 15px;">🏡</span>
             <div>
                 <h3 th:text="${casa.name}">Nombre de la Casa</h3>
+                <small style="color: #888;">Pulsa para gestionar tareas</small>
             </div>
-        </div>
-
+        </a>
     </div>
     <button onclick="window.location.href='/'">Volver al inicio</button>
 </div>
-
 </body>
 </html>
