@@ -1,4 +1,4 @@
-package com.controller;
+package com.INTEGRATION;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ public class TareaIntegrationTest {
 
     @Test
     @DisplayName("CM3-1 y CM3-2: Crear tarea exitosamente con campos válidos en BBDD real")
-    void crearTarea_Exito() throws Exception {
+    void createTarea_Valid() throws Exception {
       
         String idReal = String.valueOf(viviendaGuardada.getId());
 
@@ -69,7 +69,7 @@ public class TareaIntegrationTest {
 
     @Test
     @DisplayName("CM3-3: Error al no rellenar el campo obligatorio (nombre)")
-    void crearTarea_FaltanCamposObligatorios() throws Exception {
+    void createTarea_MissingMandatoryFields() throws Exception {
         String idReal = String.valueOf(viviendaGuardada.getId());
 
         mockMvc.perform(post("/guardarTarea")
@@ -83,7 +83,7 @@ public class TareaIntegrationTest {
 
     @Test
     @DisplayName("CM3-4: Error por formato inválido en el nombre de la tarea")
-    void crearTarea_FormatoNombreInvalido() throws Exception {
+    void createTarea_InvalidNameFormat() throws Exception {
         String idReal = String.valueOf(viviendaGuardada.getId());
 
         mockMvc.perform(post("/guardarTarea")
@@ -97,7 +97,7 @@ public class TareaIntegrationTest {
 
     @Test
     @DisplayName("CM3-4: Error por formato inválido en la descripción de la tarea")
-    void crearTarea_FormatoDescripcionInvalido() throws Exception {
+    void createTarea_InvalidDescriptionFormat() throws Exception {
         String idReal = String.valueOf(viviendaGuardada.getId());
 
         mockMvc.perform(post("/guardarTarea")
@@ -111,8 +111,8 @@ public class TareaIntegrationTest {
 
     @Test
     @DisplayName("Prueba extra: Error si la vivienda indicada no existe")
-    void crearTarea_ViviendaNoEncontrada() throws Exception {
-        // Un ID que sabemos que no va a existir en tu BBDD
+    void createTarea_ViviendaNotFound() throws Exception {
+        
         String idInexistente = "999999999"; 
 
         mockMvc.perform(post("/guardarTarea")
