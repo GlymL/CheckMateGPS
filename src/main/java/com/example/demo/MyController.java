@@ -55,7 +55,7 @@ public class MyController {
         return "result";
     }
 
-    // ESTA ES TU RUTA PRINCIPAL DE LISTADO
+    
     @GetMapping("/listar")
     public String listarViviendas(Model model) {
         try {
@@ -126,11 +126,10 @@ public class MyController {
         return "crearTarea";
     }
     
-    // Ruta placeholder para que el botón de guardar no de error 404
+   
     @PostMapping("/guardarTarea")
     public String guardarTarea(@ModelAttribute Tarea tarea, RedirectAttributes ra) {
-        // Aquí es donde trabajará tu compañero de Backend.
-        // Por ahora, solo redirigimos al listado para que no explote.
+        
         System.out.println("Tarea recibida: " + tarea.getName() + " para casa " + tarea.getViviendaId());
         return "redirect:/listar";
     }
