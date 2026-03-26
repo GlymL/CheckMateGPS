@@ -23,14 +23,14 @@ import com.example.demo.ViviendaRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional // Revierte los cambios en la BBDD al terminar cada test para no dejar basura
+@Transactional 
 @ContextConfiguration(classes = DemoApplication.class)
 public class TareaIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    // AHORA USAMOS LOS REPOSITORIOS REALES (Autowired en lugar de MockitoBean)
+    
     @Autowired
     private ViviendaRepository viviendaRepository;
 
