@@ -19,6 +19,9 @@ public class MyController {
 
     @Autowired
     private RoommateRepository roommateRepository;
+    
+    @Autowired
+    private TareaRepository tareaRepository;
 
     @GetMapping("/")
     public String home() {
@@ -117,5 +120,48 @@ public String procesarAñadirRoommate(
         roommateRepository.save(nuevoRoommate);
 
         return "redirect:/listar";
+    }
+
+    @PostMapping("/guardarTarea")
+    public String guardarTareaManual(
+            @RequestParam("nombre") String nombre,
+            @RequestParam(value = "descripcion", required = false) String descripcion,
+            @RequestParam("viviendaId") Long viviendaId,
+            Model model) {
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+            model.addAttribute("error", "No se han rellenado todos los campos obligatorios.");
+            return "crearTarea";
+        }
+
+        String regexNombre = "^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]+$";
+        String regexDescripcion = "^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ.,!?;:()]*$"; 
+
+        if (!nombre.matches(regexNombre)) {
+            model.addAttribute("error", "El formato del nombre no es válido.");
+            return "crearTarea";
+        }
+
+        if (descripcion != null && !descripcion.isEmpty() && !descripcion.matches(regexDescripcion)) {
+            model.addAttribute("error", "El formato de la descripción no es válido.");
+            return "crearTarea";
+        }
+
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
+        
+        if (viviendaOpt.isPresent()) {
+            Tarea nuevaTarea = new Tarea();
+            nuevaTarea.setNombre(nombre);
+            nuevaTarea.setDescripcion(descripcion);
+            nuevaTarea.setVivienda(viviendaOpt.get());
+
+            tareaRepository.save(nuevaTarea);
+            // TODO: Cambiar este redirect en el futuro para que lleve a la vista de tareas
+            // de la vivienda actual (ej: /vivienda/tareas?id=X) en lugar de la lista general.
+            return "redirect:/listar"; 
+        } else {
+            model.addAttribute("error", "Vivienda no encontrada.");
+            return "crearTarea";
+        }
     }
 }

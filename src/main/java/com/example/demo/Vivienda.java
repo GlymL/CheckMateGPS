@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Vivienda {
 
     @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Autoincremental (1, 2, 3...)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true) 
@@ -23,6 +23,10 @@ public class Vivienda {
     @OneToMany(mappedBy = "vivienda", cascade = CascadeType.ALL)
     private List<Roommate> roommates = new ArrayList<>();
 
+    @OneToMany(mappedBy = "vivienda", cascade = CascadeType.ALL)
+    private List<Tarea> tareas = new ArrayList<>();
+
+    // 5. CONSTRUCTOR VACÍO OBLIGATORIO PARA JPA (La base de datos lo necesita para funcionar)
     public Vivienda() {
     }
 
@@ -104,6 +108,15 @@ public class Vivienda {
         this.roommates = roommates;
     }
 
+    public List<Tarea> getTareas() {
+        return tareas;
+    }
+
+    public void setTareas(List<Tarea> tareas) {
+        this.tareas = tareas;
+    }
+
+    // --- EQUALS & HASHCODE ORIGINALES ---
     @Override
     public boolean equals(Object o) {
         if (o == this)
