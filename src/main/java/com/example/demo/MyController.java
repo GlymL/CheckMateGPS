@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ModelAttribute; // Añadido para el objeto Tarea
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -21,6 +21,9 @@ public class MyController {
 
     @Autowired
     private RoommateRepository roommateRepository;
+    
+    @Autowired
+    private TareaRepository tareaRepository;
 
     @GetMapping("/")
     public String home() {
@@ -44,6 +47,7 @@ public class MyController {
             return "redirect:/";
             
         } catch (Exception e) {
+           
             redirectAttributes.addFlashAttribute("errorMessage",
                     "El nombre de una casa no puede existir ya, por favor, introduzca uno nuevo.");
             return "redirect:/";
@@ -60,9 +64,7 @@ public class MyController {
     public String listarViviendas(Model model) {
         try {
             model.addAttribute("listaCasas", viviendaRepository.findAll());
-        } catch (Exception e) {
-            // Manejo de error silencioso
-        }
+        } catch (Exception e) {}
         return "listarViviendas"; 
     }
   
@@ -108,11 +110,9 @@ public class MyController {
         return "redirect:/listar";
     }
     
-    // --- NUEVAS RUTAS PARA TAREAS (CM3) ---
 
     @GetMapping("/vivienda/{id}")
     public String verVivienda(@PathVariable("id") String id, Model model) {
-        // Pasamos el id a la vista detalleVivienda
         model.addAttribute("viviendaId", id);
         return "detalleVivienda"; 
     }

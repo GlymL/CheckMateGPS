@@ -1,4 +1,4 @@
-package com.controller;
+package com.SYSTEM;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class SystemTest {
     private RoommateRepository roommateRepository;
 
     @Test
-    void flujoCompleto_addRoommate_ok() throws Exception {
+    void fullFlow_addRoommate_ok() throws Exception {
         Vivienda vivienda = new Vivienda();
         vivienda.setName("CasaTest");
         viviendaRepository.save(vivienda);
