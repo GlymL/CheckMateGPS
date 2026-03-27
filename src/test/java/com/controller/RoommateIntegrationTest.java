@@ -1,26 +1,24 @@
 package com.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.example.demo.DemoApplication;
-import com.example.demo.RoommateRepository;
-import com.example.demo.Vivienda;
-import com.example.demo.ViviendaRepository;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest(classes = DemoApplication.class)
+import application.Application;
+import entities.Vivienda;
+import repositories.RoommateRepository;
+import repositories.ViviendaRepository;
+
+@SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Transactional
@@ -58,7 +56,7 @@ class RoommateIntegrationTest {
         vivienda.setName("CasaTest");
         viviendaRepository.save(vivienda);
 
-        com.example.demo.Roommate existente = new com.example.demo.Roommate("user", "Maria", vivienda);
+        entities.Roommate existente = new entities.Roommate("user", "Maria", vivienda);
         roommateRepository.save(existente);
 
         mockMvc.perform(post("/add-roommate")

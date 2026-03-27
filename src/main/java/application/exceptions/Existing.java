@@ -1,4 +1,4 @@
-package com.example.demo;
+package application.exceptions;
 
 public class Existing extends Exception {
 

@@ -1,4 +1,4 @@
-package com.example.demo;
+package application.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import application.entities.Roommate;
+import application.entities.Tarea;
+import application.entities.Vivienda;
+import application.repositories.RoommateRepository;
+import application.repositories.TareaRepository;
+import application.repositories.ViviendaRepository;
 
 @Controller
 public class MyController {
@@ -112,7 +119,7 @@ public class MyController {
     
 
     @GetMapping("/vivienda/{id}")
-    public String verVivienda(@PathVariable("id") String id, Model model) {
+    public String verVivienda(@PathVariable("id") Long id, Model model) {
         model.addAttribute("viviendaId", id);
         return "detalleVivienda"; 
     }

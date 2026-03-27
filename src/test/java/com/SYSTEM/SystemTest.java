@@ -12,12 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.DemoApplication;
-import com.example.demo.RoommateRepository;
-import com.example.demo.Vivienda;
-import com.example.demo.ViviendaRepository;
+import application.Application;
+import entities.Vivienda;
+import repositories.RoommateRepository;
+import repositories.ViviendaRepository;
 
-@SpringBootTest(classes = DemoApplication.class)
+@SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
 @Transactional
 class SystemTest {

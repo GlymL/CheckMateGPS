@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\test\java\com\controller\RoommateIntegrationTest.java
 C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\test\java\com\INTEGRATION\DemoApplicationTests.java
 C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\test\java\com\INTEGRATION\TareaIntegrationTest.java
 C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\test\java\com\SYSTEM\SystemTest.java
 C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\test\java\com\UNIT\MyControllerTest.java
 C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\test\java\com\UNIT\ViviendaTest.java
+=======
+C:\Users\ruben\Documents\GPS\CheckMateGPS\src\test\java\com\controller\RoommateIntegrationTest.java
+C:\Users\ruben\Documents\GPS\CheckMateGPS\src\test\java\com\INTEGRATION\DemoApplicationTests.java
+C:\Users\ruben\Documents\GPS\CheckMateGPS\src\test\java\com\SYSTEM\SystemTest.java
+C:\Users\ruben\Documents\GPS\CheckMateGPS\src\test\java\com\UNIT\MyControllerTest.java
+C:\Users\ruben\Documents\GPS\CheckMateGPS\src\test\java\com\UNIT\ViviendaTest.java
+>>>>>>> 71fa596dac21015e05202b40a72687640308d1c4
