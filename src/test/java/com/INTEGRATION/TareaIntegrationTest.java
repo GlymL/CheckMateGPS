@@ -15,16 +15,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.DemoApplication;
-import com.example.demo.RoommateRepository;
-import com.example.demo.TareaRepository;
-import com.example.demo.Vivienda;
-import com.example.demo.ViviendaRepository;
+import application.Application;
+import application.entities.Vivienda;
+import application.repositories.RoommateRepository;
+import application.repositories.TareaRepository;
+import application.repositories.ViviendaRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional 
-@ContextConfiguration(classes = DemoApplication.class)
+@ContextConfiguration(classes = Application.class)
 public class TareaIntegrationTest {
 
     @Autowired

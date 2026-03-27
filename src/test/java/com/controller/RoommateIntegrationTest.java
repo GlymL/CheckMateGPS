@@ -14,9 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.transaction.annotation.Transactional;
 
 import application.Application;
-import entities.Vivienda;
-import repositories.RoommateRepository;
-import repositories.ViviendaRepository;
+import application.entities.Roommate;
+import application.entities.Vivienda;
+import application.repositories.RoommateRepository;
+import application.repositories.ViviendaRepository;
 
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
@@ -56,7 +57,7 @@ class RoommateIntegrationTest {
         vivienda.setName("CasaTest");
         viviendaRepository.save(vivienda);
 
-        entities.Roommate existente = new entities.Roommate("user", "Maria", vivienda);
+        Roommate existente = new Roommate("user", "Maria", vivienda);
         roommateRepository.save(existente);
 
         mockMvc.perform(post("/add-roommate")
