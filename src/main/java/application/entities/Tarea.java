@@ -24,6 +24,9 @@ public class Tarea {
     @JoinColumn(name = "vivienda_id")
     private Vivienda vivienda;
 
+    @Column(nullable = false)
+    private Boolean completada = false; // <-- added, default false
+
     public Tarea() {}
 
     public Long getId() {

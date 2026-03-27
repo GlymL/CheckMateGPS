@@ -140,11 +140,12 @@ public class MyController {
         model.addAttribute("viviendaId", id); 
         return "crearTarea";
     }
+    
   @PostMapping("/guardarTarea")
     public String guardarTarea(
             @RequestParam("nombre") String nombre, // Recibimos "nombre" correctamente
             @RequestParam(value = "descripcion", required = false) String descripcion,
-            @RequestParam("viviendaId") Long viviendaId,
+            @RequestParam("vivienda.id") Long viviendaId,
             Model model) {
         
        

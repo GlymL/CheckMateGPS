@@ -13,9 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.transaction.annotation.Transactional;
 
 import application.Application;
-import entities.Vivienda;
-import repositories.RoommateRepository;
-import repositories.ViviendaRepository;
+import application.entities.Vivienda;
+import application.repositories.RoommateRepository;
+import application.repositories.ViviendaRepository;
 
 @SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
