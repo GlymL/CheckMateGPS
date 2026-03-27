@@ -138,4 +138,25 @@ class SystemTest {
                 .andExpect(status().isOk());
         assertThat(tareaRepository.count()).isEqualTo(0);
     }
+        @Test
+    @DisplayName("SISTEMA-TAREA-07: Flujo completo - Crear tarea con descripción opcional vacía")
+    void fullFlow_createTaskWithEmptyDescription() throws Exception {
+              Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest");
+        viviendaRepository.save(vivienda);
+
+      
+        mockMvc.perform(post("/guardarTarea")
+                .param("nombre", "Tarea sin descripción")
+                .param("descripcion", "")
+                .param("vivienda.id", String.valueOf(vivienda.getId())))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/listar"));
+
+        assertThat(tareaRepository.count()).isEqualTo(1);
+        Tarea tareaGuardada = tareaRepository.findAll().get(0);
+        assertThat(tareaGuardada.getNombre()).isEqualTo("Tarea sin descripción");
+        assertThat(tareaGuardada.getDescripcion()).isNullOrEmpty();
+    }
 }
