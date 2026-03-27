@@ -1,10 +1,10 @@
-package repositories;
+package application.repositories;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import entities.Vivienda;
+import application.entities.Vivienda;
 
 public interface ViviendaRepository extends JpaRepository<Vivienda, Long> {
     // Hemos cambiado findByHouseName por findByName

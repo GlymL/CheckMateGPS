@@ -1,4 +1,4 @@
-package exceptions;
+package application.exceptions;
 
 public class Existing extends Exception {
 

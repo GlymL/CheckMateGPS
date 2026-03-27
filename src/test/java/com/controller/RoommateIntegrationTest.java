@@ -1,26 +1,24 @@
 package com.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-
-import entities.Vivienda;
-import launch.DemoApplication;
-import repositories.RoommateRepository;
-import repositories.ViviendaRepository;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest(classes = DemoApplication.class)
+import application.Application;
+import entities.Vivienda;
+import repositories.RoommateRepository;
+import repositories.ViviendaRepository;
+
+@SpringBootTest(classes = Application.class)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Transactional
