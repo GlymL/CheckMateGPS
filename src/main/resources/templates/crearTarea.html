@@ -9,12 +9,13 @@
 <div class="card" style="width: 400px;">
     <h1>Nueva Tarea 🧹</h1>
     
-    <form th:action="@{/guardarTarea}" th:object="${tarea}" method="post">
-        <input type="hidden" th:field="*{viviendaId}">
+   <form th:action="@{/guardarTarea}" th:object="${tarea}" method="post">
+        
+        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
 
         <div style="text-align: left; margin-bottom: 15px;">
             <label>Nombre de la tarea (Obligatorio):</label>
-            <input type="text" th:field="*{name}" 
+            <input type="text" th:field="*{nombre}" 
                    required 
                    pattern="^[a-zA-Z0-9 ]+$" 
                    title="CM3-4: Solo letras, números y espacios"
