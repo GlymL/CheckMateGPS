@@ -1,6 +1,11 @@
 package com.example.demo;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Roommate {
@@ -25,7 +30,13 @@ public class Roommate {
         this.nombreReal = nombreReal;
         this.vivienda = vivienda;
     }
-
+    public Long getId() { 
+        return id; 
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
     public String getNombreReal() { return nombreReal; }
     public Vivienda getVivienda() { return vivienda; }
     public String getNombreUsuario() {

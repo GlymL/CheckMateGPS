@@ -1,6 +1,7 @@
 package com.example.demo;
 
-import java.util.Optional; 
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -188,4 +189,20 @@ public class MyController {
             return "crearTarea";
         }
     }
+    //para probar el front de asignar tarea
+    @GetMapping("/asignarTarea")
+public String mostrarPantallaAsignar(Model model) {
+    
+    // 1. Buscamos todas las tareas y todos los roommates en la base de datos
+    // (Asegúrate de que los nombres de tus repositorios coinciden con estos)
+    List<Tarea> listaTareas = tareaRepository.findAll(); 
+    List<Roommate> listaRoommates = roommateRepository.findAll();
+
+    // 2. Se los pasamos a la vista HTML para rellenar los desplegables
+    model.addAttribute("tareas", listaTareas);
+    model.addAttribute("roommates", listaRoommates);
+
+    // 3. Devolvemos el nombre exacto de tu archivo HTML (sin el .html)
+    return "asignarTarea"; 
+}
 }
