@@ -25,6 +25,9 @@ public class MyController {
     @Autowired
     private TareaRepository tareaRepository;
 
+    @Autowired
+    private TareaService tareaService;
+
     @GetMapping("/")
     public String home() {
         return "index";
@@ -109,18 +112,26 @@ public class MyController {
 
         return "redirect:/listar";
     }
-    
 
     @GetMapping("/vivienda/{id}")
-    public String verVivienda(@PathVariable("id") String id, Model model) {
+    public String verVivienda(@PathVariable Long id, Model model) {
+
+        Vivienda vivienda = viviendaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Vivienda no encontrada"));
+
         model.addAttribute("viviendaId", id);
+        model.addAttribute("tareas", vivienda.getTareas());
+
         return "detalleVivienda"; 
     }
 
     @GetMapping("/vivienda/{id}/nueva-tarea")
     public String nuevaTarea(@PathVariable("id") String id, Model model) {
         Tarea tarea = new Tarea();
-        tarea.setViviendaId(id); 
+        Vivienda v = viviendaRepository.findById(Long.parseLong(id))
+            .orElseThrow(() -> new RuntimeException("Vivienda no encontrada"));
+
+        tarea.setVivienda(v);
         
         model.addAttribute("tarea", tarea);
         return "crearTarea";
@@ -128,9 +139,28 @@ public class MyController {
     
    
     @PostMapping("/guardarTarea")
-    public String guardarTarea(@ModelAttribute Tarea tarea, RedirectAttributes ra) {
-        
-        System.out.println("Tarea recibida: " + tarea.getName() + " para casa " + tarea.getViviendaId());
-        return "redirect:/listar";
+    public String guardarTarea(@ModelAttribute Tarea tarea) {
+
+        tareaRepository.save(tarea);
+
+        return "redirect:/vivienda/" + tarea.getVivienda().getId();
+    }
+
+    @PostMapping("/tareas/{id}/completar")
+    public String completarTarea(
+            @PathVariable Long id,
+            @RequestParam Long roommateId,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            tareaService.completarTarea(id, roommateId);
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        Tarea tarea = tareaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
+
+        return "redirect:/vivienda/" + tarea.getVivienda().getId();
     }
 }

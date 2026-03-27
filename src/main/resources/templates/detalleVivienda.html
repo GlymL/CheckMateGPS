@@ -55,13 +55,34 @@
     <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-task">
         ➕ Añadir Nueva Tarea
     </a>
+    <h2>Tareas</h2>
+
+    <div th:each="tarea : ${tareas}" class="info-box">
+
+        <p><b th:text="${tarea.nombre}"></b></p>
+        <p th:text="${tarea.descripcion}"></p>
+
+        <p>
+            Estado:
+            <span th:text="${tarea.completada} ? 'Completada' : 'Pendiente'"></span>
+        </p>
+
+        <form th:if="${!tarea.completada}"
+            th:action="@{/tareas/{id}/completar(id=${tarea.id})}"
+            method="post">
+
+            <input type="hidden" name="roommateId" value="1">
+
+            <button type="submit">✔ Marcar como hecha</button>
+        </form>
+
+    </div>
 
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-    
+
     <a th:href="@{/listar}" class="btn-back">
         Volver al listado de casas
     </a>
 </div>
-
 </body>
 </html>
