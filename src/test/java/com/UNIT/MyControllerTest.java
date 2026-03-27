@@ -7,9 +7,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MvcResult;
 
-
-import com.example.demo.MyController;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -21,10 +18,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import java.util.Optional;
 
-import com.example.demo.Vivienda;
-import com.example.demo.Roommate;
-import com.example.demo.ViviendaRepository;
-import com.example.demo.RoommateRepository;
+import entities.Roommate;
+import entities.Vivienda;
+import repositories.RoommateRepository;
+import repositories.ViviendaRepository;
+
+import com.controller.MyController;
 class MyControllerTest {
         @Mock
         private ViviendaRepository viviendaRepository;

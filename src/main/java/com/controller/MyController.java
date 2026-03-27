@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.controller;
 
 import java.util.Optional; 
 
@@ -12,6 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import entities.Roommate;
+import entities.Tarea;
+import entities.Vivienda;
+import repositories.RoommateRepository;
+import repositories.TareaRepository;
+import repositories.ViviendaRepository;
 
 @Controller
 public class MyController {
