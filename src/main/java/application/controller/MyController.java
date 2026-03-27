@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -124,20 +123,76 @@ public class MyController {
         return "detalleVivienda"; 
     }
 
-    @GetMapping("/vivienda/{id}/nueva-tarea")
+   @GetMapping("/vivienda/{id}/nueva-tarea")
     public String nuevaTarea(@PathVariable("id") Long id, Model model) {
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+        
+        if (viviendaOpt.isEmpty()) {
+            return "redirect:/listar"; 
+        }
+        
         Tarea tarea = new Tarea();
-        tarea.setVivienda(viviendaRepository.getReferenceById(id)); 
+      
+        tarea.setVivienda(viviendaOpt.get()); 
         
         model.addAttribute("tarea", tarea);
+        model.addAttribute("viviendaId", id); 
         return "crearTarea";
     }
-    
-   
-    @PostMapping("/guardarTarea")
-    public String guardarTarea(@ModelAttribute Tarea tarea, RedirectAttributes ra) {
+  @PostMapping("/guardarTarea")
+    public String guardarTarea(
+            @RequestParam("nombre") String nombre, // Recibimos "nombre" correctamente
+            @RequestParam(value = "descripcion", required = false) String descripcion,
+            @RequestParam("viviendaId") Long viviendaId,
+            Model model) {
         
-        System.out.println("Tarea recibida: " + tarea.getNombre() + " para casa " + tarea.getVivienda().getId());
-        return "redirect:/listar";
+       
+        Tarea tareaTemporal = new Tarea();
+        tareaTemporal.setNombre(nombre); 
+        tareaTemporal.setDescripcion(descripcion);
+
+        // --- VALIDACIONES ---
+        if (nombre == null || nombre.trim().isEmpty()) {
+            model.addAttribute("error", "No se han rellenado todos los campos obligatorios.");
+            model.addAttribute("tarea", tareaTemporal); 
+            model.addAttribute("viviendaId", viviendaId);
+            return "crearTarea";
+        }
+
+        String regexNombre = "^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]+$";
+        String regexDescripcion = "^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ.,!?;:()]*$"; 
+
+        if (!nombre.matches(regexNombre)) {
+            model.addAttribute("error", "El formato del nombre no es válido.");
+            model.addAttribute("tarea", tareaTemporal); 
+            model.addAttribute("viviendaId", viviendaId);
+            return "crearTarea";
+        }
+
+        if (descripcion != null && !descripcion.isEmpty() && !descripcion.matches(regexDescripcion)) {
+            model.addAttribute("error", "El formato de la descripción no es válido.");
+            model.addAttribute("tarea", tareaTemporal); 
+            model.addAttribute("viviendaId", viviendaId);
+            return "crearTarea";
+        }
+
+      
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
+        
+        if (viviendaOpt.isPresent()) {
+            Tarea nuevaTarea = new Tarea();
+            nuevaTarea.setNombre(nombre);
+            nuevaTarea.setDescripcion(descripcion);
+            nuevaTarea.setVivienda(viviendaOpt.get()); 
+
+            tareaRepository.save(nuevaTarea); 
+            
+            return "redirect:/listar"; 
+        } else {
+            model.addAttribute("error", "Vivienda no encontrada.");
+            model.addAttribute("tarea", tareaTemporal); 
+            model.addAttribute("viviendaId", viviendaId);
+            return "crearTarea";
+        }
     }
 }
