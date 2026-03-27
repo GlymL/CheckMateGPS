@@ -9,9 +9,8 @@
 <div class="card" style="width: 400px;">
     <h1>Nueva Tarea 🧹</h1>
     
-   <form th:action="@{/guardarTarea}" th:object="${tarea}" method="post">
-        
-        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+    <form th:action="@{/guardarTarea}" th:object="${tarea}" method="post">
+        <input type="hidden" th:field="*{vivienda.id}">
 
         <div style="text-align: left; margin-bottom: 15px;">
             <label>Nombre de la tarea (Obligatorio):</label>

@@ -1,8 +1,10 @@
-package com.example.demo;
+package application.repositories;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import application.entities.Vivienda;
 
 public interface ViviendaRepository extends JpaRepository<Vivienda, Long> {
     // Hemos cambiado findByHouseName por findByName

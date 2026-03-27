@@ -3,7 +3,7 @@ package com.UNIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.Vivienda;
+import entities.Vivienda;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
