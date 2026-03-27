@@ -1,14 +1,13 @@
 package com.UNIT;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.web.multipart.MultipartFile;
-
-import entities.Vivienda;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import org.springframework.web.multipart.MultipartFile;
+
+import application.entities.Vivienda;
 
 class ViviendaTest {
 

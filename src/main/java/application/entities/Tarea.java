@@ -1,5 +1,6 @@
 package application.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +21,9 @@ public class Tarea {
     @ManyToOne
     @JoinColumn(name = "vivienda_id")
     private Vivienda vivienda;
+
+    @Column(nullable = false)
+    private Boolean completada = false; // <-- added, default false
 
     public Tarea() {}
 
@@ -55,4 +59,11 @@ public class Tarea {
         this.vivienda = vivienda;
     }
 
+    public Boolean getCompletada() {
+        return completada;
+    }
+
+    public void setCompletada(Boolean completada) {
+        this.completada = completada;
+    }
 }

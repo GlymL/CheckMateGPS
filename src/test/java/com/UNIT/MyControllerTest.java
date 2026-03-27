@@ -20,11 +20,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import controller.MyController;
-import entities.Roommate;
-import entities.Vivienda;
-import repositories.RoommateRepository;
-import repositories.ViviendaRepository;
+import application.controller.MyController;
+import application.entities.Roommate;
+import application.entities.Vivienda;
+import application.repositories.RoommateRepository;
+import application.repositories.ViviendaRepository;
 class MyControllerTest {
         @Mock
         private ViviendaRepository viviendaRepository;
