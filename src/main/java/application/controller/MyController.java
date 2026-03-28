@@ -196,4 +196,17 @@ public class MyController {
             return "crearTarea";
         }
     }
+    
+
+    @GetMapping("/vivienda/{id}/listTareas")
+    public String listTareas(@PathVariable("id") String id, Model model) {
+        
+        model.addAttribute("roommates", roommateRepository.findByViviendaId(id));
+    
+        model.addAttribute("viviendaId", id);
+        return "listTareas"; 
+    }
+        
+
+    
 }
