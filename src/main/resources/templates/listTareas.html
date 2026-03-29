@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckMate - Lista de Tareas</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .roommate-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .roommate-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .task-box {
+            background: white;
+            color: #333;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .no-tasks {
+            color: #ddd;
+            font-size: 0.9em;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px;">
+
+<div class="card" style="width: 600px; margin: auto;">
+    <h1>Tareas Pendientes 📋</h1>
+    <p class="subtitle">Tareas asignadas por roommate</p>
+
+    <div th:each="roommate : ${roommates}" class="roommate-card">
+        <div class="roommate-header">
+            <span style="margin-right: 10px;">👤</span>
+            <span th:text="${roommate.nombreReal}">Nombre Roommate</span>
+        </div>
+
+        <div th:each="tarea : ${roommate.listaTareas}" th:if="${!tarea.completada}" class="task-box">
+            <div>
+                <b th:text="${tarea.name}">Fregar Suelo</b>
+                <p th:text="${tarea.descripcion}" style="margin: 0; font-size: 0.8em; color: #666;">Descripción</p>
+            </div>
+            <span style="background: #9b59d0; color: white; padding: 3px 8px; border-radius: 5px; font-size: 0.8em;">Pendiente</span>
+        </div>
+
+        <div th:if="${#lists.isEmpty(roommate.listaTareas)}" class="no-tasks">
+            No tiene tareas asignadas.
+        </div>
+    </div>
+
+    <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="margin-top: 20px; background: #666;">
+        Volver al Panel
+    </button>
+</div>
+
+</body>
+</html>

@@ -42,4 +42,5 @@ public class Roommate {
     public String getNombreUsuario() {
     return nombreUsuario;
 }
+
 }
