@@ -15,55 +15,48 @@ public class Tarea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombre;
+    private String name;
     private String descripcion;
+    private String roommateId; 
 
     @ManyToOne
     @JoinColumn(name = "vivienda_id")
     private Vivienda vivienda;
 
     @Column(nullable = false)
-    private Boolean completada = false; // <-- added, default false
+    private Boolean completada = false;
+
+    @ManyToOne
+    @JoinColumn(name = "roommate_id")
+    private Roommate asignadoA; 
 
     public Tarea() {}
 
-    public Long getId() {
-        return id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public Vivienda getVivienda() { return vivienda; }
+    public void setVivienda(Vivienda vivienda) { this.vivienda = vivienda; }
+
+    public Boolean getCompletada() { return completada; }
+    public void setCompletada(Boolean completada) { this.completada = completada; }
+
+    public Roommate getAsignadoA() { return asignadoA; }
+    public void setAsignadoA(Roommate asignadoA) { this.asignadoA = asignadoA; }
+
+    public String getRoommateId() {
+        return roommateId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRoommateId(String roommateId) {
+        this.roommateId = roommateId;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public Vivienda getVivienda() {
-        return vivienda;
-    }
-
-    public void setVivienda(Vivienda vivienda) {
-        this.vivienda = vivienda;
-    }
-
-    public Boolean getCompletada() {
-        return completada;
-    }
-
-    public void setCompletada(Boolean completada) {
-        this.completada = completada;
-    }
+    
 }

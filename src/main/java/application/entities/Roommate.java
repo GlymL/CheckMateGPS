@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class Roommate {
@@ -14,15 +16,16 @@ public class Roommate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombreUsuario; // CM2-3
-    private String nombreReal;    // CM2-1, CM2-2, CM2-4
+    private String nombreUsuario;
+    private String nombreReal;
 
-    // Relación: Muchos roommates pertenecen a una vivienda
     @ManyToOne
     @JoinColumn(name = "vivienda_id")
     private Vivienda vivienda;
 
-    // Constructores vacíos obligatorios para la base de datos
+    @OneToMany(mappedBy = "asignadoA")
+    private List<Tarea> assignedTasks; // Las tareas del front
+
     public Roommate() {}
 
     public Roommate(String nombreUsuario, String nombreReal, Vivienda vivienda) {
@@ -31,10 +34,15 @@ public class Roommate {
         this.vivienda = vivienda;
     }
 
+    public List<Tarea> getAssignedTasks() { return assignedTasks; }
+    public void setAssignedTasks(List<Tarea> assignedTasks) { this.assignedTasks = assignedTasks; }
+
     public String getNombreReal() { return nombreReal; }
     public Vivienda getVivienda() { return vivienda; }
-    public String getNombreUsuario() {
-    return nombreUsuario;
-}
+    public String getNombreUsuario() { return nombreUsuario; }
 
+    
+    public String getName() {
+        return this.nombreReal;
+    }
 }
