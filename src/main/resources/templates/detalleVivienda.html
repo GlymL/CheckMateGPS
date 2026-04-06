@@ -26,6 +26,22 @@
             background-color: #8449b8;
             transform: translateY(-2px);
         }
+        .btn-assign-task {
+            display: inline-block;
+            background-color: #4CAF50; 
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-bottom: 15px;
+            width: 70%; 
+        }
+        .btn-assign-task:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
         .btn-back {
             display: inline-block;
             background-color: #666;
@@ -57,10 +73,17 @@
         ➕ Añadir Nueva Tarea
     </a>
 
+    <a th:href="@{/asignarTarea}" class="btn-assign-task">
+        🤝 Asignar Tarea a Roommate
+    </a>
+    
+
+
     <a th:href="@{/vivienda/{id}/listTareas(id=${viviendaId})}" 
        class="btn-add-task" style="background-color: #59d09b; margin-top: 10px;">
         📋 Ver Lista Tareas
     </a>
+
 
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
     

@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\DemoApplication.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\Existing.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\MyController.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\Roommate.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\RoommateRepository.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\Tarea.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\TareaRepository.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\Vivienda.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\com\example\demo\ViviendaRepository.java
+=======
 C:\Users\ruben\Documents\GPS\CheckMateGPS\src\main\java\application\Application.java
 C:\Users\ruben\Documents\GPS\CheckMateGPS\src\main\java\application\controller\MyController.java
 C:\Users\ruben\Documents\GPS\CheckMateGPS\src\main\java\application\entities\Roommate.java
@@ -7,3 +18,4 @@ C:\Users\ruben\Documents\GPS\CheckMateGPS\src\main\java\application\exceptions\E
 C:\Users\ruben\Documents\GPS\CheckMateGPS\src\main\java\application\repositories\RoommateRepository.java
 C:\Users\ruben\Documents\GPS\CheckMateGPS\src\main\java\application\repositories\TareaRepository.java
 C:\Users\ruben\Documents\GPS\CheckMateGPS\src\main\java\application\repositories\ViviendaRepository.java
+>>>>>>> 71fa596dac21015e05202b40a72687640308d1c4
