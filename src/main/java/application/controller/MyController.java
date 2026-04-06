@@ -1,6 +1,7 @@
 package application.controller;
 
-import java.util.Optional; 
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -194,6 +195,26 @@ public class MyController {
             return "crearTarea";
         }
     }
+
+  
+  
+@GetMapping("/asignarTarea")
+public String mostrarPantallaAsignar(Model model) {
+    
+   
+    List<Tarea> listaTareas = tareaRepository.findAll(); 
+    List<Roommate> listaRoommates = roommateRepository.findAll();
+
+    
+    model.addAttribute("tareas", listaTareas);
+    model.addAttribute("roommates", listaRoommates);
+
+   
+    return "asignarTarea"; 
+}
+
+  
+    
 
     @GetMapping("/vivienda/{id}/listTareas")
     public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {

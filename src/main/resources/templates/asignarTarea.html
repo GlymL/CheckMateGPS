@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckMate - Asignar Tarea</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="card" style="width: 400px;">
+    <h1>Asignar Tarea 🤝</h1>
+
+    <div th:if="${errorDatos}" style="color: #d9534f; background: #fdf7f7; border: 1px solid #d9534f; padding: 10px; margin-bottom: 15px; text-align: left; font-size: 14px;">
+        ⚠️ Los datos son obligatorios. Debes seleccionar una tarea y un roommate.
+    </div>
+
+    <div th:if="${exito}" style="color: #5cb85c; background: #f4fdf4; border: 1px solid #5cb85c; padding: 10px; margin-bottom: 15px; text-align: left; font-size: 14px;">
+        ✅ Tarea asignada correctamente.
+    </div>
+    
+    <form th:action="@{/asignarTarea}" method="post">
+        
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label>Selecciona la Tarea (Obligatorio):</label>
+            <select name="tareaId" required 
+                    style="width: 100%; padding: 8px; margin-top: 5px;">
+                <option value="" disabled selected>-- Elige una tarea pendiente --</option>
+                <option th:each="tarea : ${tareas}" 
+                        th:value="${tarea.id}" 
+                        th:text="${tarea.nombre}"></option>
+            </select>
+        </div>
+
+        <div style="text-align: left; margin-bottom: 15px;">
+            <label>Asignar a Roommate (Obligatorio):</label>
+            <select name="roommateId" required 
+                    style="width: 100%; padding: 8px; margin-top: 5px;">
+                <option value="" disabled selected>-- Elige un responsable --</option>
+                <option th:each="roommate : ${roommates}" 
+        th:value="${roommate.id}" 
+        th:text="${roommate.nombreReal + ' (' + roommate.nombreUsuario + ')'}"></option>
+            </select>
+        </div>
+
+        <button type="submit" style="background: #9b59d0; color: white;">Asignar Responsable</button>
+        <button type="button" onclick="window.history.back()" style="background: #eee; color: #333; margin-top: 10px;">Cancelar</button>
+    </form>
+</div>
+</body>
+</html>
