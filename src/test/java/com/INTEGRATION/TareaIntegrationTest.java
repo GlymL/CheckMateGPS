@@ -13,9 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import java.util.Optional;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import application.Application;
+import application.entities.Tarea;
 import application.entities.Vivienda;
 import application.repositories.RoommateRepository;
 import application.repositories.TareaRepository;
@@ -121,5 +125,28 @@ public class TareaIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("crearTarea"))
                 .andExpect(model().attribute("error", "Vivienda no encontrada."));
+    }
+    @Test
+@DisplayName("CM1-7: Marcar tarea como completada correctamente")
+void completeTarea_success() throws Exception {
+
+    Vivienda vivienda = new Vivienda();
+    vivienda.setName("Casa Test");
+    vivienda = viviendaRepository.save(vivienda);
+    
+    Tarea tarea = new Tarea();
+    tarea.setNombre("Limpiar cocina");
+    tarea.setDescripcion("Limpiar fogones");
+    tarea.setVivienda(vivienda);
+    tarea.setCompletada(false);
+    tarea = tareaRepository.save(tarea);
+    
+        mockMvc.perform(post("/tarea/" + tarea.getId() + "/completar"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/listar"));
+
+        Optional<Tarea> tareaActualizada = tareaRepository.findById(tarea.getId());
+        assert(tareaActualizada).isPresent();
+        assert(tareaActualizada.get().getCompletada());
     }
 }

@@ -212,4 +212,32 @@ class TareaTest {
         assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
         verify(tareaRepository).save(any(Tarea.class));
     }
+
+
+    @Test
+    void completarTarea_success() throws Exception {
+    // Arrange
+    Vivienda vivienda = new Vivienda();
+    vivienda.setId(1L);
+    vivienda.setName("Casa1");
+    
+    Tarea tarea = new Tarea();
+    tarea.setId(1L);
+    tarea.setNombre("Limpiar cocina");
+    tarea.setCompletada(false);
+    tarea.setVivienda(vivienda);
+    
+    when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+    when(tareaRepository.save(any(Tarea.class))).thenReturn(tarea);
+    
+    // Act
+    MvcResult result = mockMvc.perform(post("/tarea/1/completar"))
+            .andReturn();
+    
+    // Assert
+    assertThat(result.getResponse().getStatus()).isEqualTo(302);
+    assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
+    verify(tareaRepository).findById(1L);
+    verify(tareaRepository).save(any(Tarea.class));
+        }
 }
