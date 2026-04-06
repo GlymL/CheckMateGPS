@@ -143,18 +143,17 @@ public class MyController {
     
   @PostMapping("/guardarTarea")
     public String guardarTarea(
-            @RequestParam("nombre") String nombre, // Recibimos "nombre" correctamente
+            @RequestParam("name") String name,
             @RequestParam(value = "descripcion", required = false) String descripcion,
-            @RequestParam("vivienda.id") Long viviendaId,
+            @RequestParam("viviendaId") Long viviendaId,
             Model model) {
         
-       
         Tarea tareaTemporal = new Tarea();
-        tareaTemporal.setNombre(nombre); 
+        tareaTemporal.setName(name); 
         tareaTemporal.setDescripcion(descripcion);
 
-        // --- VALIDACIONES ---
-        if (nombre == null || nombre.trim().isEmpty()) {
+
+        if (name == null || name.trim().isEmpty()) {
             model.addAttribute("error", "No se han rellenado todos los campos obligatorios.");
             model.addAttribute("tarea", tareaTemporal); 
             model.addAttribute("viviendaId", viviendaId);
@@ -164,7 +163,7 @@ public class MyController {
         String regexNombre = "^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]+$";
         String regexDescripcion = "^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ.,!?;:()]*$"; 
 
-        if (!nombre.matches(regexNombre)) {
+        if (!name.matches(regexNombre)) {
             model.addAttribute("error", "El formato del nombre no es válido.");
             model.addAttribute("tarea", tareaTemporal); 
             model.addAttribute("viviendaId", viviendaId);
@@ -178,18 +177,17 @@ public class MyController {
             return "crearTarea";
         }
 
-      
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
         
         if (viviendaOpt.isPresent()) {
             Tarea nuevaTarea = new Tarea();
-            nuevaTarea.setNombre(nombre);
+            nuevaTarea.setName(name);
             nuevaTarea.setDescripcion(descripcion);
             nuevaTarea.setVivienda(viviendaOpt.get()); 
 
             tareaRepository.save(nuevaTarea); 
             
-            return "redirect:/listar"; 
+            return "redirect:/vivienda/" + viviendaId + "/listTareas"; 
         } else {
             model.addAttribute("error", "Vivienda no encontrada.");
             model.addAttribute("tarea", tareaTemporal); 
@@ -219,16 +217,20 @@ public String mostrarPantallaAsignar(Model model) {
     
 
     @GetMapping("/vivienda/{id}/listTareas")
-    public String listTareas(@PathVariable("id") String id, Model model) {
+    public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
         
-        model.addAttribute("roommates", roommateRepository.findByViviendaId(id));
-    
-        model.addAttribute("viviendaId", id);
-        return "listTareas"; 
+        java.util.List<Roommate> listaDeRoommates = roommateRepository.findByViviendaId(id);
+
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+
+        if (viviendaOpt.isPresent()) {
+            model.addAttribute("roommates", listaDeRoommates); // Pasamos la variable que pidió
+            model.addAttribute("viviendaId", id); // Pasamos el ID que pidió
+            model.addAttribute("vivienda", viviendaOpt.get());
+
+            return "listTareas";
+        } else {
+            return "redirect:/listar";
+        }
     }
-        
-
-    
-
-  
 }

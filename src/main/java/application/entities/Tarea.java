@@ -14,7 +14,7 @@ public class Tarea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombre;
+    private String name;
     private String descripcion;
     //fallaba aquí, faltaba la columna completada y por eso no guardaba en la bbdd
     @Column(name = "completada", nullable = false)
@@ -27,6 +27,10 @@ public class Tarea {
     @Column(nullable = false)
     private Boolean completada = false; // <-- added, default false
 
+    @ManyToOne
+    @JoinColumn(name = "roommate_id")
+    private Roommate asignadoA;
+
     public Tarea() {}
 
     public Long getId() {
@@ -37,12 +41,12 @@ public class Tarea {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getName() {
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescripcion() {
@@ -64,7 +68,15 @@ public class Tarea {
       return this.completada;
     }
 
-   public void setCompletada(Boolean completada) {
-      this.completada = completada;
-   }
+    public void setCompletada(Boolean completada) {
+        this.completada = completada;
+    }
+
+    public Roommate getAsignadoA() {
+        return asignadoA;
+    }
+
+    public void setAsignadoA(Roommate asignadoA) {
+        this.asignadoA = asignadoA;
+    }
 }

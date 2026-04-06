@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Roommate {
@@ -21,6 +22,18 @@ public class Roommate {
     @ManyToOne
     @JoinColumn(name = "vivienda_id")
     private Vivienda vivienda;
+
+    // Tareas asignadas a este roommate
+    @OneToMany(mappedBy = "asignadoA")
+    private java.util.List<Tarea> assignedTasks;
+
+    public java.util.List<Tarea> getAssignedTasks() {
+        return assignedTasks;
+    }
+
+    public void setAssignedTasks(java.util.List<Tarea> assignedTasks) {
+        this.assignedTasks = assignedTasks;
+    }
 
     // Constructores vacíos obligatorios para la base de datos
     public Roommate() {}
