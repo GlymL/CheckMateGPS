@@ -24,8 +24,8 @@ public class Tarea {
     @JoinColumn(name = "vivienda_id")
     private Vivienda vivienda;
 
-    @Column(nullable = false)
-    private Boolean completada = false; // <-- added, default false
+   // @Column(nullable = false)
+   // private Boolean completada = false; // <-- added, default false
 
     @ManyToOne
     @JoinColumn(name = "roommate_id")

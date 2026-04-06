@@ -1,69 +1,132 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>CheckMate - Lista de Tareas</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        .roommate-card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .roommate-header {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
         .task-box {
-            background: white;
-            color: #333;
-            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
             border-radius: 8px;
-            margin-top: 5px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            text-align: left;
         }
-        .no-tasks {
-            color: #ddd;
+        .task-info b {
+            font-size: 1.1em;
+            color: #333;
+        }
+        .task-info p {
+            margin: 5px 0 0 0;
             font-size: 0.9em;
-            padding-left: 10px;
+            color: #666;
+        }
+        .task-meta {
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #555;
+            background: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px dashed #ccc;
+            display: inline-block;
+        }
+        .status-container {
+            text-align: right;
+            min-width: 100px;
+        }
+        /* Colores para los estados */
+        .badge-pendiente {
+            background: #e67e22; /* Naranja */
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-completada {
+            background: #2ecc71; /* Verde */
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .scroll-container {
+            max-height: 350px; /* Altura máxima antes de que aparezca el scroll */
+            overflow-y: auto;  /* Muestra el scroll vertical solo si es necesario */
+            padding-right: 10px; /* Margen para que el scroll no pise las cajas */
+            margin-bottom: 20px;
+        }
+
+        /* Darle un diseño bonito a la barra de scroll (Chrome, Safari, Edge) */
+        .scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
         }
     </style>
 </head>
-<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px;">
+<body>
 
-<div class="card" style="width: 600px; margin: auto;">
-    <h1>Tareas Pendientes 📋</h1>
-    <p class="subtitle">Tareas asignadas por roommate</p>
+<div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
+    
+    <h2>Tareas de la Vivienda 📋</h2>
+    <p style="color: #666; margin-bottom: 20px;">Todas las tareas creadas para esta casa.</p>
+<div class="scroll-container">
+    <div th:each="tarea : ${vivienda.tareas}" class="task-box">
+        
+        <div class="task-info">
+            <b th:text="${tarea.getName()}">Nombre de Tarea</b>
+            
+            <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
+            <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
 
-    <div th:each="roommate : ${roommates}" class="roommate-card">
-        <div class="roommate-header">
-            <span style="margin-right: 10px;">👤</span>
-            <span th:text="${roommate.nombreReal}">Nombre Roommate</span>
-        </div>
-
-        <div th:each="tarea : ${roommate.listaTareas}" th:if="${!tarea.completada}" class="task-box">
-            <div>
-                <b th:text="${tarea.name}">Fregar Suelo</b>
-                <p th:text="${tarea.descripcion}" style="margin: 0; font-size: 0.8em; color: #666;">Descripción</p>
+            <div class="task-meta">
+                <span th:if="${tarea.asignadoA != null}">
+                    👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
+                </span>
+                <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
+                    ⚠️ Sin asignar
+                </span>
             </div>
-            <span style="background: #9b59d0; color: white; padding: 3px 8px; border-radius: 5px; font-size: 0.8em;">Pendiente</span>
         </div>
 
-        <div th:if="${#lists.isEmpty(roommate.listaTareas)}" class="no-tasks">
-            No tiene tareas asignadas.
+        <div class="status-container">
+            
+            <span th:if="${!tarea.completada}" class="badge-pendiente">Pendiente</span>
+            
+            <div th:if="${tarea.completada}">
+                <span class="badge-completada">Completada</span>
+                
+                <div th:if="${tarea.asignadoA != null}" style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">
+                    por <span th:text="${tarea.asignadoA.nombreUsuario}"></span>
+                </div>
+            </div>
+            
         </div>
     </div>
+</div>
+    <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="color: #888; padding: 20px;">
+        Aún no hay tareas creadas en esta casa. ¡Añade la primera!
+    </div>
 
-    <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="margin-top: 20px; background: #666;">
+    <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top: 15px;">
         Volver al Panel
     </button>
 </div>

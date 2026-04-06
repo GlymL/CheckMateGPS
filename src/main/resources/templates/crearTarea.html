@@ -6,32 +6,41 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<div class="card" style="width: 400px;">
-    <h1>Nueva Tarea 🧹</h1>
+
+<div class="modal-content" style="width: 400px; margin: 50px auto; padding: 25px;">
+    
+    <h2 style="text-align: center;">Nueva Tarea 🧹</h2>
     
     <form th:action="@{/guardarTarea}" th:object="${tarea}" method="post">
-        <input type="hidden" th:field="*{vivienda.id}">
+        
+        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+        <label>Nombre de la tarea (Obligatorio)<br></label>
+        <input type="text" th:field="*{name}" 
+               required 
+               pattern="^[a-zA-Z0-9 ]+$" 
+               title="Solo letras, números y espacios"  
+                  
+                oninvalid="if(this.validity.valueMissing) { this.setCustomValidity('Por favor, rellena este campo obligatorio.'); } else if(this.validity.patternMismatch) { this.setCustomValidity('Formato incorrecto: Solo letras, números y espacios.'); }"
+           oninput="this.setCustomValidity('')"
+               style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px;">
 
-        <div style="text-align: left; margin-bottom: 15px;">
-            <label>Nombre de la tarea (Obligatorio):</label>
-            <input type="text" th:field="*{nombre}" 
-                   required 
-                   pattern="^[a-zA-Z0-9 ]+$" 
-                   title="CM3-4: Solo letras, números y espacios"
-                   style="width: 100%; padding: 8px; margin-top: 5px;">
-        </div>
+        <label>Descripción (Opcional)<br></label>
+        <textarea th:field="*{descripcion}" 
+                  pattern="^[a-zA-Z0-9 ,.!?;:]*$"
+                  title="Letras, números y signos de puntuación"
+                  oninput="if(this.value && !this.value.match(/^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ.,!?;:\(\)]*$/)) { this.setCustomValidity('Formato incorrecto: No se permiten símbolos como * o $.'); } else { this.setCustomValidity(''); }"
+                  style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; height: 80px; resize: none;"></textarea>
 
-        <div style="text-align: left; margin-bottom: 15px;">
-            <label>Descripción (Opcional):</label>
-            <textarea th:field="*{descripcion}" 
-                      pattern="^[a-zA-Z0-9 ,.!?;:]*$"
-                      title="CM3-4: Letras, números y signos de puntuación"
-                      style="width: 100%; padding: 8px; margin-top: 5px; height: 80px;"></textarea>
-        </div>
+        <button type="submit" style="background-color: #9b59d0; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;">
+            Crear Tarea
+        </button>
+        
+        <button type="button" onclick="window.history.back()" style="background-color: #666; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s;">
+            Cancelar
+        </button>
 
-        <button type="submit" style="background: #9b59d0; color: white;">Crear Tarea</button>
-        <button type="button" onclick="window.history.back()" style="background: #eee; color: #333; margin-top: 10px;">Cancelar</button>
     </form>
 </div>
+
 </body>
 </html>
