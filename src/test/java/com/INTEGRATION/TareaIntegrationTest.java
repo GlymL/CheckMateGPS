@@ -127,8 +127,8 @@ public class TareaIntegrationTest {
                 .andExpect(model().attribute("error", "Vivienda no encontrada."));
     }
     @Test
-@DisplayName("CT1-7: Marcar tarea como completada correctamente")
-void completarTarea_success() throws Exception {
+@DisplayName("CM1-7: Marcar tarea como completada correctamente")
+void completeTarea_success() throws Exception {
 
     Vivienda vivienda = new Vivienda();
     vivienda.setName("Casa Test");
