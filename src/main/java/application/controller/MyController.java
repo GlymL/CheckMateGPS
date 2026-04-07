@@ -56,7 +56,7 @@ public class MyController {
         } catch (Exception e) {
            
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "El nombre de una casa no puede existir ya, por favor, introduzca uno nuevo.");
+                    "El nombre de una vivienda no puede existir ya, por favor, introduzca uno nuevo.");
             return "redirect:/";
         }
     }
