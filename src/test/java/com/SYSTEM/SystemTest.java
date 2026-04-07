@@ -60,27 +60,29 @@ class SystemTest {
     void assignTask_ok() throws Exception {
 
         Vivienda vivienda = new Vivienda();
-        vivienda.setName("CasaTest");
+        vivienda.setName("Casa1");
         viviendaRepository.save(vivienda);
 
         Roommate roommate = new Roommate("user1", "Ana", vivienda);
-        roommateRepository.save(roommate);
+        roommate = roommateRepository.save(roommate);
 
         Tarea tarea = new Tarea();
         tarea.setName("Limpiar");
         tarea.setVivienda(vivienda);
-        tareaRepository.save(tarea);
+        tarea = tareaRepository.save(tarea);
 
         mockMvc.perform(post("/assignTask/submit")
                 .param("taskId", tarea.getId().toString())
                 .param("roommateId", roommate.getId().toString())
                 .param("viviendaId", vivienda.getId().toString()))
-            .andDo(print())
-            .andExpect(status().is3xxRedirection());
+                .andExpect(redirectedUrl("/vivienda/" + vivienda.getId() + "/assignTask"));
 
-        Tarea actualizada = tareaRepository.findById(tarea.getId()).get();
-        assertThat(actualizada.getRoommateId()).isEqualTo(roommate.getId().toString());
+        Tarea updated = tareaRepository.findById(tarea.getId()).get();
+
+        assertThat(updated.getRoommate()).isNotNull();
+        assertThat(updated.getRoommate().getId()).isEqualTo(roommate.getId());
     }
+
     @Test
     void assignTask_sinTask() throws Exception {
 
