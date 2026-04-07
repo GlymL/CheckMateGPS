@@ -12,23 +12,8 @@
             margin-bottom: 20px;
             border: 1px solid #eee;
         }
-        .btn-add-task {
+        .btn-action {
             display: inline-block;
-            background-color: #9b59d0;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .btn-add-task:hover {
-            background-color: #8449b8;
-            transform: translateY(-2px);
-        }
-        .btn-assign-task {
-            display: inline-block;
-            background-color: #4CAF50; 
             color: white;
             padding: 12px 24px;
             border-radius: 8px;
@@ -36,9 +21,20 @@
             font-weight: bold;
             transition: 0.3s;
             margin-bottom: 15px;
-            width: 70%; 
+            width: 80%;
+            box-sizing: border-box;
         }
-        .btn-assign-task:hover {
+        .btn-purple {
+            background-color: #9b59d0;
+        }
+        .btn-purple:hover {
+            background-color: #8449b8;
+            transform: translateY(-2px);
+        }
+        .btn-green {
+            background-color: #4CAF50; 
+        }
+        .btn-green:hover {
             background-color: #45a049;
             transform: translateY(-2px);
         }
@@ -61,30 +57,25 @@
 </head>
 <body>
 
-
 <div class="card" style="width: 500px; margin: 50px auto; text-align: center;">
-    <h1>Vivienda <span th:text="${viviendaNombre}">7</span></h1>
+    <h1>Vivienda <span th:text="${viviendaNombre}"></span></h1>
     
     <div class="info-box">
         <p>Panel de gestión de tu vivienda.</p>
     </div>
 
-    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-task">
+    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-action btn-purple">
         ➕ Añadir Nueva Tarea
     </a>
 
-    <a th:href="@{/asignarTarea}" class="btn-assign-task">
+    <a th:href="@{/vivienda/{id}/listTareas(id=${viviendaId})}" class="btn-action btn-purple">
+        📋 Ver Tareas de la Vivienda
+    </a>
+
+    <a th:href="@{/asignarTarea}" class="btn-action btn-green">
         🤝 Asignar Tarea a Roommate
     </a>
     
-
-
-    <a th:href="@{/vivienda/{id}/listTareas(id=${viviendaId})}" 
-       class="btn-add-task" style="background-color: #59d09b; margin-top: 10px;">
-        📋 Ver Lista Tareas
-    </a>
-
-
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
     
     <a th:href="@{/listar}" class="btn-back">
