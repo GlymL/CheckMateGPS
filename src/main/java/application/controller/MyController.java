@@ -119,22 +119,22 @@ public class MyController {
     
 
     @GetMapping("/vivienda/{id}")
-    public String verVivienda(@PathVariable("id") Long id, Model model) {       // Buscamos la vivienda en la base de datos por su ID
-  // 1. Buscamos la vivienda en la base de datos por su ID
+    public String verVivienda(@PathVariable("id") Long id, Model model) {       
+  // 1. Buscar la vivienda 
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
         
-        // 2. Comprobamos si la hemos encontrado
+        // 2. Comprobar si la vivienda existe
         if (viviendaOpt.isPresent()) {
             Vivienda vivienda = viviendaOpt.get(); // Extraemos el objeto real
             
-            // 3. Le pasamos el nombre a la vista para el <h1>
+          
             model.addAttribute("viviendaNombre", vivienda.getName()); 
-            // 4. Seguimos pasando el ID porque los botones lo necesitan para las URLs
+           
             model.addAttribute("viviendaId", id); 
             
             return "detalleVivienda"; 
         } else {
-            // Si el ID no existe, lo devolvemos a la lista por seguridad
+            // Si el ID no existe, lo devolvemos a la lista 
             return "redirect:/listar";
         }
     }
@@ -163,18 +163,18 @@ public class MyController {
             @RequestParam("viviendaId") Long viviendaId,
             Model model) {
         
-        // 1. Buscamos la vivienda PRIMERO para tenerla disponible siempre
+        // 1. Buscar la vivienda 
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
         if (viviendaOpt.isEmpty()) {
             return "redirect:/listar";
         }
         Vivienda vivienda = viviendaOpt.get();
 
-        // 2. Preparamos la tarea con todos sus datos (¡incluida la vivienda!)
+        // 2. Preparar la tarea  
         Tarea tareaTemporal = new Tarea();
         tareaTemporal.setName(name); 
         tareaTemporal.setDescripcion(descripcion);
-        tareaTemporal.setVivienda(vivienda); // <-- SOLUCIÓN AL CRASHEO
+        tareaTemporal.setVivienda(vivienda); 
 
         // 3. Validaciones
         if (name == null || name.trim().isEmpty()) {
@@ -201,7 +201,7 @@ public class MyController {
             return "crearTarea";
         }
 
-        // 4. Si todo está correcto, guardamos la tarea (ya tiene la vivienda puesta en el paso 2)
+        // 4. Si todo está correcto, guarda la tarea 
         tareaRepository.save(tareaTemporal); 
         
         return "redirect:/vivienda/" + viviendaId + "/listTareas"; 
@@ -235,8 +235,8 @@ public String mostrarPantallaAsignar(Model model) {
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
 
         if (viviendaOpt.isPresent()) {
-            model.addAttribute("roommates", listaDeRoommates); // Pasamos la variable que pidió
-            model.addAttribute("viviendaId", id); // Pasamos el ID que pidió
+            model.addAttribute("roommates", listaDeRoommates); 
+            model.addAttribute("viviendaId", id);
             model.addAttribute("vivienda", viviendaOpt.get());
 
             return "listTareas";
