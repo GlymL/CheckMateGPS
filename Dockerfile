@@ -5,7 +5,7 @@ COPY . .
 # Le damos permisos de ejecución a tu archivo mvnw
 RUN chmod +x ./mvnw
 # Compilamos el proyecto omitiendo los tests para que sea más rápido
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -Dmaven.test.skip=true
 
 # Etapa 2: Levantar el servidor con tu web
 FROM eclipse-temurin:21-jdk
