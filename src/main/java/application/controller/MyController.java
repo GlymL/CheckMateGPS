@@ -140,47 +140,49 @@ public class MyController {
     }
 
    @GetMapping("/vivienda/{id}/nueva-tarea")
-    public String nuevaTarea(@PathVariable("id") Long id, Model model) {
-        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
-        
-        if (viviendaOpt.isEmpty()) {
-            return "redirect:/listar"; 
-        }
-        
-        Tarea tarea = new Tarea();
-      
-        tarea.setVivienda(viviendaOpt.get()); 
-        
-        model.addAttribute("tarea", tarea);
-        model.addAttribute("viviendaId", id); 
-        return "crearTarea";
-    }
-    
-  @PostMapping("/guardarTarea")
+   public String nuevaTarea(@PathVariable("id") Long id, Model model) {
+       Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+       
+       if (viviendaOpt.isEmpty()) {
+           return "redirect:/listar"; 
+       }
+       
+       Tarea tarea = new Tarea();
+       Vivienda vivienda = viviendaOpt.get();
+       tarea.setVivienda(vivienda); 
+       
+       model.addAttribute("tarea", tarea);
+       model.addAttribute("viviendaId", id); 
+       model.addAttribute("viviendaNombre", vivienda.getName()); 
+       
+       return "crearTarea";
+   }
+   
+   @PostMapping("/guardarTarea")
    public String guardarTarea(
             @RequestParam("name") String name,
             @RequestParam(value = "descripcion", required = false) String descripcion,
             @RequestParam("viviendaId") Long viviendaId,
             Model model) {
         
-        // 1. Buscar la vivienda 
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
         if (viviendaOpt.isEmpty()) {
             return "redirect:/listar";
         }
         Vivienda vivienda = viviendaOpt.get();
+        String viviendaNombre = vivienda.getName(); 
 
-        // 2. Preparar la tarea  
         Tarea tareaTemporal = new Tarea();
         tareaTemporal.setName(name); 
         tareaTemporal.setDescripcion(descripcion);
         tareaTemporal.setVivienda(vivienda); 
 
-        // 3. Validaciones
+    
         if (name == null || name.trim().isEmpty()) {
             model.addAttribute("error", "No se han rellenado todos los campos obligatorios.");
             model.addAttribute("tarea", tareaTemporal); 
             model.addAttribute("viviendaId", viviendaId);
+            model.addAttribute("viviendaNombre", viviendaNombre); 
             return "crearTarea";
         }
 
@@ -191,6 +193,7 @@ public class MyController {
             model.addAttribute("error", "El formato del nombre no es válido.");
             model.addAttribute("tarea", tareaTemporal); 
             model.addAttribute("viviendaId", viviendaId);
+            model.addAttribute("viviendaNombre", viviendaNombre); 
             return "crearTarea";
         }
 
@@ -198,10 +201,10 @@ public class MyController {
             model.addAttribute("error", "El formato de la descripción no es válido.");
             model.addAttribute("tarea", tareaTemporal); 
             model.addAttribute("viviendaId", viviendaId);
+            model.addAttribute("viviendaNombre", viviendaNombre); 
             return "crearTarea";
         }
 
-        // 4. Si todo está correcto, guarda la tarea 
         tareaRepository.save(tareaTemporal); 
         
         return "redirect:/vivienda/" + viviendaId + "/listTareas"; 

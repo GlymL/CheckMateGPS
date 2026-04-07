@@ -71,6 +71,11 @@ body {
     justify-content: center;
     overflow: hidden;
     position: relative;
+    color: white;
+}
+
+a {
+    color: white;
 }
 
 /* Decorative blobs */
