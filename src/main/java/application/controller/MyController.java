@@ -119,9 +119,24 @@ public class MyController {
     
 
     @GetMapping("/vivienda/{id}")
-    public String verVivienda(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("viviendaId", id);
-        return "detalleVivienda"; 
+    public String verVivienda(@PathVariable("id") Long id, Model model) {       
+  // 1. Buscar la vivienda 
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+        
+        // 2. Comprobar si la vivienda existe
+        if (viviendaOpt.isPresent()) {
+            Vivienda vivienda = viviendaOpt.get(); // Extraemos el objeto real
+            
+          
+            model.addAttribute("viviendaNombre", vivienda.getName()); 
+           
+            model.addAttribute("viviendaId", id); 
+            
+            return "detalleVivienda"; 
+        } else {
+            // Si el ID no existe, lo devolvemos a la lista 
+            return "redirect:/listar";
+        }
     }
 
    @GetMapping("/vivienda/{id}/nueva-tarea")
@@ -142,17 +157,26 @@ public class MyController {
     }
     
   @PostMapping("/guardarTarea")
-    public String guardarTarea(
+   public String guardarTarea(
             @RequestParam("name") String name,
             @RequestParam(value = "descripcion", required = false) String descripcion,
             @RequestParam("viviendaId") Long viviendaId,
             Model model) {
         
+        // 1. Buscar la vivienda 
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
+        if (viviendaOpt.isEmpty()) {
+            return "redirect:/listar";
+        }
+        Vivienda vivienda = viviendaOpt.get();
+
+        // 2. Preparar la tarea  
         Tarea tareaTemporal = new Tarea();
         tareaTemporal.setName(name); 
         tareaTemporal.setDescripcion(descripcion);
+        tareaTemporal.setVivienda(vivienda); 
 
-
+        // 3. Validaciones
         if (name == null || name.trim().isEmpty()) {
             model.addAttribute("error", "No se han rellenado todos los campos obligatorios.");
             model.addAttribute("tarea", tareaTemporal); 
@@ -177,23 +201,10 @@ public class MyController {
             return "crearTarea";
         }
 
-        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
+        // 4. Si todo está correcto, guarda la tarea 
+        tareaRepository.save(tareaTemporal); 
         
-        if (viviendaOpt.isPresent()) {
-            Tarea nuevaTarea = new Tarea();
-            nuevaTarea.setName(name);
-            nuevaTarea.setDescripcion(descripcion);
-            nuevaTarea.setVivienda(viviendaOpt.get()); 
-
-            tareaRepository.save(nuevaTarea); 
-            
-            return "redirect:/vivienda/" + viviendaId + "/listTareas"; 
-        } else {
-            model.addAttribute("error", "Vivienda no encontrada.");
-            model.addAttribute("tarea", tareaTemporal); 
-            model.addAttribute("viviendaId", viviendaId);
-            return "crearTarea";
-        }
+        return "redirect:/vivienda/" + viviendaId + "/listTareas"; 
     }
 
   
@@ -224,8 +235,8 @@ public String mostrarPantallaAsignar(Model model) {
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
 
         if (viviendaOpt.isPresent()) {
-            model.addAttribute("roommates", listaDeRoommates); // Pasamos la variable que pidió
-            model.addAttribute("viviendaId", id); // Pasamos el ID que pidió
+            model.addAttribute("roommates", listaDeRoommates); 
+            model.addAttribute("viviendaId", id);
             model.addAttribute("vivienda", viviendaOpt.get());
 
             return "listTareas";
