@@ -12,7 +12,8 @@
     
 <h2 style="text-align: center;">Añadir roommate 👤</h2>
     
-    <div th:if="${error}" style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-weight: bold;" th:text="${error}"></div>
+    <div th:if="${error}" style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 6px;
+     margin-bottom: 15px; text-align: center; font-weight: bold;" th:text="${error}"></div>
 
     <form th:action="@{/add-roommate}" method="post">
         
@@ -21,15 +22,18 @@
         <label>Nombre:<br></label>
         <input type="text" name="nombreReal" required
                pattern="^[a-zA-Z áéíóúÁÉÍÓÚñÑ]+$"
-               oninvalid="if(this.validity.valueMissing) { this.setCustomValidity('Por favor, indica el nombre.'); } else if(this.validity.patternMismatch) { this.setCustomValidity('Solo se permiten letras y espacios.'); }"
+               oninvalid="if(this.validity.valueMissing) { this.setCustomValidity('Por favor, indica el nombre.'); } 
+               else if(this.validity.patternMismatch) { this.setCustomValidity('Solo se permiten letras y espacios.'); }"
                oninput="this.setCustomValidity('')"
                style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px;">
 
-        <button type="submit" style="background-color: #3498db; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;">
+        <button type="submit" style="background-color: #3498db; color: white; width: 100%; border: none; padding: 10px;
+         font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;">
             Añadir a la vivienda
         </button>
         
-        <button type="button" th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s;">
+        <button type="button" th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666;
+         color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s;">
             Cancelar
         </button>
 

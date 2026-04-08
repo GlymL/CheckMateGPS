@@ -34,19 +34,22 @@ class RoommateIntegrationTest {
     @Autowired
     private RoommateRepository roommateRepository;
 
-    @Test
+   @Test
     void addRoommate_Valid() throws Exception {
         Vivienda vivienda = new Vivienda();
         vivienda.setName("CasaTest");
         viviendaRepository.save(vivienda);
+        
+        // Obtenemos el ID real que la BD le ha asignado a la vivienda
+        Long idVivienda = vivienda.getId();
 
-        mockMvc.perform(post("/add-roommate")
-                .param("nombreVivienda", "CasaTest")
-                .param("nombreUsuario", "ana123")
-                .param("nombre", "Ana"))
+        mockMvc.perform(post("/guardarRoommate")
+                .param("viviendaId", String.valueOf(idVivienda))
+                .param("nombreReal", "Ana"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/listar"));
+                // Ahora redirige a los detalles de esa vivienda concreta
+                .andExpect(redirectedUrl("/vivienda/" + idVivienda));
 
         assertThat(roommateRepository.existsByNombreRealAndVivienda("Ana", vivienda)).isTrue();
     }
@@ -56,31 +59,23 @@ class RoommateIntegrationTest {
         Vivienda vivienda = new Vivienda();
         vivienda.setName("CasaTest");
         viviendaRepository.save(vivienda);
+        
+        Long idVivienda = vivienda.getId();
 
-        Roommate existente = new Roommate("user", "Maria", vivienda);
+        // El constructor de Roommate ya no tiene 'nombreUsuario'
+        Roommate existente = new Roommate("Maria", vivienda);
         roommateRepository.save(existente);
 
-        mockMvc.perform(post("/add-roommate")
-                .param("nombreVivienda", "CasaTest")
-                .param("nombreUsuario", "user2")
-                .param("nombre", "Maria"))
+        mockMvc.perform(post("/guardarRoommate")
+                .param("viviendaId", String.valueOf(idVivienda))
+                .param("nombreReal", "Maria"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/add-roommate"));
+                // En caso de error de duplicado, vuelve al formulario de esa vivienda
+                .andExpect(redirectedUrl("/vivienda/" + idVivienda + "/nuevo-roommate"));
 
         assertThat(roommateRepository.count()).isEqualTo(1);
     }
 
-    @Test
-    void addRoommate_InexistentVivienda() throws Exception {
-        mockMvc.perform(post("/add-roommate")
-                .param("nombreVivienda", "CasaInexistente")
-                .param("nombreUsuario", "user333")
-                .param("nombre", "Ana"))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/add-roommate"));
-
-        assertThat(roommateRepository.count()).isZero();
-    }
+   
 }

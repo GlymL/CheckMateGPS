@@ -142,81 +142,87 @@ class MyControllerTest {
     }
 
     // CM2: Test para verificar los campos para añadir un nuevo roommate 
-        // CM2-2: datos correctos → se crea roommate
-       @Test
-        void addRoommate_createCorrectly() throws Exception {
+    // CM2-2: datos correctos → se crea roommate
+    @Test
+    void addRoommate_createCorrectly() throws Exception {
 
         Vivienda vivienda = new Vivienda();
+        vivienda.setId(1L); // Añadimos un ID simulado
         vivienda.setName("Casa1");
 
-        when(viviendaRepository.findByName("Casa1"))
+        // Ahora buscamos por ID, no por nombre
+        when(viviendaRepository.findById(1L))
                 .thenReturn(Optional.of(vivienda));
 
         when(roommateRepository.existsByNombreRealAndVivienda("Ana", vivienda))
                 .thenReturn(false);
 
-        MvcResult result = mockMvc.perform(post("/add-roommate")
-                .param("nombreVivienda", "Casa1")
-                .param("nombreUsuario", "ana123")
-                .param("nombre", "Ana"))
+        // Actualizamos la ruta y los parámetros
+        MvcResult result = mockMvc.perform(post("/guardarRoommate")
+                .param("viviendaId", "1")
+                .param("nombreReal", "Ana"))
                 .andReturn();
 
         assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
+        // Redirige al panel de la vivienda en caso de éxito
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/vivienda/1");
 
         verify(roommateRepository).save(any(Roommate.class));
-        }
-        // CM2-3: campos vacíos → error
-        @Test
-        void addRoommate_empty_fields_error() throws Exception {
+    }
 
-        MvcResult result = mockMvc.perform(post("/add-roommate")
-                .param("nombreVivienda", "Casa1")
-                .param("nombreUsuario", "")
-                .param("nombre", "Ana"))
-                .andReturn();
-
-        assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/add-roommate");
-
-        verify(roommateRepository, never()).save(any(Roommate.class));
-        }
-        // CM2-4: campos vacíos → error
-        @Test
-        void addRoommate_Invalid_format_error() throws Exception {
-
-        MvcResult result = mockMvc.perform(post("/add-roommate")
-                .param("nombreVivienda", "Casa1")
-                .param("nombreUsuario", "ana123")
-                .param("nombre", "Ana123"))
-                .andReturn();
-
-        assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/add-roommate");
-
-        verify(roommateRepository, never()).save(any(Roommate.class));
-        }
-    //CM 2-5
+    // CM2-3: campos vacíos → error
     @Test
-        void addRoommate_errorWhenDuplicated() throws Exception {
+    void addRoommate_empty_fields_error() throws Exception {
+
+        MvcResult result = mockMvc.perform(post("/guardarRoommate")
+                .param("viviendaId", "1")
+                .param("nombreReal", ""))
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(302);
+        // Redirige al formulario de esa vivienda en caso de error
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/vivienda/1/nuevo-roommate");
+
+        verify(roommateRepository, never()).save(any(Roommate.class));
+    }
+
+    // CM2-4: formato inválido → error
+    @Test
+    void addRoommate_Invalid_format_error() throws Exception {
+
+        MvcResult result = mockMvc.perform(post("/guardarRoommate")
+                .param("viviendaId", "1")                
+                .param("nombreReal", "Ana123"))
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(302);
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/vivienda/1/nuevo-roommate");
+
+        verify(roommateRepository, never()).save(any(Roommate.class));
+    }
+
+    // CM 2-5: duplicado → error
+    @Test
+    void addRoommate_errorWhenDuplicated() throws Exception {
+        
         Vivienda vivienda = new Vivienda();
+        vivienda.setId(1L);
         vivienda.setName("Casa1");
 
-        when(viviendaRepository.findByName("Casa1"))
+        when(viviendaRepository.findById(1L))
                 .thenReturn(Optional.of(vivienda));
 
         when(roommateRepository.existsByNombreRealAndVivienda("Maria", vivienda))
                 .thenReturn(true);
 
-        MvcResult result = mockMvc.perform(post("/add-roommate")
-                .param("nombreVivienda", "Casa1")
-                .param("nombreUsuario", "user1")
-                .param("nombre", "Maria"))
+        MvcResult result = mockMvc.perform(post("/guardarRoommate")
+                .param("viviendaId", "1")
+                .param("nombreReal", "Maria"))
                 .andReturn();
 
         assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/add-roommate");
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/vivienda/1/nuevo-roommate");
 
         verify(roommateRepository, never()).save(any(Roommate.class));
-        }
+    }
 }
