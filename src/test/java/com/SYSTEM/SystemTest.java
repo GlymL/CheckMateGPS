@@ -75,7 +75,7 @@ class SystemTest {
 
         assertThat(tareaRepository.count()).isEqualTo(1);
         Tarea tareaGuardada = tareaRepository.findAll().get(0);
-        assertThat(tareaGuardada.getNombre()).isEqualTo("Limpiar cocina");
+        assertThat(tareaGuardada.getName()).isEqualTo("Limpiar cocina");
         assertThat(tareaGuardada.getDescripcion()).isEqualTo("Limpiar nevera y fregar los platos");
         assertThat(tareaGuardada.getVivienda().getId()).isEqualTo(vivienda.getId());
         assertThat(tareaGuardada.getCompletada()).isFalse();
@@ -156,7 +156,7 @@ class SystemTest {
 
         assertThat(tareaRepository.count()).isEqualTo(1);
         Tarea tareaGuardada = tareaRepository.findAll().get(0);
-        assertThat(tareaGuardada.getNombre()).isEqualTo("Tarea sin descripción");
+        assertThat(tareaGuardada.getName()).isEqualTo("Tarea sin descripción");
         assertThat(tareaGuardada.getDescripcion()).isNullOrEmpty();
     }
 }
