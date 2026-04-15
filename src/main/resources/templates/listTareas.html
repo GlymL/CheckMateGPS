@@ -80,56 +80,94 @@
         .scroll-container::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8; 
         }
+
+        .date-assign-form {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .input-date {
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        .btn-date {
+            background: #9b59d0;
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
     </style>
 </head>
 <body>
 
-<div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
+    <div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
     
-    <h2>Tareas de la Vivienda 📋</h2>
-    <p style="color: #666; margin-bottom: 20px;">Todas las tareas creadas para esta casa.</p>
-<div class="scroll-container">
-    <div th:each="tarea : ${vivienda.tareas}" class="task-box">
+        <h2>Tareas de la Vivienda 📋</h2>
+        <p style="color: #666; margin-bottom: 20px;">Todas las tareas creadas para esta casa.</p>
+
+        <div th:if="${errorMsg}" style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9em;">
+            ⚠️ <span th:text="${errorMsg}"></span>
+        </div>
+    <div class="scroll-container">
+        <div th:each="tarea : ${vivienda.tareas}" class="task-box">
         
-        <div class="task-info">
-            <b th:text="${tarea.getName()}">Nombre de Tarea</b>
-            
-            <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
-            <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
+            <div class="task-info">
+                <b th:text="${tarea.getName()}">Nombre de Tarea</b>
+    
+                <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
+                <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
 
-            <div class="task-meta">
-                <span th:if="${tarea.asignadoA != null}">
-                    👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
-                </span>
-                <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
-                    ⚠️ Sin asignar
-                </span>
-            </div>
-        </div>
-
-        <div class="status-container">
-            
-            <span th:if="${!tarea.completada}" class="badge-pendiente">Pendiente</span>
-            
-            <div th:if="${tarea.completada}">
-                <span class="badge-completada">Completada</span>
-                
-                <div th:if="${tarea.asignadoA != null}" style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">
-                    por <span th:text="${tarea.asignadoA.nombreReal}"></span>
+                <div class="task-meta">
+                    <span th:if="${tarea.asignadoA != null}">
+                        👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
+                    </span>
+                    <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
+                         ⚠️ Sin asignar
+                    </span>
+        
+                    <div th:if="${tarea.fechaRealizacion != null}" style="margin-top: 5px; color: #2980b9;">
+                    📅 Fecha: <strong th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></strong>
+                    </div>
                 </div>
+
+                <form th:if="${!tarea.completada}" th:action="@{/assignDate/submit}" method="post" class="date-assign-form">
+                    <input type="hidden" name="taskId" th:value="${tarea.id}">
+                    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+
+                    <input type="date" name="fecha" required class="input-date">
+                    <button type="submit" class="btn-date">📅 Asignar Fecha</button>
+                </form>
             </div>
+
+            <div class="status-container">
             
+                <span th:if="${!tarea.completada}" class="badge-pendiente">Pendiente</span>
+            
+                <div th:if="${tarea.completada}">
+                    <span class="badge-completada">Completada</span>
+                
+                    <div th:if="${tarea.asignadoA != null}" style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">
+                        por <span th:text="${tarea.asignadoA.nombreReal}"></span>
+                    </div>
+                </div>
+            
+            </div>
         </div>
     </div>
-</div>
-    <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="color: #888; padding: 20px;">
-        Aún no hay tareas creadas en esta casa. ¡Añade la primera!
-    </div>
+        <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="color: #888; padding: 20px;">
+            Aún no hay tareas creadas en esta casa. ¡Añade la primera!
+        </div>
 
-    <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top: 15px;">
-        Volver al Panel
-    </button>
-</div>
+        <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top: 15px;">
+            Volver al Panel
+        </button>
+    </div>
 
 </body>
 </html>
