@@ -20,6 +20,9 @@ import application.repositories.RoommateRepository;
 import application.repositories.TareaRepository;
 import application.repositories.ViviendaRepository;
 
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Controller
 public class MyController {
 
@@ -258,5 +261,31 @@ public String mostrarPantallaAsignar(Model model) {
         } else {
             return "redirect:/listar";
         }
+    }
+
+    @PostMapping("/assignDate/submit")
+    public String assignDate(
+            @RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam("taskId") Long taskId,
+            @RequestParam("viviendaId") Long viviendaId,
+            RedirectAttributes redirectAttributes) {
+
+        Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
+        if (tareaOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMsg", "Error: La tarea seleccionada no existe.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
+
+        if (fecha == null || !fecha.isAfter(LocalDate.now())) {
+            redirectAttributes.addFlashAttribute("errorMsg", "La fecha indicada no es válida. Debe ser posterior al día de hoy.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
+
+        Tarea tarea = tareaOpt.get();
+        tarea.setFechaRealizacion(fecha);
+        tareaRepository.save(tarea);
+
+        redirectAttributes.addFlashAttribute("successMsg", "Fecha asignada correctamente.");
+        return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
 }
