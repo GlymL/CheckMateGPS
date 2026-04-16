@@ -28,31 +28,39 @@
 
 
 
-<div class="modal" id="houseMenu" style="display: none;">
-    <div class="modal-content">
+<div class="modal" id="houseMenu" style="display: none; background: rgba(0,0,0,0.1) !important;">
+    <div class="modal-content" style="width: 400px; margin: 50px auto; padding: 25px;">
+        
         <span class="close" onclick="closeMenu()">✖</span>
 
-        <h2>Crear Vivienda</h2>
+        <h2 style="text-align: center; margin-bottom: 20px;">Crear Vivienda</h2>
 
         <form action="/submit" method="post" enctype="multipart/form-data">
 
-            <label>Nombre de la Vivienda<br></label>
+            <label>Nombre de la Vivienda (Obligatorio)<br></label>
             <input type="text" name="houseName" required
-            pattern="^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]+$" 
-            oninvalid="this.setCustomValidity('El formato del nombre es incorrecto.')" 
-            oninput="this.setCustomValidity('')">
+                   pattern="^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]+$" 
+                   oninvalid="this.setCustomValidity('El formato del nombre es incorrecto.')" 
+                   oninput="this.setCustomValidity('')"
+                   style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 15px; background-color: white; border: 1px solid #ccc; border-radius: 6px; color: black;">
 
-            <label><br>Descripción<br></label>
+            <label>Descripción<br></label>
             <textarea name="description" required
-            oninput="validarDescripcion(this)"
-            oninvalid="if(this.value===''){this.setCustomValidity('Por favor, añade una descripción.')}"></textarea>
+                      oninput="validarDescripcion(this)"
+                      oninvalid="if(this.value===''){this.setCustomValidity('Por favor, añade una descripción.')}"
+                      style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 15px; background-color: white; border: 1px solid #ccc; border-radius: 6px; height: 80px; resize: none; color: black;"></textarea>
 
-            <label><br>Foto de la Vivienda<br></label>
-            <input type="file" name="image" accept=".png, .jpeg">
+            <label>Foto de la Vivienda<br></label>
+            <input type="file" name="image" accept=".png, .jpeg"
+                   style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 20px; background-color: white; border: 1px solid #ccc; border-radius: 6px; color: black;">
 
+            <button type="submit" style="background-color: #9b59d0; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; box-shadow: none;">
+                Crear Vivienda
+            </button>
 
-
-            <button type="submit">Crear</button>
+            <button type="button" onclick="closeMenu()" style="background-color: #666; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: none;">
+                Cancelar
+            </button>
 
         </form>
 
