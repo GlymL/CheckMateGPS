@@ -227,7 +227,7 @@ class TareaTest {
     
     Tarea tarea = new Tarea();
     tarea.setId(1L);
-    tarea.setNombre("Limpiar cocina");
+    tarea.setName("Limpiar cocina");
     tarea.setCompletada(false);
     tarea.setVivienda(vivienda);
     
