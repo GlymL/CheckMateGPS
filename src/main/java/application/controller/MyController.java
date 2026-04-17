@@ -56,7 +56,7 @@ public class MyController {
         } catch (Exception e) {
            
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "El nombre de una casa no puede existir ya, por favor, introduzca uno nuevo.");
+                    "El nombre de una vivienda no puede existir ya, por favor, introduzca uno nuevo.");
             return "redirect:/";
         }
     }
@@ -75,48 +75,60 @@ public class MyController {
         return "listarViviendas"; 
     }
   
-    @GetMapping("/add-roommate")
-    public String mostrarFormularioRoommate() {
+    @GetMapping("/vivienda/{id}/nuevo-roommate")
+    public String mostrarFormularioRoommate(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("viviendaId", id);
         return "addRoommate"; 
     }
 
     @PostMapping("/add-roommate")
     public String procesarAñadirRoommate(
-        @RequestParam(value = "nombreVivienda", required = false, defaultValue = "") String nombreVivienda,
-        @RequestParam(value = "nombreUsuario", required = false, defaultValue = "") String nombreUsuario,
-        @RequestParam(value = "nombre", required = false, defaultValue = "") String nombreReal,
+       @RequestParam("viviendaId") Long viviendaId,
+        @RequestParam("nombreReal") String nombreReal, 
         RedirectAttributes redirectAttributes) {
 
-        if (nombreVivienda.isBlank() || nombreUsuario.isBlank() || nombreReal.isBlank()) {
-            redirectAttributes.addFlashAttribute("errorCampos", true);
-            return "redirect:/add-roommate";
+        if (nombreReal.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "El nombre no puede estar vacío.");
+            return "redirect:/vivienda/" + viviendaId + "/nuevo-roommate";
         }
 
         if (!nombreReal.matches("^[a-zA-Z\\s]+$")) {
-            redirectAttributes.addFlashAttribute("errorFormato", true);
-            return "redirect:/add-roommate";
+            redirectAttributes.addFlashAttribute("error", "Formato incorrecto: Solo letras y espacios.");
+            return "redirect:/vivienda/" + viviendaId + "/nuevo-roommate";
         }
 
-        Optional<Vivienda> viviendaOpt = viviendaRepository.findByName(nombreVivienda);
+       
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
         if (viviendaOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorVivienda", true);
-            return "redirect:/add-roommate";
+            return "redirect:/listar"; 
         }
-        
         Vivienda viviendaEncontrada = viviendaOpt.get();
 
+     
         boolean existeDuplicado = roommateRepository.existsByNombreRealAndVivienda(nombreReal, viviendaEncontrada);
         if (existeDuplicado) {
-            redirectAttributes.addFlashAttribute("errorDuplicado", true);
-            return "redirect:/add-roommate";
-        }
-
-        Roommate nuevoRoommate = new Roommate(nombreUsuario, nombreReal, viviendaEncontrada);
+            redirectAttributes.addFlashAttribute("error", "Ese compañero ya vive en esta casa.");
+            return "redirect:/vivienda/" + viviendaId + "/nuevo-roommate";
+        }     
+        Roommate nuevoRoommate = new Roommate(nombreReal, viviendaEncontrada);
         roommateRepository.save(nuevoRoommate);
 
-        return "redirect:/listar";
+        return "redirect:/vivienda/" + viviendaId;
+    }
+   @GetMapping("/vivienda/{id}/roommates")
+public String listarRoommates(@PathVariable("id") Long id, Model model) {
+    Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+    
+    if (viviendaOpt.isPresent()) {
+        Vivienda vivienda = viviendaOpt.get();
+        model.addAttribute("vivienda", vivienda);
+        model.addAttribute("viviendaId", id);
+        model.addAttribute("viviendaNombre", vivienda.getName());
+        return "listRoommates"; // Nombre del nuevo HTML
     }
     
+    return "redirect:/listar";
+} 
 
     @GetMapping("/vivienda/{id}")
     public String verVivienda(@PathVariable("id") Long id, Model model) {       

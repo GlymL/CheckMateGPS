@@ -135,7 +135,7 @@ void completeTarea_success() throws Exception {
     vivienda = viviendaRepository.save(vivienda);
     
     Tarea tarea = new Tarea();
-    tarea.setNombre("Limpiar cocina");
+    tarea.setName("Limpiar cocina");
     tarea.setDescripcion("Limpiar fogones");
     tarea.setVivienda(vivienda);
     tarea.setCompletada(false);
