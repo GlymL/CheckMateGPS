@@ -83,9 +83,12 @@ class SystemTest {
                 .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
 
-        boolean estaCompletada = tareaRepository.findById(tarea.getId()).get().getCompletada();
-       
-        assertThat(estaCompletada).isTrue();
+        assertThat(tareaRepository.count()).isEqualTo(1);
+        Tarea tareaGuardada = tareaRepository.findAll().get(0);
+        assertThat(tareaGuardada.getName()).isEqualTo("Limpiar cocina");
+        assertThat(tareaGuardada.getDescripcion()).isEqualTo("Limpiar nevera y fregar los platos");
+        assertThat(tareaGuardada.getVivienda().getId()).isEqualTo(vivienda.getId());
+        assertThat(tareaGuardada.getCompletada()).isFalse();
     }
 
 
