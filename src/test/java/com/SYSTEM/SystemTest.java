@@ -21,6 +21,8 @@ import application.repositories.RoommateRepository;
 import application.repositories.TareaRepository;
 import application.repositories.ViviendaRepository;
 
+import java.time.LocalDate;
+
 @SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
 @Transactional
@@ -151,9 +153,63 @@ class SystemTest {
                 .andExpect(flash().attributeExists("error"))
                 .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
+        assertThat(tareaRepository.count()).isEqualTo(1);
+        Tarea tareaGuardada = tareaRepository.findAll().get(0);
+        assertThat(tareaGuardada.getName()).isEqualTo("Tarea sin descripción");
+        assertThat(tareaGuardada.getDescripcion()).isNullOrEmpty();
+    }
 
-        boolean estaCompletada = tareaRepository.findById(tarea.getId()).get().getCompletada();
-       
-        assertThat(estaCompletada).isFalse();
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM7: Flujo completo - Asignar fecha futura correcta")
+    void fullFlow_assignDate_ok() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM7");
+        viviendaRepository.save(vivienda);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea CM7"); 
+        tarea.setVivienda(vivienda);
+        tareaRepository.save(tarea);
+
+        String fechaFutura = LocalDate.now().plusDays(5).toString();
+
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fechaFutura)
+                .param("taskId", String.valueOf(tarea.getId()))
+                .param("viviendaId", String.valueOf(vivienda.getId())))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection()) 
+                .andExpect(redirectedUrl("/vivienda/" + vivienda.getId() + "/listTareas"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash().attributeExists("successMsg"));
+
+        Tarea tareaActualizada = tareaRepository.findById(tarea.getId()).get();
+        assertThat(tareaActualizada.getFechaRealizacion().toString()).isEqualTo(fechaFutura);
+    }
+
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM7: Flujo de error - Asignar fecha del pasado")
+    void fullFlow_assignDate_pastDate_shouldShowError() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM7 Error");
+        viviendaRepository.save(vivienda);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea CM7 Pasado"); 
+        tarea.setVivienda(vivienda);
+        tareaRepository.save(tarea);
+
+        String fechaPasada = LocalDate.now().minusDays(1).toString(); 
+
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fechaPasada)
+                .param("taskId", String.valueOf(tarea.getId()))
+                .param("viviendaId", String.valueOf(vivienda.getId())))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/vivienda/" + vivienda.getId() + "/listTareas"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash().attributeExists("errorMsg"));
+
+        Tarea tareaNoActualizada = tareaRepository.findById(tarea.getId()).get();
+        assertThat(tareaNoActualizada.getFechaRealizacion()).isNull();
     }
 }

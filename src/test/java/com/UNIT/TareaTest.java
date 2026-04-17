@@ -1,5 +1,6 @@
 package com.UNIT;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +16,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import application.controller.MyController;
@@ -240,4 +244,70 @@ class TareaTest {
     verify(tareaRepository).findById(1L);
     verify(tareaRepository).save(any(Tarea.class));
         }
+
+        // CM7-2: Asignación correcta con fecha futura
+    @Test
+    void unitTest_assignDate_ok() throws Exception {
+        Tarea tarea = new Tarea();
+        tarea.setId(1L);
+        
+        // Simulamos que la tarea existe en la BD
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+        
+        // Creamos una fecha válida (mañana)
+        String fechaFutura = LocalDate.now().plusDays(1).toString(); 
+
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fechaFutura)
+                .param("taskId", "1")
+                .param("viviendaId", "10"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMsg", "Fecha asignada correctamente."))
+                .andExpect(redirectedUrl("/vivienda/10/listTareas"));
+
+        // Verificamos que el controlador llamó al save() para actualizar la base de datos
+        verify(tareaRepository).save(tarea);
+    }
+
+    // CM7-3: Error al intentar asignar una fecha pasada
+    @Test
+    void unitTest_assignDate_fechaPasada_error() throws Exception {
+        Tarea tarea = new Tarea();
+        tarea.setId(1L);
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+
+        // Creamos una fecha no válida (ayer)
+        String fechaAyer = LocalDate.now().minusDays(1).toString();
+
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fechaAyer)
+                .param("taskId", "1")
+                .param("viviendaId", "10"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("errorMsg"))
+                .andExpect(redirectedUrl("/vivienda/10/listTareas"));
+
+        // Verificamos que NUNCA se llegó a guardar en la base de datos
+        verify(tareaRepository, never()).save(any());
+    }
+
+    // CM7-1 / Manejo de errores: La tarea no existe
+    @Test
+    void unitTest_assignDate_tareaNoExiste_error() throws Exception {
+        // Simulamos que la BD devuelve vacío
+        when(tareaRepository.findById(99L)).thenReturn(Optional.empty());
+
+        String fechaFutura = LocalDate.now().plusDays(5).toString();
+
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fechaFutura)
+                .param("taskId", "99")
+                .param("viviendaId", "10"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("errorMsg", "Error: La tarea seleccionada no existe."))
+                .andExpect(redirectedUrl("/vivienda/10/listTareas"));
+
+        // Verificamos que no se guarda nada
+        verify(tareaRepository, never()).save(any());
+    }
 }
