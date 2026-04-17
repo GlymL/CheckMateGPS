@@ -1,8 +1,6 @@
 package com.SYSTEM;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,11 +8,13 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.transaction.annotation.Transactional;
 
 import application.Application;
+import application.entities.Roommate;
 import application.entities.Tarea;
 import application.entities.Vivienda;
 import application.repositories.RoommateRepository;
@@ -57,106 +57,100 @@ class SystemTest {
         assertThat(exista).isTrue();
     }
 
+      // CM4-1: Tarea marcada como realizada con éxito
     @Test
-   
-    void fullFlow_createTaskSuccessfully() throws Exception {
+    void flujoCompleto_completarTarea_ok() throws Exception {
         Vivienda vivienda = new Vivienda();
         vivienda.setName("CasaTest");
         viviendaRepository.save(vivienda);
-    
-        mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
-                .param("descripcion", "Limpiar nevera y fregar los platos")
-                .param("vivienda.id", String.valueOf(vivienda.getId())))
-                .andDo(print())
+
+
+        Roommate roommate = new Roommate("user1", vivienda);
+        roommateRepository.save(roommate);
+
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Limpiar baño");
+        tarea.setVivienda(vivienda);
+        tarea.setAsignadoA(roommate);
+        tarea.setCompletada(false);
+        tareaRepository.save(tarea);
+
+
+        mockMvc.perform(post("/tareas/" + tarea.getId() + "/completar")
+                .param("roommateId", String.valueOf(roommate.getId())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/listar"));
+                .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
 
-        assertThat(tareaRepository.count()).isEqualTo(1);
-        Tarea tareaGuardada = tareaRepository.findAll().get(0);
-        assertThat(tareaGuardada.getName()).isEqualTo("Limpiar cocina");
-        assertThat(tareaGuardada.getDescripcion()).isEqualTo("Limpiar nevera y fregar los platos");
-        assertThat(tareaGuardada.getVivienda().getId()).isEqualTo(vivienda.getId());
-        assertThat(tareaGuardada.getCompletada()).isFalse();
+        boolean estaCompletada = tareaRepository.findById(tarea.getId()).get().getCompletada();
+       
+        assertThat(estaCompletada).isTrue();
     }
 
+
+    // CM4-2: Error al marcar tarea que ya estaba realizada
     @Test
-    void fullFlow_multipleTasksForSameHouse() throws Exception {
+    void flujoCompleto_completarTarea_yaRealizada() throws Exception {
         Vivienda vivienda = new Vivienda();
-        vivienda.setName("CasaTest");
-        viviendaRepository.save(vivienda);
-        String[] tareas = {
-            "Limpiar salón",
-            "Sacar la basura",
-            "Regar las plantas"
-        };
-        
-        for (String nombreTarea : tareas) {
-            mockMvc.perform(post("/guardarTarea")
-                    .param("nombre", nombreTarea)
-                    .param("vivienda.id", String.valueOf(vivienda.getId())))
-                    .andExpect(status().is3xxRedirection());
-        }
-        
-        // Verificar que se guardaron correctamente
-        assertThat(tareaRepository.count()).isEqualTo(3);
-        
-        // Verificar que todas pertenecen a la vivienda correcta
-        for (Tarea tarea : tareaRepository.findAll()) {
-            assertThat(tarea.getVivienda().getId()).isEqualTo(vivienda.getId());
-        }
-    }
-    
-    @Test
-    void fullFlow_createTaskWithoutName_shouldShowError() throws Exception {
-
-        Vivienda vivienda = new Vivienda();
-        vivienda.setName("CasaTest");
+        vivienda.setName("CasaTest2");
         viviendaRepository.save(vivienda);
 
-        // 2. Enviar formulario con nombre vacío
-        mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "")
-                .param("descripcion", "Descripción válida")
-                .param("vivienda.id", String.valueOf(vivienda.getId())))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(redirectedUrl(null));
 
-    
-        assertThat(tareaRepository.count()).isEqualTo(0);
-    }
+        Roommate roommate = new Roommate("user2", vivienda);
+        roommateRepository.save(roommate);
 
-    @Test
-    void fullFlow_createTaskForNonExistentHouse_shouldShowError() throws Exception {
-        Long idInexistente = 999999L;
-        mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Tarea prueba")
-                .param("vivienda.id", String.valueOf(idInexistente)))
-                .andDo(print())
-                .andExpect(status().isOk());
-        assertThat(tareaRepository.count()).isEqualTo(0);
-    }
-        @Test
-    @DisplayName("SISTEMA-TAREA-07: Flujo completo - Crear tarea con descripción opcional vacía")
-    void fullFlow_createTaskWithEmptyDescription() throws Exception {
-              Vivienda vivienda = new Vivienda();
-        vivienda.setName("CasaTest");
-        viviendaRepository.save(vivienda);
 
-      
-        mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Tarea sin descripción")
-                .param("descripcion", "")
-                .param("vivienda.id", String.valueOf(vivienda.getId())))
-                .andDo(print())
+        Tarea tarea = new Tarea();
+        tarea.setName("Fregar platos");
+        tarea.setVivienda(vivienda);
+        tarea.setAsignadoA(roommate);
+        tarea.setCompletada(true); // Ya está completada de antes
+        tareaRepository.save(tarea);
+
+
+        mockMvc.perform(post("/tareas/" + tarea.getId() + "/completar")
+                .param("roommateId", String.valueOf(roommate.getId())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/listar"));
+                .andExpect(flash().attributeExists("error"))
+                .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
-        assertThat(tareaRepository.count()).isEqualTo(1);
-        Tarea tareaGuardada = tareaRepository.findAll().get(0);
-        assertThat(tareaGuardada.getName()).isEqualTo("Tarea sin descripción");
-        assertThat(tareaGuardada.getDescripcion()).isNullOrEmpty();
+
+        boolean sigueCompletada = tareaRepository.findById(tarea.getId()).get().getCompletada();
+       
+        assertThat(sigueCompletada).isTrue();
+    }
+
+
+    // CM4-3: Aviso al marcar tarea que no tiene roommate asignado
+    @Test
+    void flujoCompleto_completarTarea_sinAsignar() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest3");
+        viviendaRepository.save(vivienda);
+
+
+        Roommate roommate = new Roommate("user3", vivienda);
+        roommateRepository.save(roommate);
+
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Bajar basura");
+        tarea.setVivienda(vivienda);
+        tarea.setAsignadoA(null); // Tarea sin nadie asignado
+        tarea.setCompletada(false);
+        tareaRepository.save(tarea);
+
+
+        mockMvc.perform(post("/tareas/" + tarea.getId() + "/completar")
+                .param("roommateId", String.valueOf(roommate.getId())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("error"))
+                .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
+
+
+        boolean estaCompletada = tareaRepository.findById(tarea.getId()).get().getCompletada();
+       
+        assertThat(estaCompletada).isFalse();
     }
 }
