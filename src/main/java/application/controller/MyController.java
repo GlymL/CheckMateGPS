@@ -20,6 +20,9 @@ import application.repositories.RoommateRepository;
 import application.repositories.TareaRepository;
 import application.repositories.ViviendaRepository;
 
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Controller
 public class MyController {
 
@@ -75,48 +78,60 @@ public class MyController {
         return "listarViviendas"; 
     }
   
-    @GetMapping("/add-roommate")
-    public String mostrarFormularioRoommate() {
+    @GetMapping("/vivienda/{id}/nuevo-roommate")
+    public String mostrarFormularioRoommate(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("viviendaId", id);
         return "addRoommate"; 
     }
 
     @PostMapping("/add-roommate")
     public String procesarAñadirRoommate(
-        @RequestParam(value = "nombreVivienda", required = false, defaultValue = "") String nombreVivienda,
-        @RequestParam(value = "nombreUsuario", required = false, defaultValue = "") String nombreUsuario,
-        @RequestParam(value = "nombre", required = false, defaultValue = "") String nombreReal,
+       @RequestParam("viviendaId") Long viviendaId,
+        @RequestParam("nombreReal") String nombreReal, 
         RedirectAttributes redirectAttributes) {
 
-        if (nombreVivienda.isBlank() || nombreUsuario.isBlank() || nombreReal.isBlank()) {
-            redirectAttributes.addFlashAttribute("errorCampos", true);
-            return "redirect:/add-roommate";
+        if (nombreReal.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "El nombre no puede estar vacío.");
+            return "redirect:/vivienda/" + viviendaId + "/nuevo-roommate";
         }
 
         if (!nombreReal.matches("^[a-zA-Z\\s]+$")) {
-            redirectAttributes.addFlashAttribute("errorFormato", true);
-            return "redirect:/add-roommate";
+            redirectAttributes.addFlashAttribute("error", "Formato incorrecto: Solo letras y espacios.");
+            return "redirect:/vivienda/" + viviendaId + "/nuevo-roommate";
         }
 
-        Optional<Vivienda> viviendaOpt = viviendaRepository.findByName(nombreVivienda);
+       
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
         if (viviendaOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorVivienda", true);
-            return "redirect:/add-roommate";
+            return "redirect:/listar"; 
         }
-        
         Vivienda viviendaEncontrada = viviendaOpt.get();
 
+     
         boolean existeDuplicado = roommateRepository.existsByNombreRealAndVivienda(nombreReal, viviendaEncontrada);
         if (existeDuplicado) {
-            redirectAttributes.addFlashAttribute("errorDuplicado", true);
-            return "redirect:/add-roommate";
-        }
-
-        Roommate nuevoRoommate = new Roommate(nombreUsuario, nombreReal, viviendaEncontrada);
+            redirectAttributes.addFlashAttribute("error", "Ese compañero ya vive en esta casa.");
+            return "redirect:/vivienda/" + viviendaId + "/nuevo-roommate";
+        }     
+        Roommate nuevoRoommate = new Roommate(nombreReal, viviendaEncontrada);
         roommateRepository.save(nuevoRoommate);
 
-        return "redirect:/listar";
+        return "redirect:/vivienda/" + viviendaId;
+    }
+   @GetMapping("/vivienda/{id}/roommates")
+public String listarRoommates(@PathVariable("id") Long id, Model model) {
+    Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+    
+    if (viviendaOpt.isPresent()) {
+        Vivienda vivienda = viviendaOpt.get();
+        model.addAttribute("vivienda", vivienda);
+        model.addAttribute("viviendaId", id);
+        model.addAttribute("viviendaNombre", vivienda.getName());
+        return "listRoommates"; // Nombre del nuevo HTML
     }
     
+    return "redirect:/listar";
+} 
 
     @GetMapping("/vivienda/{id}")
     public String verVivienda(@PathVariable("id") Long id, Model model) {       
@@ -279,5 +294,31 @@ public String mostrarPantallaAsignar(Model model) {
         } else {
             return "redirect:/listar";
         }
+    }
+
+    @PostMapping("/assignDate/submit")
+    public String assignDate(
+            @RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam("taskId") Long taskId,
+            @RequestParam("viviendaId") Long viviendaId,
+            RedirectAttributes redirectAttributes) {
+
+        Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
+        if (tareaOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMsg", "Error: La tarea seleccionada no existe.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
+
+        if (fecha == null || !fecha.isAfter(LocalDate.now())) {
+            redirectAttributes.addFlashAttribute("errorMsg", "La fecha indicada no es válida. Debe ser posterior al día de hoy.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
+
+        Tarea tarea = tareaOpt.get();
+        tarea.setFechaRealizacion(fecha);
+        tareaRepository.save(tarea);
+
+        redirectAttributes.addFlashAttribute("successMsg", "Fecha asignada correctamente.");
+        return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
 }

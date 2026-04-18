@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckMate - Lista de Roommates</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .roommate-box {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .roommate-info b {
+            font-size: 1.1em;
+            color: #6c5f5f;
+        }
+        .scroll-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .scroll-container::-webkit-scrollbar { width: 8px; }
+        .scroll-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .scroll-container::-webkit-scrollbar-thumb { background: #3498db; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
+    
+    <h2>Roommates de <span th:text="${viviendaNombre}"></span> 🏠</h2>
+    <p style="color: #ffffff; margin-bottom: 20px;">Personas que conviven en esta vivienda.</p>
+
+    <div class="scroll-container">
+        <div th:each="roommate : ${vivienda.roommates}" class="roommate-box">
+            <div class="roommate-info">
+                <span>👤 </span>
+                <b th:text="${roommate.nombreReal}">Nombre del Roommate</b>
+            </div>
+            <span style="font-size: 0.8em; color: #9b59d0; font-weight: bold;">Activo</span>
+        </div>
+
+        <div th:if="${#lists.isEmpty(vivienda.roommates)}" style="color: #888; padding: 20px; text-align: center;">
+            No hay ningún compañero registrado todavía.
+        </div>
+    </div>
+
+    <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" 
+            style="background-color: #666; color: white; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer;">
+        Volver al Panel
+    </button>
+</div>
+
+</body>
+</html>

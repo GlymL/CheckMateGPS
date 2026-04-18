@@ -37,7 +37,7 @@
                 <option value="" disabled selected>-- Elige un responsable --</option>
                 <option th:each="roommate : ${roommates}" 
         th:value="${roommate.id}" 
-        th:text="${roommate.nombreReal + ' (' + roommate.nombreUsuario + ')'}"></option>
+        th:text="${roommate.nombreReal}"></option>
             </select>
         </div>
 
