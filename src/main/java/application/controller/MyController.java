@@ -276,7 +276,7 @@ public String mostrarPantallaAsignar(Model model) {
             redirectAttributes.addFlashAttribute("errorMsg", "Error: La tarea seleccionada no existe.");
             return "redirect:/vivienda/" + viviendaId + "/listTareas";
         }
-        
+        Tarea tarea = tareaOpt.get();
         if (fecha == null) {
             redirectAttributes.addFlashAttribute("errorMsg", "Formato de fecha no válido.");
             return "redirect:/vivienda/" + viviendaId + "/listTareas";
@@ -286,8 +286,11 @@ public String mostrarPantallaAsignar(Model model) {
             redirectAttributes.addFlashAttribute("errorMsg", "La fecha indicada no es válida. Debe ser posterior al día de hoy.");
             return "redirect:/vivienda/" + viviendaId + "/listTareas";
         }
+        if (Boolean.TRUE.equals(tarea.getCompletada())){
+            redirectAttributes.addFlashAttribute("errorMsg", "La tarea ya está completada.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
 
-        Tarea tarea = tareaOpt.get();
         tarea.setFechaRealizacion(fecha);
         tareaRepository.save(tarea);
 

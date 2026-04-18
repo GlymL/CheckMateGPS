@@ -16,7 +16,7 @@ import application.controller.MyController;
 import application.entities.Tarea;
 import application.repositories.TareaRepository;
 // CM7
-class AssignDateUnitTest {
+class AssignDateTest {
 
     @Mock
     private TareaRepository tareaRepository;
