@@ -271,12 +271,18 @@ public String mostrarPantallaAsignar(Model model) {
             RedirectAttributes redirectAttributes) {
 
         Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
+
         if (tareaOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMsg", "Error: La tarea seleccionada no existe.");
             return "redirect:/vivienda/" + viviendaId + "/listTareas";
         }
+        
+        if (fecha == null) {
+            redirectAttributes.addFlashAttribute("errorMsg", "Formato de fecha no válido.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
 
-        if (fecha == null || !fecha.isAfter(LocalDate.now())) {
+        if (!fecha.isAfter(LocalDate.now())) {
             redirectAttributes.addFlashAttribute("errorMsg", "La fecha indicada no es válida. Debe ser posterior al día de hoy.");
             return "redirect:/vivienda/" + viviendaId + "/listTareas";
         }
