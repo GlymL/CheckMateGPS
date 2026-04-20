@@ -297,4 +297,37 @@ public String mostrarPantallaAsignar(Model model) {
         redirectAttributes.addFlashAttribute("successMsg", "Fecha asignada correctamente.");
         return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
+
+    
+    @GetMapping("/vivienda/{id}/estado-tareas")
+    public String verEstadoTareas(@PathVariable("id") Long id, Model model) {
+        
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+
+        if (viviendaOpt.isPresent()) {
+            Vivienda vivienda = viviendaOpt.get();
+            
+            // Se obtienen las tareas y se ordenan: pendientes primero (false), completadas después (true)
+            java.util.List<Tarea> tareasOrdenadas = vivienda.getTareas().stream()
+                .sorted((t1, t2) -> {
+                    
+                    boolean completada1 = Boolean.TRUE.equals(t1.getCompletada());
+                    boolean completada2 = Boolean.TRUE.equals(t2.getCompletada());
+                    
+                    // Se comparan los booleanos para que las pendientes salgan arriba
+                    return Boolean.compare(completada1, completada2);
+                })
+                .collect(java.util.stream.Collectors.toList());
+
+            // 2. Se pasa la lista ya ordenada y el ID al HTML
+            model.addAttribute("tareas", tareasOrdenadas);
+            model.addAttribute("viviendaId", id);
+            
+            
+            return "estadoTareas"; 
+        } else {
+            
+            return "redirect:/listar";
+        }
+    }
 }
