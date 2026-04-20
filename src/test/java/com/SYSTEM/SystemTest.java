@@ -212,4 +212,53 @@ class SystemTest {
         Tarea tareaNoActualizada = tareaRepository.findById(tarea.getId()).get();
         assertThat(tareaNoActualizada.getFechaRealizacion()).isNull();
     }
+
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM8: Ver estado de tareas con lista llena y ordenada")
+    void fullFlow_verEstadoTareas_ok() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM8");
+        viviendaRepository.save(vivienda);
+
+        Roommate roommate = new Roommate("userCM8", vivienda);
+        roommateRepository.save(roommate);
+
+        Tarea tareaCompletada = new Tarea();
+        tareaCompletada.setName("Tarea Completada");
+        tareaCompletada.setVivienda(vivienda);
+        tareaCompletada.setCompletada(true);
+        tareaCompletada.setAsignadoA(roommate);
+        tareaRepository.save(tareaCompletada);
+
+        Tarea tareaPendiente = new Tarea();
+        tareaPendiente.setName("Tarea Pendiente");
+        tareaPendiente.setVivienda(vivienda);
+        tareaPendiente.setCompletada(false);
+        tareaRepository.save(tareaPendiente);
+
+        vivienda.getTareas().add(tareaCompletada);
+        vivienda.getTareas().add(tareaPendiente);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/vivienda/" + vivienda.getId() + "/estado-tareas"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("estadoTareas"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("tareas"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("Tarea Pendiente")))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("Tarea Completada")));
+    }
+
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM8: Ver estado de tareas vacío")
+    void fullFlow_verEstadoTareas_vacio() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM8 Vacia");
+        viviendaRepository.save(vivienda);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/vivienda/" + vivienda.getId() + "/estado-tareas"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("estadoTareas"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("No hay tareas en la vivienda seleccionada.")));
+    }
 }
