@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.Optional;
 
@@ -148,5 +149,48 @@ void completeTarea_success() throws Exception {
         Optional<Tarea> tareaActualizada = tareaRepository.findById(tarea.getId());
         assert(tareaActualizada).isPresent();
         assert(tareaActualizada.get().getCompletada());
+    }
+
+    @Test
+    @DisplayName("CM11-1: Consultar descripción de una tarea cuando sí tiene descripción")
+    void viewTareaDescription_Exists() throws Exception {
+        
+        Tarea tareaConDesc = new Tarea();
+        tareaConDesc.setName("Limpiar Cristales");
+        tareaConDesc.setDescripcion("Usar el spray azul que hay en el armario");
+        tareaConDesc.setVivienda(viviendaGuardada);
+        tareaConDesc = tareaRepository.save(tareaConDesc);
+
+        
+        mockMvc.perform(get("/tarea/" + tareaConDesc.getId() + "/descripcion"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("descripcion")) 
+                .andExpect(model().attributeExists("tarea"))
+                .andExpect(result -> {
+                    String content = result.getResponse().getContentAsString();
+                    
+                    assert(content.contains("Usar el spray azul que hay en el armario"));
+                });
+    }
+
+    @Test
+    @DisplayName("CM11-2: Consultar descripción de una tarea cuando no tiene descripción")
+    void viewTareaDescription_NotExists() throws Exception {
+        
+        Tarea tareaSinDesc = new Tarea();
+        tareaSinDesc.setName("Sacar Basura");
+        tareaSinDesc.setDescripcion(""); 
+        tareaSinDesc.setVivienda(viviendaGuardada);
+        tareaSinDesc = tareaRepository.save(tareaSinDesc);
+
+        
+        mockMvc.perform(get("/tarea/" + tareaSinDesc.getId() + "/descripcion"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("descripcion"))
+                .andExpect(result -> {
+                    String content = result.getResponse().getContentAsString();
+                    
+                    assert(content.contains("La tarea seleccionada no tiene descripción."));
+                });
     }
 }
