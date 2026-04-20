@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.Optional;
 
@@ -127,8 +128,8 @@ public class TareaIntegrationTest {
                 .andExpect(model().attribute("error", "Vivienda no encontrada."));
     }
     @Test
-@DisplayName("CM1-7: Marcar tarea como completada correctamente")
-void completeTarea_success() throws Exception {
+    @DisplayName("CM1-7: Marcar tarea como completada correctamente")
+    void completeTarea_success() throws Exception {
 
     Vivienda vivienda = new Vivienda();
     vivienda.setName("Casa Test");
@@ -148,5 +149,49 @@ void completeTarea_success() throws Exception {
         Optional<Tarea> tareaActualizada = tareaRepository.findById(tarea.getId());
         assert(tareaActualizada).isPresent();
         assert(tareaActualizada.get().getCompletada());
+    }
+
+    @Test
+    @DisplayName("CM8-1: Visualizar lista de tareas con sus detalles (nombre, estado, asignado)")
+    void viewTareas_Success() throws Exception {
+        
+        application.entities.Roommate rm = new application.entities.Roommate("Pepe Test", viviendaGuardada);
+        roommateRepository.save(rm);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea CM8");
+        tarea.setDescripcion("Prueba de listado");
+        tarea.setVivienda(viviendaGuardada);
+        tarea.setAsignadoA(rm);
+        tarea.setCompletada(false);
+        tareaRepository.save(tarea);
+
+        
+        mockMvc.perform(get("/vivienda/" + viviendaGuardada.getId() + "/listTareas"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listTareas"))
+                
+                .andExpect(model().attributeExists("vivienda"))
+                .andExpect(model().attributeExists("roommates"))
+                .andExpect(model().attribute("viviendaId", viviendaGuardada.getId()));
+        
+        
+    }
+
+    @Test
+    @DisplayName("CM8-2: Mostrar mensaje cuando no hay tareas en la vivienda")
+    void viewTareas_EmptyList() throws Exception {
+        
+        Vivienda viviendaVacia = new Vivienda();
+        viviendaVacia.setName("Casa Vacía");
+        viviendaVacia = viviendaRepository.save(viviendaVacia);
+
+        
+        mockMvc.perform(get("/vivienda/" + viviendaVacia.getId() + "/listTareas"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listTareas"))
+                .andExpect(model().attributeExists("vivienda"));
+        
+        
     }
 }
