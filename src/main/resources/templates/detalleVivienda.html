@@ -7,11 +7,22 @@
     <style>
         .info-box {
             background: #fff;
-            padding: 20px;
+            padding: 12px 20px; 
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 10px; 
             border: 1px solid #eee;
         }
+
+
+        .vivienda-desc {
+            font-size: 0.9em;
+            color: #777;
+            font-style: italic;
+            margin: 8px 0 0 0;
+            padding-top: 8px;
+            border-top: 1px dotted #ddd; 
+        }
+        
         .btn-action {
             display: inline-block;
             color: white;
@@ -72,7 +83,12 @@
     <h1>Vivienda <span th:text="${viviendaNombre}"></span></h1>
     
     <div class="info-box">
-        <p>Panel de gestión de tu vivienda.</p>
+    <p style="margin: 0; font-weight: bold; color: #555;">Panel de Gestión</p>
+    
+    <p th:if="${viviendaDescripcion != null and !viviendaDescripcion.isEmpty()}" 
+       th:text="${viviendaDescripcion}"
+       class="vivienda-desc">
+    </p>
     </div>
 
     <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-action btn-purple">
@@ -110,9 +126,7 @@
     <a th:href="@{/vivienda/{id}/roommates(id=${viviendaId})}" class="btn-action btn-blue">
     👥 Ver Roommates de la Vivienda
     </a>
-    <a th:href="@{/asignarTarea}" class="btn-action btn-green">
-        🤝 Asignar Tarea a Roommate
-    </a>
+    
     
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
 

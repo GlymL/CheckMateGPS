@@ -1,6 +1,9 @@
 package com.SYSTEM;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.DisplayName;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.junit.jupiter.api.DisplayName;
 import application.Application;
 import application.entities.Roommate;
 import application.entities.Tarea;
@@ -208,6 +211,11 @@ class SystemTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/vivienda/" + vivienda.getId() + "/listTareas"))
                 .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash().attributeExists("errorMsg"));
+
+        assertThat(tareaRepository.count()).isEqualTo(1);
+        Tarea tareaGuardada = tareaRepository.findAll().get(0);
+        assertThat(tareaGuardada.getName()).isEqualTo("Tarea sin descripción");
+        assertThat(tareaGuardada.getDescripcion()).isNullOrEmpty();
 
         Tarea tareaNoActualizada = tareaRepository.findById(tarea.getId()).get();
         assertThat(tareaNoActualizada.getFechaRealizacion()).isNull();

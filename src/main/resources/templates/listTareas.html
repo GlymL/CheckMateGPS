@@ -136,7 +136,7 @@
         
             <div class="task-info">
                 <b th:text="${tarea.getName()}">Nombre de Tarea</b>
-    
+
                 <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
                 <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
 
@@ -145,21 +145,37 @@
                         👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
                     </span>
                     <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
-                         ⚠️ Sin asignar
+                        ⚠️ Sin asignar
                     </span>
-        
+
                     <div th:if="${tarea.fechaRealizacion != null}" style="margin-top: 5px; color: #2980b9;">
-                    📅 Fecha: <strong th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></strong>
+                        📅 Fecha: <strong th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></strong>
                     </div>
                 </div>
 
-                <form th:if="${!tarea.completada}" th:action="@{/assignDate/submit}" method="post" class="date-assign-form">
-                    <input type="hidden" name="taskId" th:value="${tarea.id}">
-                    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                <div th:if="${!tarea.completada}" class="management-container">
+                    
+                    <form th:action="@{/assignRoommate/submit}" method="post" class="assign-form">
+                        <input type="hidden" name="taskId" th:value="${tarea.id}">
+                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                        
+                        <select name="roommateId" required class="select-roommate">
+                            <option value="" disabled selected>👤 Responsable...</option>
+                            <option th:each="rm : ${roommates}" 
+                                    th:value="${rm.id}" 
+                                    th:text="${rm.nombreReal}"></option>
+                        </select>
+                        <button type="submit" class="btn-date" style="background: #3498db;">Asignar</button>
+                    </form>
 
-                    <input type="date" name="fecha" required class="input-date">
-                    <button type="submit" class="btn-date">📅 Asignar Fecha</button>
-                </form>
+                    <form th:action="@{/assignDate/submit}" method="post" class="assign-form">
+                        <input type="hidden" name="taskId" th:value="${tarea.id}">
+                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+            
+                        <input type="date" name="fecha" required class="input-date">
+                        <button type="submit" class="btn-date">📅 Fecha</button>
+                    </form>
+                </div>
             </div>
 
             <div class="status-container">

@@ -144,7 +144,7 @@ public String listarRoommates(@PathVariable("id") Long id, Model model) {
             
           
             model.addAttribute("viviendaNombre", vivienda.getName()); 
-           
+           model.addAttribute("viviendaDescripcion", vivienda.getDescription());
             model.addAttribute("viviendaId", id); 
             
             return "detalleVivienda"; 
@@ -241,7 +241,40 @@ public String mostrarPantallaAsignar(Model model) {
    
     return "asignarTarea"; 
 }
+@PostMapping("/asignarTarea")
+    public String processAsignTarea(
+            @RequestParam(value = "tareaId", required = false) Long tareaId,
+            @RequestParam(value = "roommateId", required = false) Long roommateId,
+            Model model) {
 
+        // CM5-2: Validamos si faltan datos
+        if (tareaId == null || roommateId == null) {
+            model.addAttribute("errorAsignacion", "Los datos son obligatorios.");
+            model.addAttribute("tareas", tareaRepository.findAll());
+            model.addAttribute("roommates", roommateRepository.findAll());
+            return "asignarTarea"; 
+        }
+
+        // CM5-1: Si están los datos, asignamos
+        Optional<Tarea> tareaOpt = tareaRepository.findById(tareaId);
+        Optional<Roommate> roommateOpt = roommateRepository.findById(roommateId);
+
+        if (tareaOpt.isPresent() && roommateOpt.isPresent()) {
+            Tarea tarea = tareaOpt.get();
+            Roommate roommate = roommateOpt.get();
+            
+            // Si el método en tu entidad Tarea se llama diferente, cámbialo aquí
+            tarea.setAsignadoA(roommate); 
+            tareaRepository.save(tarea);
+            
+            return "redirect:/listar"; 
+        }
+
+        model.addAttribute("errorAsignacion", "La tarea o el roommate seleccionado no existe.");
+        model.addAttribute("tareas", tareaRepository.findAll());
+        model.addAttribute("roommates", roommateRepository.findAll());
+        return "asignarTarea";
+    }
   
     
 
@@ -271,21 +304,57 @@ public String mostrarPantallaAsignar(Model model) {
             RedirectAttributes redirectAttributes) {
 
         Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
+
         if (tareaOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMsg", "Error: La tarea seleccionada no existe.");
             return "redirect:/vivienda/" + viviendaId + "/listTareas";
         }
-
-        if (fecha == null || !fecha.isAfter(LocalDate.now())) {
-            redirectAttributes.addFlashAttribute("errorMsg", "La fecha indicada no es válida. Debe ser posterior al día de hoy.");
+        Tarea tarea = tareaOpt.get();
+        if (fecha == null) {
+            redirectAttributes.addFlashAttribute("errorMsg", "Formato de fecha no válido.");
             return "redirect:/vivienda/" + viviendaId + "/listTareas";
         }
 
-        Tarea tarea = tareaOpt.get();
+        if (!fecha.isAfter(LocalDate.now())) {
+            redirectAttributes.addFlashAttribute("errorMsg", "La fecha indicada no es válida. Debe ser posterior al día de hoy.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
+        if (Boolean.TRUE.equals(tarea.getCompletada())){
+            redirectAttributes.addFlashAttribute("errorMsg", "La tarea ya está completada.");
+            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        }
+
         tarea.setFechaRealizacion(fecha);
         tareaRepository.save(tarea);
 
         redirectAttributes.addFlashAttribute("successMsg", "Fecha asignada correctamente.");
         return "redirect:/vivienda/" + viviendaId + "/listTareas";
+    }
+    @PostMapping("/assignRoommate/submit")
+    public String assignRoommate(
+        @RequestParam(value = "roommateId", required = false) Long roommateId,
+        @RequestParam("taskId") Long taskId,
+        @RequestParam("viviendaId") Long viviendaId,
+        RedirectAttributes redirectAttributes) {
+
+    
+    if (roommateId == null) {
+        redirectAttributes.addFlashAttribute("errorMsg", "Error: Debe seleccionar un roommate para asignar la tarea.");
+        return "redirect:/vivienda/" + viviendaId + "/listTareas";
+    }
+
+    Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
+    Optional<Roommate> roommateOpt = roommateRepository.findById(roommateId);
+
+    if (tareaOpt.isPresent() && roommateOpt.isPresent()) {
+        Tarea tarea = tareaOpt.get();
+        tarea.setAsignadoA(roommateOpt.get());
+        tareaRepository.save(tarea);
+        redirectAttributes.addFlashAttribute("successMsg", "Responsable asignado correctamente.");
+    } else {
+        redirectAttributes.addFlashAttribute("errorMsg", "Error al procesar la asignación.");
+    }
+
+    return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
 }
