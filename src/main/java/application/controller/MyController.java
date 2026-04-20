@@ -241,7 +241,40 @@ public String mostrarPantallaAsignar(Model model) {
    
     return "asignarTarea"; 
 }
+@PostMapping("/asignarTarea")
+    public String processAsignTarea(
+            @RequestParam(value = "tareaId", required = false) Long tareaId,
+            @RequestParam(value = "roommateId", required = false) Long roommateId,
+            Model model) {
 
+        // CM5-2: Validamos si faltan datos
+        if (tareaId == null || roommateId == null) {
+            model.addAttribute("errorAsignacion", "Los datos son obligatorios.");
+            model.addAttribute("tareas", tareaRepository.findAll());
+            model.addAttribute("roommates", roommateRepository.findAll());
+            return "asignarTarea"; 
+        }
+
+        // CM5-1: Si están los datos, asignamos
+        Optional<Tarea> tareaOpt = tareaRepository.findById(tareaId);
+        Optional<Roommate> roommateOpt = roommateRepository.findById(roommateId);
+
+        if (tareaOpt.isPresent() && roommateOpt.isPresent()) {
+            Tarea tarea = tareaOpt.get();
+            Roommate roommate = roommateOpt.get();
+            
+            // Si el método en tu entidad Tarea se llama diferente, cámbialo aquí
+            tarea.setAsignadoA(roommate); 
+            tareaRepository.save(tarea);
+            
+            return "redirect:/listar"; 
+        }
+
+        model.addAttribute("errorAsignacion", "La tarea o el roommate seleccionado no existe.");
+        model.addAttribute("tareas", tareaRepository.findAll());
+        model.addAttribute("roommates", roommateRepository.findAll());
+        return "asignarTarea";
+    }
   
     
 
