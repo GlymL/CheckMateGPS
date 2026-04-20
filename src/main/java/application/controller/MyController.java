@@ -330,4 +330,24 @@ public String mostrarPantallaAsignar(Model model) {
             return "redirect:/listar";
         }
     }
+
+    @GetMapping("/tarea/{id}/descripcion")
+    public String verDescripcionTarea(@PathVariable("id") Long id, Model model) {
+        
+        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+
+        if (tareaOpt.isPresent()) {
+            Tarea tarea = tareaOpt.get();
+            
+            // Pasamos la tarea a la vista
+            model.addAttribute("tarea", tarea);
+            
+            // Pasamos también el ID de la vivienda para que el botón de "Volver" funcione
+            model.addAttribute("viviendaId", tarea.getVivienda().getId());
+            
+            return "descripcion"; 
+        } else {
+            return "redirect:/listar";
+        }
+    }
 }

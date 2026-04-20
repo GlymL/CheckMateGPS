@@ -102,6 +102,22 @@
             cursor: pointer;
             font-size: 0.85em;
         }
+        .btn-desc {
+            display: inline-block; 
+            background-color: #9b59d0; 
+            color: white; 
+            text-decoration: none; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 0.85em; 
+            font-weight: bold; 
+            margin-top: 8px; 
+            margin-bottom: 4px;
+            transition: 0.3s;
+        }
+        .btn-desc:hover {
+            background-color: #8449b8;
+        }
     </style>
 </head>
 <body>
@@ -120,8 +136,11 @@
             <div class="task-info">
                 <b th:text="${tarea.getName()}">Nombre de Tarea</b>
     
-                <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
-                <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
+                <div>
+                    <a th:href="@{'/tarea/' + ${tarea.id} + '/descripcion'}" class="btn-desc">
+                        👁️ Ver Descripción
+                    </a>
+                </div>
 
                 <div class="task-meta">
                     <span th:if="${tarea.asignadoA != null}">
