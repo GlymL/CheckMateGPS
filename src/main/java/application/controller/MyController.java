@@ -119,23 +119,23 @@ public class MyController {
         return "redirect:/vivienda/" + viviendaId;
     }
    @GetMapping("/vivienda/{id}/roommates")
-    public String listarRoommates(@PathVariable("id") Long id, Model model) {
-        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
-        
-        if (viviendaOpt.isPresent()) {
-            Vivienda vivienda = viviendaOpt.get();
-            model.addAttribute("vivienda", vivienda);
-            model.addAttribute("viviendaId", id);
-            model.addAttribute("viviendaNombre", vivienda.getName());
-            return "listRoommates"; // Nombre del nuevo HTML
-        }
-        
-        return "redirect:/listar";
-    } 
+public String listarRoommates(@PathVariable("id") Long id, Model model) {
+    Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+    
+    if (viviendaOpt.isPresent()) {
+        Vivienda vivienda = viviendaOpt.get();
+        model.addAttribute("vivienda", vivienda);
+        model.addAttribute("viviendaId", id);
+        model.addAttribute("viviendaNombre", vivienda.getName());
+        return "listRoommates"; // Nombre del nuevo HTML
+    }
+    
+    return "redirect:/listar";
+} 
 
     @GetMapping("/vivienda/{id}")
     public String verVivienda(@PathVariable("id") Long id, Model model) {       
-        // 1. Buscar la vivienda 
+  // 1. Buscar la vivienda 
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
         
         // 2. Comprobar si la vivienda existe
@@ -225,20 +225,58 @@ public class MyController {
         return "redirect:/vivienda/" + viviendaId + "/listTareas"; 
     }
 
-    @GetMapping("/asignarTarea")
-    public String mostrarPantallaAsignar(Model model) {
-        
+  
+  
+@GetMapping("/asignarTarea")
+public String mostrarPantallaAsignar(Model model) {
     
-        List<Tarea> listaTareas = tareaRepository.findAll(); 
-        List<Roommate> listaRoommates = roommateRepository.findAll();
-
-        
-        model.addAttribute("tareas", listaTareas);
-        model.addAttribute("roommates", listaRoommates);
+   
+    List<Tarea> listaTareas = tareaRepository.findAll(); 
+    List<Roommate> listaRoommates = roommateRepository.findAll();
 
     
-        return "asignarTarea"; 
+    model.addAttribute("tareas", listaTareas);
+    model.addAttribute("roommates", listaRoommates);
+
+   
+    return "asignarTarea"; 
+}
+@PostMapping("/asignarTarea")
+    public String processAsignTarea(
+            @RequestParam(value = "tareaId", required = false) Long tareaId,
+            @RequestParam(value = "roommateId", required = false) Long roommateId,
+            Model model) {
+
+        // CM5-2: Validamos si faltan datos
+        if (tareaId == null || roommateId == null) {
+            model.addAttribute("errorAsignacion", "Los datos son obligatorios.");
+            model.addAttribute("tareas", tareaRepository.findAll());
+            model.addAttribute("roommates", roommateRepository.findAll());
+            return "asignarTarea"; 
+        }
+
+        // CM5-1: Si están los datos, asignamos
+        Optional<Tarea> tareaOpt = tareaRepository.findById(tareaId);
+        Optional<Roommate> roommateOpt = roommateRepository.findById(roommateId);
+
+        if (tareaOpt.isPresent() && roommateOpt.isPresent()) {
+            Tarea tarea = tareaOpt.get();
+            Roommate roommate = roommateOpt.get();
+            
+            // Si el método en tu entidad Tarea se llama diferente, cámbialo aquí
+            tarea.setAsignadoA(roommate); 
+            tareaRepository.save(tarea);
+            
+            return "redirect:/listar"; 
+        }
+
+        model.addAttribute("errorAsignacion", "La tarea o el roommate seleccionado no existe.");
+        model.addAttribute("tareas", tareaRepository.findAll());
+        model.addAttribute("roommates", roommateRepository.findAll());
+        return "asignarTarea";
     }
+  
+    
 
     @GetMapping("/vivienda/{id}/listTareas")
     public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
@@ -298,30 +336,32 @@ public class MyController {
         @RequestParam("taskId") Long taskId,
         @RequestParam("viviendaId") Long viviendaId,
         RedirectAttributes redirectAttributes) {
-        if (roommateId == null) {
-            redirectAttributes.addFlashAttribute("errorMsg", "Error: Debe seleccionar un roommate para asignar la tarea.");
-            return "redirect:/vivienda/" + viviendaId + "/listTareas";
-        }
 
-        Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
-        Optional<Roommate> roommateOpt = roommateRepository.findById(roommateId);
-
-        if (tareaOpt.isPresent() && roommateOpt.isPresent()) {
-            Tarea tarea = tareaOpt.get();
-            tarea.setAsignadoA(roommateOpt.get());
-            tareaRepository.save(tarea);
-            redirectAttributes.addFlashAttribute("successMsg", "Responsable asignado correctamente.");
-        } else {
-            redirectAttributes.addFlashAttribute("errorMsg", "Error al procesar la asignación.");
-        }
-
+    
+    if (roommateId == null) {
+        redirectAttributes.addFlashAttribute("errorMsg", "Error: Debe seleccionar un roommate para asignar la tarea.");
         return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
-    //CM4   
+
+    Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
+    Optional<Roommate> roommateOpt = roommateRepository.findById(roommateId);
+
+    if (tareaOpt.isPresent() && roommateOpt.isPresent()) {
+        Tarea tarea = tareaOpt.get();
+        tarea.setAsignadoA(roommateOpt.get());
+        tareaRepository.save(tarea);
+        redirectAttributes.addFlashAttribute("successMsg", "Responsable asignado correctamente.");
+    } else {
+        redirectAttributes.addFlashAttribute("errorMsg", "Error al procesar la asignación.");
+    }
+
+    return "redirect:/vivienda/" + viviendaId + "/listTareas";
+    }
+    // CM4
     @PostMapping("/tareas/{id}/completar")
     public String completarTarea(
             @PathVariable("id") Long id,
-            @RequestParam("roommateId") Long roommateId,
+            @RequestParam(value = "roommateId", required = false) Long roommateId,
             RedirectAttributes redirectAttributes) {
 
         Optional<Tarea> tareaOpt = tareaRepository.findById(id);
@@ -334,24 +374,25 @@ public class MyController {
         Tarea tarea = tareaOpt.get();
         Long viviendaId = tarea.getVivienda().getId();
 
+        // CM4-2
         if (tarea.getCompletada()) {
             redirectAttributes.addFlashAttribute("error", "La tarea ya está realizada");
             return "redirect:/vivienda/" + viviendaId;
         }
 
+        // CM4-3
         if (tarea.getAsignadoA() == null) {
-            redirectAttributes.addFlashAttribute("error", "La tarea no tiene roommate asignado");
+            redirectAttributes.addFlashAttribute("warning", 
+                "La tarea no tiene roommate asignado. ¿Deseas marcarla igualmente?");
+
             return "redirect:/vivienda/" + viviendaId;
         }
 
-        if (!tarea.getAsignadoA().getId().equals(roommateId)) {
-            redirectAttributes.addFlashAttribute("error", "El roommate no coincide con el asignado");
-            return "redirect:/vivienda/" + viviendaId;
-        }
-
+        // CM4-1
         tarea.setCompletada(true);
         tareaRepository.save(tarea);
 
+        redirectAttributes.addFlashAttribute("success", "Tarea completada correctamente");
         return "redirect:/vivienda/" + viviendaId;
     }
 }
