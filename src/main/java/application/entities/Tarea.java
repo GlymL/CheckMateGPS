@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDate;
 @Entity
 public class Tarea {
 
@@ -19,6 +20,8 @@ public class Tarea {
     //fallaba aquí, faltaba la columna completada y por eso no guardaba en la bbdd
     @Column(name = "completada", nullable = false)
    private Boolean completada = false;
+
+    private LocalDate fechaRealizacion;
 
     @ManyToOne
     @JoinColumn(name = "vivienda_id")
@@ -78,5 +81,13 @@ public class Tarea {
 
     public void setAsignadoA(Roommate asignadoA) {
         this.asignadoA = asignadoA;
+    }
+
+    public LocalDate getFechaRealizacion() { 
+        return fechaRealizacion; 
+    }
+    
+    public void setFechaRealizacion(LocalDate fechaRealizacion) { 
+        this.fechaRealizacion = fechaRealizacion; 
     }
 }

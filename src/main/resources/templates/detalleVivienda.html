@@ -7,11 +7,22 @@
     <style>
         .info-box {
             background: #fff;
-            padding: 20px;
+            padding: 12px 20px; 
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 10px; 
             border: 1px solid #eee;
         }
+
+
+        .vivienda-desc {
+            font-size: 0.9em;
+            color: #777;
+            font-style: italic;
+            margin: 8px 0 0 0;
+            padding-top: 8px;
+            border-top: 1px dotted #ddd; 
+        }
+        
         .btn-action {
             display: inline-block;
             color: white;
@@ -72,12 +83,39 @@
     <h1>Vivienda <span th:text="${viviendaNombre}"></span></h1>
     
     <div class="info-box">
-        <p>Panel de gestión de tu vivienda.</p>
+    <p style="margin: 0; font-weight: bold; color: #555;">Panel de Gestión</p>
+    
+    <p th:if="${viviendaDescripcion != null and !viviendaDescripcion.isEmpty()}" 
+       th:text="${viviendaDescripcion}"
+       class="vivienda-desc">
+    </p>
     </div>
 
     <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-action btn-purple">
         ➕ Añadir Nueva Tarea
     </a>
+    <h2>Tareas</h2>
+
+    <div th:each="tarea : ${tareas}" class="info-box">
+
+        <p><b th:text="${tarea.nombre}"></b></p>
+        <p th:text="${tarea.descripcion}"></p>
+
+        <p>
+            Estado:
+            <span th:text="${tarea.completada} ? 'Completada' : 'Pendiente'"></span>
+        </p>
+
+        <form th:if="${!tarea.completada}"
+            th:action="@{/tareas/{id}/completar(id=${tarea.id})}"
+            method="post">
+
+            <input type="hidden" name="roommateId" value="1">
+
+            <button type="submit">✔ Marcar como hecha</button>
+        </form>
+
+    </div>
 
     <a th:href="@{/vivienda/{id}/listTareas(id=${viviendaId})}" class="btn-action btn-purple">
         📋 Ver Tareas de la Vivienda
@@ -88,17 +126,14 @@
     <a th:href="@{/vivienda/{id}/roommates(id=${viviendaId})}" class="btn-action btn-blue">
     👥 Ver Roommates de la Vivienda
     </a>
-    <a th:href="@{/asignarTarea}" class="btn-action btn-green">
-        🤝 Asignar Tarea a Roommate
-    </a>
+    
     
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-    
+
     <a th:href="@{/listar}" class="btn-back">
         Volver al listado de viviendas
     </a>
 
 </div>
-
 </body>
 </html>

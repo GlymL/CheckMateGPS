@@ -57,7 +57,7 @@ class RoommateIntegrationTest {
         vivienda.setName("CasaTest");
         viviendaRepository.save(vivienda);
 
-        Roommate existente = new Roommate("user", "Maria", vivienda);
+        Roommate existente = new Roommate("Maria", vivienda);
         roommateRepository.save(existente);
 
         mockMvc.perform(post("/add-roommate")

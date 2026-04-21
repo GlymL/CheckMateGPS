@@ -6,130 +6,201 @@
     <link rel="stylesheet" href="/css/style.css">
     <style>
         .task-box {
-            background: #f9f9f9;
-            border: 1px solid #eee;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            position: relative;
+            display: block;
             text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
+
         .task-info b {
-            font-size: 1.1em;
-            color: #333;
+            font-size: 1.25em;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 6px;
+            padding-right: 90px;
         }
+
         .task-info p {
-            margin: 5px 0 0 0;
-            font-size: 0.9em;
-            color: #666;
+            margin: 0 0 12px 0;
+            font-size: 0.95em;
+            color: #7f8c8d;
+            line-height: 1.5;
         }
+
         .task-meta {
-            margin-top: 10px;
             font-size: 0.85em;
-            color: #555;
-            background: #fff;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px dashed #ccc;
+            color: #444;
+            background: #f4f6f8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #e1e4e8;
             display: inline-block;
+            margin-bottom: 5px;
         }
+
         .status-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             text-align: right;
-            min-width: 100px;
         }
-      
+
         .badge-pendiente {
             background: #e67e22; 
             color: white;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
             font-weight: bold;
-            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(230, 126, 34, 0.3);
         }
+
         .badge-completada {
             background: #2ecc71; 
             color: white;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
             font-weight: bold;
-            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        .date-assign-form {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-date {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .btn-date {
+            width: auto; 
+            white-space: nowrap;
+            background: #9b59d0;
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-date:hover {
+            background: #8449b8;
+            transform: translateY(-1px);
+        }
+
         .scroll-container {
-            max-height: 350px; 
+            max-height: 380px; 
             overflow-y: auto;  
             padding-right: 10px; 
             margin-bottom: 20px;
         }
 
-       
-        .scroll-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scroll-container::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 10px;
-        }
-        .scroll-container::-webkit-scrollbar-thumb {
-            background: #c1c1c1; 
-            border-radius: 10px;
-        }
-        .scroll-container::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8; 
-        }
+        .scroll-container::-webkit-scrollbar { width: 6px; }
+        .scroll-container::-webkit-scrollbar-track { background: transparent; }
+        .scroll-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+        .scroll-container::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
     </style>
 </head>
 <body>
 
-<div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
+    <div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
     
-    <h2>Tareas de la Vivienda 📋</h2>
-    <p style="color: #666; margin-bottom: 20px;">Todas las tareas creadas para esta casa.</p>
-<div class="scroll-container">
-    <div th:each="tarea : ${vivienda.tareas}" class="task-box">
-        
-        <div class="task-info">
-            <b th:text="${tarea.getName()}">Nombre de Tarea</b>
-            
-            <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
-            <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
+        <h2>Tareas de la Vivienda 📋</h2>
+        <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px;">Todas las tareas creadas para esta casa.</p>
 
-            <div class="task-meta">
-                <span th:if="${tarea.asignadoA != null}">
-                    👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
-                </span>
-                <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
-                    ⚠️ Sin asignar
-                </span>
-            </div>
+        <div th:if="${errorMsg}" style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9em;">
+            ⚠️ <span th:text="${errorMsg}"></span>
         </div>
+    <div class="scroll-container">
+        <div th:each="tarea : ${vivienda.tareas}" class="task-box">
+        
+            <div class="task-info">
+                <b th:text="${tarea.getName()}">Nombre de Tarea</b>
 
-        <div class="status-container">
+                <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
+                <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
+
+                <div class="task-meta">
+                    <span th:if="${tarea.asignadoA != null}">
+                        👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
+                    </span>
+                    <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
+                        ⚠️ Sin asignar
+                    </span>
+
+                    <div th:if="${tarea.fechaRealizacion != null}" style="margin-top: 5px; color: #2980b9;">
+                        📅 Fecha: <strong th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></strong>
+                    </div>
+                </div>
+
+                <div th:if="${!tarea.completada}" class="management-container">
+                    
+                    <form th:action="@{/assignRoommate/submit}" method="post" class="assign-form">
+                        <input type="hidden" name="taskId" th:value="${tarea.id}">
+                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                        
+                        <select name="roommateId" required class="select-roommate">
+                            <option value="" disabled selected>👤 Responsable...</option>
+                            <option th:each="rm : ${roommates}" 
+                                    th:value="${rm.id}" 
+                                    th:text="${rm.nombreReal}"></option>
+                        </select>
+                        <button type="submit" class="btn-date" style="background: #3498db;">Asignar</button>
+                    </form>
+
+                    <form th:action="@{/assignDate/submit}" method="post" class="assign-form">
+                        <input type="hidden" name="taskId" th:value="${tarea.id}">
+                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
             
-            <span th:if="${!tarea.completada}" class="badge-pendiente">Pendiente</span>
-            
-            <div th:if="${tarea.completada}">
-                <span class="badge-completada">Completada</span>
-                
-                <div th:if="${tarea.asignadoA != null}" style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">
-                    por <span th:text="${tarea.asignadoA.nombreReal}"></span>
+                        <input type="date" name="fecha" required class="input-date">
+                        <button type="submit" class="btn-date">📅 Fecha</button>
+                    </form>
                 </div>
             </div>
+
+            <div class="status-container">
             
+                <span th:if="${!tarea.completada}" class="badge-pendiente">Pendiente</span>
+            
+                <div th:if="${tarea.completada}">
+                    <span class="badge-completada">Completada</span>
+                
+                    <div th:if="${tarea.asignadoA != null}" style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">
+                        por <span th:text="${tarea.asignadoA.nombreReal}"></span>
+                    </div>
+                </div>
+            
+            </div>
         </div>
     </div>
-</div>
-    <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="color: #888; padding: 20px;">
-        Aún no hay tareas creadas en esta casa. ¡Añade la primera!
-    </div>
+        <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="color: #888; padding: 20px;">
+            Aún no hay tareas creadas en esta casa. ¡Añade la primera!
+        </div>
 
-    <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top: 15px;">
-        Volver al Panel
-    </button>
-</div>
+        <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top: 15px;">
+            Volver al Panel
+        </button>
+    </div>
 
 </body>
 </html>
