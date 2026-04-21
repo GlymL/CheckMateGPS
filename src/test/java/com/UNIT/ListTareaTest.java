@@ -271,4 +271,4 @@ class ListTareasUnitTest {
         assertThat(tareas.get(0).getAsignadoA()).isNotNull();
         assertThat(tareas.get(1).getAsignadoA()).isNull();
     }
-}
+} 
