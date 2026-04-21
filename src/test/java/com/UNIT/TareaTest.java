@@ -46,8 +46,10 @@ class TareaTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
+    // CT1-1: Test exitoso - guardar tarea con datos válidos
     @Test
     void guardarTarea_createCorrectly() throws Exception {
+        
         Vivienda vivienda = new Vivienda();
         vivienda.setId(1L);
         vivienda.setName("Casa1");
@@ -55,127 +57,205 @@ class TareaTest {
         when(viviendaRepository.findById(1L))
                 .thenReturn(Optional.of(vivienda));
 
+        
         MvcResult result = mockMvc.perform(post("/guardarTarea")
                 .param("name", "Limpiar cocina")
                 .param("descripcion", "Limpiar los fogones y la encimera")
-                .param("viviendaId", "1"))
+                .param("vivienda.id", "1"))
                 .andReturn();
 
+        
         assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl())
-                .isEqualTo("/vivienda/1/listTareas");
-
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
         verify(tareaRepository).save(any(Tarea.class));
     }
 
+    // CT1-2: Test error - nombre vacío
     @Test
     void guardarTarea_emptyNameError() throws Exception {
+        
         Vivienda vivienda = new Vivienda();
         vivienda.setId(1L);
+        vivienda.setName("Casa1");
 
         when(viviendaRepository.findById(1L))
                 .thenReturn(Optional.of(vivienda));
 
+        
         MvcResult result = mockMvc.perform(post("/guardarTarea")
                 .param("name", "")
                 .param("descripcion", "Descripción válida")
-                .param("viviendaId", "1"))
+                .param("vivienda.id", "1"))
                 .andReturn();
 
+        
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         assertThat(result.getModelAndView().getViewName()).isEqualTo("crearTarea");
-
+        assertThat(result.getModelAndView().getModel().get("error"))
+                .isEqualTo("No se han rellenado todos los campos obligatorios.");
         verify(tareaRepository, never()).save(any(Tarea.class));
     }
 
+    // CT1-3: Test error - formato de nombre inválido
     @Test
     void guardarTarea_invalidNameFormatError() throws Exception {
+        
         Vivienda vivienda = new Vivienda();
         vivienda.setId(1L);
+        vivienda.setName("Casa1");
 
         when(viviendaRepository.findById(1L))
                 .thenReturn(Optional.of(vivienda));
 
+        
         MvcResult result = mockMvc.perform(post("/guardarTarea")
                 .param("name", "Tarea@#$%")
                 .param("descripcion", "Descripción válida")
-                .param("viviendaId", "1"))
+                .param("vivienda.id", "1"))
                 .andReturn();
 
+        
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         assertThat(result.getModelAndView().getViewName()).isEqualTo("crearTarea");
-
+        assertThat(result.getModelAndView().getModel().get("error"))
+                .isEqualTo("El formato del nombre no es válido.");
         verify(tareaRepository, never()).save(any(Tarea.class));
     }
 
+    // CT1-4: Test error - formato de descripción inválido
     @Test
     void guardarTarea_invalidDescriptionFormatError() throws Exception {
+        
         Vivienda vivienda = new Vivienda();
         vivienda.setId(1L);
+        vivienda.setName("Casa1");
 
         when(viviendaRepository.findById(1L))
                 .thenReturn(Optional.of(vivienda));
 
+        
         MvcResult result = mockMvc.perform(post("/guardarTarea")
                 .param("name", "Limpiar cocina")
-                .param("descripcion", "Descripción @#$%")
-                .param("viviendaId", "1"))
+                .param("descripcion", "Descripción con caracteres ilegales @#$%")
+                .param("vivienda.id", "1"))
                 .andReturn();
 
+        
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         assertThat(result.getModelAndView().getViewName()).isEqualTo("crearTarea");
-
+        assertThat(result.getModelAndView().getModel().get("error"))
+                .isEqualTo("El formato de la descripción no es válido.");
         verify(tareaRepository, never()).save(any(Tarea.class));
     }
 
+    // CT1-5: Test error - vivienda no existe
     @Test
     void guardarTarea_viviendaNotFoundError() throws Exception {
+        
         when(viviendaRepository.findById(99L))
                 .thenReturn(Optional.empty());
 
+        
         MvcResult result = mockMvc.perform(post("/guardarTarea")
                 .param("name", "Limpiar cocina")
                 .param("descripcion", "Limpiar los fogones")
-                .param("viviendaId", "99"))
+                .param("vivienda.id", "99"))
                 .andReturn();
 
-        assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
-
-        verify(tareaRepository, never()).save(any());
+        
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        assertThat(result.getModelAndView().getViewName()).isEqualTo("crearTarea");
+        assertThat(result.getModelAndView().getModel().get("error"))
+                .isEqualTo("Vivienda no encontrada.");
+        verify(tareaRepository, never()).save(any(Tarea.class));
     }
 
+    // CT1-6: Test - descripción opcional (vacía)
     @Test
-    void completarTarea_success() throws Exception {
+    void guardarTarea_withoutDescriptionSuccess() throws Exception {
+        
         Vivienda vivienda = new Vivienda();
         vivienda.setId(1L);
+        vivienda.setName("Casa1");
 
-        Tarea tarea = new Tarea();
-        tarea.setId(1L);
-        tarea.setCompletada(false);
-        tarea.setVivienda(vivienda);
+        when(viviendaRepository.findById(1L))
+                .thenReturn(Optional.of(vivienda));
 
-        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
-
-        MvcResult result = mockMvc.perform(post("/tareas/1/completar")
-                .param("roommateId", "1"))
+        
+        MvcResult result = mockMvc.perform(post("/guardarTarea")
+                .param("name", "Limpiar cocina")
+                .param("vivienda.id", "1"))
                 .andReturn();
 
+        
         assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl())
-                .isEqualTo("/vivienda/1");
-
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
         verify(tareaRepository).save(any(Tarea.class));
     }
 
+    
+    @Test
+    void guardarTarea_descriptionWithValidPunctuationSuccess() throws Exception {
+        
+        Vivienda vivienda = new Vivienda();
+        vivienda.setId(1L);
+        vivienda.setName("Casa1");
+
+        when(viviendaRepository.findById(1L))
+                .thenReturn(Optional.of(vivienda));
+
+        
+        MvcResult result = mockMvc.perform(post("/guardarTarea")
+                .param("name", "Hacer compras")
+                .param("descripcion", "Comprar leche, pan y huevos. No olvidar el queso!")
+                .param("vivienda.id", "1"))
+                .andReturn();
+
+        
+        assertThat(result.getResponse().getStatus()).isEqualTo(302);
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
+        verify(tareaRepository).save(any(Tarea.class));
+    }
+
+
+    @Test
+    void completarTarea_success() throws Exception {
+    // Arrange
+    Vivienda vivienda = new Vivienda();
+    vivienda.setId(1L);
+    vivienda.setName("Casa1");
+    
+    Tarea tarea = new Tarea();
+    tarea.setId(1L);
+    tarea.setName("Limpiar cocina");
+    tarea.setCompletada(false);
+    tarea.setVivienda(vivienda);
+    
+    when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+    when(tareaRepository.save(any(Tarea.class))).thenReturn(tarea);
+    
+    // Act
+    MvcResult result = mockMvc.perform(post("/tareas/1/completar"))
+            .andReturn();
+    
+    // Assert
+    assertThat(result.getResponse().getStatus()).isEqualTo(302);
+    assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/listar");
+    verify(tareaRepository).findById(1L);
+    verify(tareaRepository).save(any(Tarea.class));
+        }
+
+        // CM7-2: Asignación correcta con fecha futura
     @Test
     void unitTest_assignDate_ok() throws Exception {
         Tarea tarea = new Tarea();
         tarea.setId(1L);
-
+        
+        // Simulamos que la tarea existe en la BD
         when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
-
-        String fechaFutura = LocalDate.now().plusDays(1).toString();
+        
+        // Creamos una fecha válida (mañana)
+        String fechaFutura = LocalDate.now().plusDays(1).toString(); 
 
         mockMvc.perform(post("/assignDate/submit")
                 .param("fecha", fechaFutura)
@@ -185,16 +265,18 @@ class TareaTest {
                 .andExpect(flash().attribute("successMsg", "Fecha asignada correctamente."))
                 .andExpect(redirectedUrl("/vivienda/10/listTareas"));
 
+        // Verificamos que el controlador llamó al save() para actualizar la base de datos
         verify(tareaRepository).save(tarea);
     }
 
+    // CM7-3: Error al intentar asignar una fecha pasada
     @Test
     void unitTest_assignDate_fechaPasada_error() throws Exception {
         Tarea tarea = new Tarea();
         tarea.setId(1L);
-
         when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
 
+        // Creamos una fecha no válida (ayer)
         String fechaAyer = LocalDate.now().minusDays(1).toString();
 
         mockMvc.perform(post("/assignDate/submit")
@@ -205,11 +287,14 @@ class TareaTest {
                 .andExpect(flash().attributeExists("errorMsg"))
                 .andExpect(redirectedUrl("/vivienda/10/listTareas"));
 
+        // Verificamos que NUNCA se llegó a guardar en la base de datos
         verify(tareaRepository, never()).save(any());
     }
 
+    // CM7-1 / Manejo de errores: La tarea no existe
     @Test
     void unitTest_assignDate_tareaNoExiste_error() throws Exception {
+        // Simulamos que la BD devuelve vacío
         when(tareaRepository.findById(99L)).thenReturn(Optional.empty());
 
         String fechaFutura = LocalDate.now().plusDays(5).toString();
@@ -222,6 +307,7 @@ class TareaTest {
                 .andExpect(flash().attribute("errorMsg", "Error: La tarea seleccionada no existe."))
                 .andExpect(redirectedUrl("/vivienda/10/listTareas"));
 
+        // Verificamos que no se guarda nada
         verify(tareaRepository, never()).save(any());
     }
 }
