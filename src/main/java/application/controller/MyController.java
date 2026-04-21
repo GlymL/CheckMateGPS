@@ -357,4 +357,42 @@ public String mostrarPantallaAsignar(Model model) {
 
     return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
+    // CM4
+    @PostMapping("/tareas/{id}/completar")
+    public String completarTarea(
+            @PathVariable("id") Long id,
+            @RequestParam(value = "roommateId", required = false) Long roommateId,
+            RedirectAttributes redirectAttributes) {
+
+        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+
+        if (tareaOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Tarea no encontrada");
+            return "redirect:/listar";
+        }
+
+        Tarea tarea = tareaOpt.get();
+        Long viviendaId = tarea.getVivienda().getId();
+
+        // CM4-2
+        if (tarea.getCompletada()) {
+            redirectAttributes.addFlashAttribute("error", "La tarea ya está realizada");
+            return "redirect:/vivienda/" + viviendaId;
+        }
+
+        // CM4-3
+        if (tarea.getAsignadoA() == null) {
+            redirectAttributes.addFlashAttribute("warning", 
+                "La tarea no tiene roommate asignado. ¿Deseas marcarla igualmente?");
+
+            return "redirect:/vivienda/" + viviendaId;
+        }
+
+        // CM4-1
+        tarea.setCompletada(true);
+        tareaRepository.save(tarea);
+
+        redirectAttributes.addFlashAttribute("success", "Tarea completada correctamente");
+        return "redirect:/vivienda/" + viviendaId;
+    }
 }

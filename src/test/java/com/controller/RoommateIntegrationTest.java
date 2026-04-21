@@ -43,7 +43,7 @@ class RoommateIntegrationTest {
         mockMvc.perform(post("/add-roommate")
                 .param("nombreVivienda", "CasaTest")
                 .param("nombreUsuario", "ana123")
-                .param("nombre", "Ana"))
+                .param("name", "Ana"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/listar"));
@@ -63,7 +63,7 @@ class RoommateIntegrationTest {
         mockMvc.perform(post("/add-roommate")
                 .param("nombreVivienda", "CasaTest")
                 .param("nombreUsuario", "user2")
-                .param("nombre", "Maria"))
+                .param("name", "Maria"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/add-roommate"));
@@ -76,7 +76,7 @@ class RoommateIntegrationTest {
         mockMvc.perform(post("/add-roommate")
                 .param("nombreVivienda", "CasaInexistente")
                 .param("nombreUsuario", "user333")
-                .param("nombre", "Ana"))
+                .param("name", "Ana"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/add-roommate"));
