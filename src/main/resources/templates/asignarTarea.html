@@ -26,7 +26,7 @@
                 <option value="" disabled selected>-- Elige una tarea pendiente --</option>
                 <option th:each="tarea : ${tareas}" 
                         th:value="${tarea.id}" 
-                        th:text="${tarea.nombre}"></option>
+                        th:text="${tarea.name}"></option>
             </select>
         </div>
 

@@ -27,12 +27,10 @@ public class TareaService {
         if (tarea.getAsignadoA() == null) {
             throw new RuntimeException("La tarea no está asignada a ningún roommate");
         }
-
-        Roommate roommate = roommateRepository.findById(roommateId)
+        roommateRepository.findById(roommateId)
             .orElseThrow(() -> new RuntimeException("Roommate no encontrado"));
 
         tarea.setCompletada(true);
-        tarea.setAsignadoA(roommate);
 
         return tareaRepository.save(tarea);
     }
