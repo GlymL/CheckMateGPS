@@ -58,7 +58,7 @@ public class AsignarTareaIntegrationTest {
         tareaGuardada = tareaRepository.save(nuevaTarea);
 
      
-        Roommate nuevoRoommate = new Roommate("jperez", "Juan Perez", viviendaGuardada);
+        Roommate nuevoRoommate = new Roommate("Juan Perez", viviendaGuardada);
         roommateGuardado = roommateRepository.save(nuevoRoommate);
     }
 
