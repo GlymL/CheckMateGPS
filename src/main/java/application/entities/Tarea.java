@@ -19,7 +19,7 @@ public class Tarea {
     private String descripcion;
     //fallaba aquí, faltaba la columna completada y por eso no guardaba en la bbdd
     @Column(name = "completada", nullable = false)
-   private Boolean completada = false;
+    private boolean completada = false;
 
     private LocalDate fechaRealizacion;
 
@@ -67,11 +67,11 @@ public class Tarea {
     public void setVivienda(Vivienda vivienda) {
         this.vivienda = vivienda;
     }
-    public Boolean getCompletada() {
+    public boolean getCompletada() {
       return this.completada;
     }
 
-    public void setCompletada(Boolean completada) {
+    public void setCompletada(boolean completada) {
         this.completada = completada;
     }
 
