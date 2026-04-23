@@ -52,6 +52,6 @@ public class Roommate {
     }
     public String getNombreReal() { return nombreReal; }
     public Vivienda getVivienda() { return vivienda; }
-   // public String getNombreUsuario() { return nombreUsuario;}
+   
 
 }
