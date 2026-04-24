@@ -54,44 +54,45 @@ public class MyController {
     }
 
     @PostMapping("/submit")
-    public String submitHouse(
+        public String submitHouse(
         @RequestParam String houseName,
         @RequestParam String description,
         @RequestParam MultipartFile image,
         RedirectAttributes redirectAttributes) {
 
-    try {
-        Vivienda nuevaVivienda = new Vivienda(houseName, description);
+        try {
+            Vivienda nuevaVivienda = new Vivienda(houseName, description);
 
-        // 1. Validar si hay imagen
-        if (image != null && !image.isEmpty()) {
-            // 2. Validar formato (Criterio CM1-2)
-            String type = image.getContentType();
+            if (image != null && !image.isEmpty()) {
+                String type = image.getContentType();
+        
+        
             if (type == null || (!type.equals("image/jpeg") && !type.equals("image/png"))) {
-                throw new IllegalArgumentException("Formato de imagen no válido");
+                redirectAttributes.addFlashAttribute("errorMessage", "Formato de imagen no válido. Solo se admiten archivos .png o .jpeg.");
+                redirectAttributes.addFlashAttribute("openModal", true);
+                return "redirect:/"; // Cortamos aquí y volvemos a casa con el mensaje
             }
 
-            // 3. Validar tamaño
             if (image.getSize() > 2 * 1024 * 1024) {
-                throw new IllegalArgumentException("La imagen es demasiado grande (máx 2MB).");
+                redirectAttributes.addFlashAttribute("errorMessage", "La imagen es demasiado grande (máx 2MB).");
+                redirectAttributes.addFlashAttribute("openModal", true);
+            return "redirect:/";
             }
 
-            // 4. Guardar bytes una vez validado todo
             nuevaVivienda.setImage(image.getBytes());
         }
 
         viviendaRepository.save(nuevaVivienda);
         return "redirect:/result";
 
-    } catch (IllegalArgumentException e) {
-        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-        return "redirect:/";
     } catch (Exception e) {
-        redirectAttributes.addFlashAttribute("errorMessage",
-                "El nombre de una vivienda no puede existir ya, por favor, introduzca uno nuevo.");
+    
+        redirectAttributes.addFlashAttribute("errorMessage", "El nombre de una vivienda no puede existir ya.");
+        redirectAttributes.addFlashAttribute("openModal", true);
         return "redirect:/";
     }
 }
+
 
     @GetMapping("/result")
     public String resultPage() {
