@@ -6,57 +6,91 @@
     <link rel="stylesheet" href="/css/style.css">
     <style>
         body {
-            background-color: #f5f5f5;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #2a1a6e 0%, #7b2f9e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: -1;
+        }
+        body::before {
+            width: 500px;
+            height: 500px;
+            background: #e060a0;
+            top: -150px;
+            right: -100px;
+        }
+        body::after {
+            width: 400px;
+            height: 400px;
+            background: #4040cc;
+            bottom: -120px;
+            left: -80px;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0;
         }
 
         .vivienda-header {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 20px 60px rgba(0, 0, 0, 0.35);
             text-align: center;
         }
 
         .vivienda-header h1 {
             margin: 0 0 10px 0;
-            color: #333;
+            color: white;
             font-size: 2.5em;
+            font-weight: 700;
         }
 
         .vivienda-desc {
-            color: #666;
+            color: rgba(255, 255, 255, 0.65);
             font-size: 1.1em;
             margin: 10px 0 0 0;
         }
 
         .tabs-container {
-            background: white;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 20px 60px rgba(0, 0, 0, 0.35);
         }
 
         .tabs-header {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 0;
-            background: white;
-            border-bottom: 2px solid #eee;
+            background: transparent;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .tab-btn {
             padding: 18px 20px;
             border: none;
-            background: white;
-            color: #666;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
@@ -67,18 +101,18 @@
         }
 
         .tab-btn:hover {
-            background-color: #f9f9f9;
-            color: #333;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .tab-btn.active {
-            color: #9b59d0;
-            border-bottom-color: #9b59d0;
+            color: #e060a0;
+            border-bottom-color: #e060a0;
         }
 
         .tab-content {
             padding: 25px;
             display: none;
+            color: white;
         }
 
         .tab-content.active {
@@ -103,13 +137,19 @@
 
         .content-item {
             padding: 15px;
-            background: #f9f9f9;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
             margin-bottom: 12px;
-            border-left: 4px solid #9b59d0;
+            border-left: 4px solid #e060a0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .content-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
         }
 
         .content-item:last-child {
@@ -122,12 +162,12 @@
 
         .item-name {
             font-weight: bold;
-            color: #333;
+            color: white;
             margin-bottom: 4px;
         }
 
         .item-desc {
-            color: #999;
+            color: rgba(255, 255, 255, 0.65);
             font-size: 0.9em;
         }
 
@@ -140,40 +180,43 @@
         }
 
         .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
+            background-color: rgba(255, 193, 7, 0.3);
+            color: #ffd54f;
+            border: 1px solid rgba(255, 193, 7, 0.5);
         }
 
         .status-completed {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: rgba(76, 175, 80, 0.3);
+            color: #81c784;
+            border: 1px solid rgba(76, 175, 80, 0.5);
         }
 
         .empty-state {
             text-align: center;
-            color: #999;
+            color: rgba(255, 255, 255, 0.65);
             padding: 40px 20px;
             font-style: italic;
         }
 
         .btn-add-new {
             display: inline-block;
-            background-color: #9b59d0;
+            background: linear-gradient(135deg, #e060a0 0%, #9b59d0 100%);
             color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
+            padding: 12px 28px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: bold;
             font-size: 0.95em;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
             margin-top: 15px;
+            box-shadow: 0 8px 24px rgba(224, 96, 160, 0.4);
         }
 
         .btn-add-new:hover {
-            background-color: #8449b8;
             transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(224, 96, 160, 0.6);
         }
 
         .footer {
@@ -183,21 +226,22 @@
 
         .btn-back {
             display: inline-block;
-            background-color: #da6ac7;
+            background: linear-gradient(135deg, #9b59d0 0%, #6b3fa0 100%);
             color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
+            padding: 12px 28px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: bold;
             font-size: 0.95em;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            box-shadow: 0 8px 24px rgba(155, 89, 208, 0.4);
         }
 
         .btn-back:hover {
-            background-color: #e983d8;
             transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(155, 89, 208, 0.6);
         }
     </style>
 </head>
@@ -243,7 +287,7 @@
                 <div class="empty-state">
                     No hay roommates registrados
                 </div>
-                <div style="text-align: center;">
+                <div style="text-align: center; padding: 20px 0;">
                     <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new">
                         Añadir Roommate
                     </a>
@@ -273,7 +317,7 @@
                 <div class="empty-state">
                     No hay tareas registradas
                 </div>
-                <div style="text-align: center;">
+                <div style="text-align: center; padding: 20px 0;">
                     <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">
                         Añadir Tarea
                     </a>
@@ -283,15 +327,15 @@
 
         <div id="vivienda" class="tab-content">
             <div style="padding: 20px; text-align: center;">
-                <p style="color: #999; margin: 0;">
+                <p style="color: rgba(255, 255, 255, 0.65); margin: 0;">
                     Información de la vivienda
                 </p>
-                <p style="color: #666; font-size: 1.1em; margin: 10px 0 20px 0;">
+                <p style="color: white; font-size: 1.1em; margin: 10px 0 20px 0;">
                     <strong th:text="${viviendaNombre}"></strong>
                 </p>
                 <p th:if="${viviendaDescripcion != null and !viviendaDescripcion.isEmpty()}" 
                    th:text="${viviendaDescripcion}"
-                   style="color: #666; margin: 10px 0;">
+                   style="color: rgba(255, 255, 255, 0.65); margin: 10px 0;">
                 </p>
             </div>
         </div>
