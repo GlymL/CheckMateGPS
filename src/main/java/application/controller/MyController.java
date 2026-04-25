@@ -358,7 +358,7 @@ public String mostrarPantallaAsignar(Model model) {
     return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
 
-   @GetMapping("/vivienda/{id}/calendario")
+@GetMapping("/vivienda/{id}/calendario")
 public String mostrarCalendario(@PathVariable("id") Long id, 
                                 @RequestParam(value = "tareaId", required = false) Long tareaId, 
                                 Model model) {

@@ -254,8 +254,8 @@ body {
     </div>
 
     <div class="top-nav">
-        <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="nav-btn">Add Roommate</a>
-        <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="nav-btn">Añadir Tarea</a>
+        <a th:href="@{/vivienda/{id}/roommates(id=${viviendaId})}" class="nav-btn">Roommates</a>
+        <a th:href="@{/vivienda/{id}/listTareas(id=${viviendaId})}" class="nav-btn">Tareas</a>
         <a href="#" class="nav-btn active">Calendario</a>
     </div>
 
@@ -296,7 +296,7 @@ body {
             </select>
             
             <div style="display: flex; gap: 10px;">
-                <button onclick="confirmarAsignacion()" style="flex: 1; background: #22c55e; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Confirmar</button>
+                <button onclick="confirmarAsignacion()" style="flex: 1; background: #22c55e; color: white; border: none; padding: 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">Confirmar</button>
                 <button onclick="cerrarModal()" style="flex: 1; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Cerrar</button>
             </div>
         </div>
