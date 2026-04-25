@@ -1,10 +1,7 @@
-application\controller\MyController.class
+application\Application.class
+application\exceptions\Existing.class
+application\entities\Roommate.class
 application\entities\Tarea.class
 application\repositories\RoommateRepository.class
 application\repositories\ViviendaRepository.class
-application\Application.class
-application\exceptions\Existing.class
-application\repositories\TareaRepository.class
-application\entities\Roommate.class
-application\repositories\TareaService.class
 application\entities\Vivienda.class

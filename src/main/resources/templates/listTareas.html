@@ -168,13 +168,10 @@
                         <button type="submit" class="btn-date" style="background: #3498db;">Asignar</button>
                     </form>
 
-                    <form th:action="@{/assignDate/submit}" method="post" class="assign-form">
-                        <input type="hidden" name="taskId" th:value="${tarea.id}">
-                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
-            
-                        <input type="date" name="fecha" required class="input-date">
-                        <button type="submit" class="btn-date">📅 Fecha</button>
-                    </form>
+                    <button type="button" class="btn-date" 
+                            th:onclick="|window.location.href='/vivienda/' + ${viviendaId} + '/calendario?tareaId=' + ${tarea.id}|">
+                        📅 Abrir Calendario
+                    </button>
                 </div>
             </div>
 

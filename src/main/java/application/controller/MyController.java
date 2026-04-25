@@ -1,15 +1,18 @@
 package application.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -19,9 +22,6 @@ import application.entities.Vivienda;
 import application.repositories.RoommateRepository;
 import application.repositories.TareaRepository;
 import application.repositories.ViviendaRepository;
-
-import java.time.LocalDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Controller
 public class MyController {
@@ -357,4 +357,65 @@ public String mostrarPantallaAsignar(Model model) {
 
     return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
+
+   @GetMapping("/vivienda/{id}/calendario")
+public String mostrarCalendario(@PathVariable("id") Long id, 
+                                @RequestParam(value = "tareaId", required = false) Long tareaId, 
+                                Model model) {
+    
+    Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+    
+    if (viviendaOpt.isPresent()) {
+        model.addAttribute("vivienda", viviendaOpt.get());
+        model.addAttribute("viviendaId", id);
+        model.addAttribute("tareaId", tareaId);
+        
+        // 1. Tareas sin fecha (para el desplegable)
+        List<Tarea> pendientes = tareaRepository.findByVivienda_IdAndFechaRealizacionIsNull(id);
+        model.addAttribute("tareasPendientes", pendientes);
+        
+        // 2. Tareas CON fecha (para pintar el calendario)
+        // Necesitas crear este método en el Repositorio si no existe
+        List<Tarea> asignadas = tareaRepository.findByVivienda_IdAndFechaRealizacionIsNotNull(id);
+        model.addAttribute("tareasAsignadas", asignadas);
+        
+        return "calendario"; 
+    }
+    return "redirect:/listar";
+}
+
+    @PostMapping("/api/asignar-tarea")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<String> asignarTareaAjax(
+            @RequestParam("tareaId") Long tareaId, 
+            @RequestParam("fecha") String fechaStr) {
+        
+        // CORREGIDO: tareaRepository con 't' minúscula
+        Optional<Tarea> tareaOpt = tareaRepository.findById(tareaId);
+        
+        if (tareaOpt.isPresent()) {
+            Tarea tarea = tareaOpt.get();
+            // Asigna la fecha a tu campo real
+            tarea.setFechaRealizacion(java.time.LocalDate.parse(fechaStr)); 
+            tareaRepository.save(tarea);
+            return org.springframework.http.ResponseEntity.ok("Asignado correctamente");
+        }
+        return org.springframework.http.ResponseEntity.badRequest().body("Error al asignar");
+    }
+   /* @GetMapping("/vivienda/foto/{id}")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<byte[]> mostrarImagen(@PathVariable("id") Long id) {
+        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+        
+        if (viviendaOpt.isPresent() && viviendaOpt.get().getImage() != null) {
+            // Extraemos los bytes (asegúrate de que tu método get de la entidad se llama getImage() o getImagen())
+            byte[] imagenBytes = viviendaOpt.get().getImage(); 
+            
+            return org.springframework.http.ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "image/jpeg") // O image/png
+                    .body(imagenBytes);
+        }
+        
+        return org.springframework.http.ResponseEntity.notFound().build();
+    }*/
 }

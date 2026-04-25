@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckMate - Calendario de Tareas</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+    /* --- ESTILOS DE LA CABECERA DE LA VIVIENDA --- */
+        .vivienda-info {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vivienda-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%; /* Imagen circular */
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo por si la imagen tarda en cargar */
+        }
+
+        .vivienda-nombre {
+            margin: 10px 0 0 0;
+            font-size: 2.2em;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .vivienda-descripcion {
+            margin: 0;
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 500px;
+            line-height: 1.4;
+        }
+        /* --- ESTILOS DE NAVEGACIÓN --- */
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Nunito', sans-serif;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px); /* Pequeño efecto de elevación al pasar el ratón */
+        }
+
+        /* Botón activo (la página actual) */
+        .nav-btn.active {
+            background: #e060a0;
+            border-color: #e060a0;
+            box-shadow: 0 4px 10px rgba(224, 96, 160, 0.4);
+        }
+body {
+            /* Mantenemos tu fondo degradado */
+            background: linear-gradient(135deg, #1e3c72 0%, #8e2de2 100%);
+            margin: 0;
+            padding: 20px; /* Un poco de margen superior e inferior */
+            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centra todo horizontalmente */
+            justify-content: flex-start; /* Empieza a colocar desde arriba */
+            gap: 25px; /* Espacio exacto entre cabecera, botones y calendario */
+        }
+
+        .calendar-container {
+            
+            width: 100%;
+            max-width: 450px; /* Ajusta el ancho para que el calendario no sea gigante */
+            margin: 0; /* Quitamos márgenes automáticos si los había, el 'gap' del body ya hace el trabajo */
+            
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .nav-month-btn {
+            background: rgba(255, 255, 255, 0.15); /* Fondo semitransparente */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 1.2em; /* Tamaño del símbolo < > */
+            font-weight: bold;
+            width: 35px;  /* Ancho pequeñito */
+            height: 35px; /* Alto pequeñito */
+            border-radius: 50%; /* Esto los hace perfectamente redondos */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            padding: 0; /* Quitamos el padding para que no se deformen */
+        }
+
+        .nav-month-btn:hover {
+            background: rgba(255, 255, 255, 0.35); /* Se ilumina al pasar el ratón */
+            transform: scale(1.1); /* Efecto de rebote al hacer hover */
+        }
+        .calendar-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            text-transform: capitalize;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .day-name {
+            font-weight: 800;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 10px;
+        }
+
+        .day-cell {
+            padding: 15px 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        .day-cell:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .day-cell.empty {
+            background: transparent;
+            cursor: default;
+        }
+        .day-cell.empty:hover {
+            transform: none;
+        }
+        
+        .day-cell.selected {
+            background: #e060a0; 
+            color: white;
+        }
+            /* --- LOGO FLOTANTE --- */
+        .logo-container {
+            position: absolute;
+            top: 25px;
+            left: 40px;
+            z-index: 1000;
+        }
+
+        .header-logo-img {
+            height: 65px;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
+        }
+        
+        .header-logo-img:hover { transform: scale(1.05); }
+        /* --- MODAL (MINI PANEL) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none; /* Oculto por defecto */
+            justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1e3c72 0%, #8e2de2 100%);
+            padding: 25px; border-radius: 15px; width: 90%; max-width: 350px;
+            color: white; text-align: center; position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .close-btn {
+            position: absolute; top: 10px; right: 15px; font-size: 1.5em;
+            cursor: pointer; color: rgba(255,255,255,0.7); font-weight: bold;
+        }
+        .close-btn:hover { color: white; }
+        
+        /* Modificamos tu .day-cell para que las burbujas se queden dentro */
+        .day-cell { position: relative; } 
+        
+        /* Burbuja de contador en el calendario */
+        .task-badge {
+            position: absolute; bottom: 3px; right: 3px;
+            background: #e060a0; color: white; font-size: 0.7em;
+            width: 18px; height: 18px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <a href="/">
+            <img th:src="@{/images/logo.jpeg}" alt="Logo CheckMate" class="header-logo-img">
+        </a>
+    </div>
+
+    <div class="vivienda-info">
+        <img th:if="${vivienda.image != null}" 
+             th:src="@{'/vivienda/foto/' + ${vivienda.id}}" 
+             alt="Imagen de la vivienda"
+             class="vivienda-img">
+        
+        <h1 class="vivienda-nombre" th:text="${vivienda.name}">¡nombre</h1>
+        
+        <p class="vivienda-descripcion" th:text="${vivienda.description}">
+            desc
+        </p>
+    </div>
+
+    <div class="top-nav">
+        <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="nav-btn">Add Roommate</a>
+        <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="nav-btn">Añadir Tarea</a>
+        <a href="#" class="nav-btn active">Calendario</a>
+    </div>
+
+    <div style="display: flex; gap: 20px; max-width: 1200px; margin: 20px auto; padding: 0 20px; align-items: flex-start;">
+        
+        <div class="calendar-container" style="flex: 2; margin: 0;">
+            <div class="calendar-header">
+                <button id="prevMonth" class="nav-month-btn">&lt;</button>
+                <h2 id="monthYear">Abril 2026</h2>
+                <button id="nextMonth" class="nav-month-btn">&gt;</button>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <div class="day-name">Lun</div>
+                <div class="day-name">Mar</div>
+                <div class="day-name">Mié</div>
+                <div class="day-name">Jue</div>
+                <div class="day-name">Vie</div>
+                <div class="day-name">Sáb</div>
+                <div class="day-name">Dom</div>
+            </div>
+        </div>
+
+        <div id="panelAsignacion" style="display:none; flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 20px;">
+            <h3 style="margin-top: 0; color: #333;">Día: <span id="fechaModalTexto"></span></h3>
+            
+            <div style="margin-bottom: 20px; background: #f0fdf4; padding: 15px; border-radius: 6px; border-left: 4px solid #22c55e;">
+                <ul id="listaTareasDia" style="margin: 0; padding-left: 20px; font-size: 0.95em; color: #1f2937;">
+                    </ul>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            
+            <p style="font-weight: bold; margin-bottom: 10px;">Asignar nueva tarea:</p>
+            <select id="selectTarea" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #ccc;">
+                <option value="">-- Seleccionar tarea --</option>
+                <option th:each="t : ${tareasPendientes}" th:value="${t.id}" th:text="${t.name}"></option>
+            </select>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="confirmarAsignacion()" style="flex: 1; background: #22c55e; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Confirmar</button>
+                <button onclick="cerrarModal()" style="flex: 1; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="datos-tareas-seguro" style="display:none;">
+        <span th:each="t : ${tareasAsignadas}" 
+              class="dato-tarea" 
+              th:data-nombre="${t.name}" 
+              th:data-fecha="${t.fechaRealizacion}">
+        </span>
+    </div>
+
+    <script>
+        let fechaActual = new Date();
+        const grid = document.getElementById('calendarGrid');
+        const monthYearText = document.getElementById('monthYear');
+        
+        const meses = [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ];
+
+        let tareasAsignadasServidor = [];
+        document.querySelectorAll('.dato-tarea').forEach(span => {
+            tareasAsignadasServidor.push({
+                name: span.getAttribute('data-nombre'),
+                fechaRealizacion: span.getAttribute('data-fecha')
+            });
+        });
+
+        let diaSeleccionadoGlobal = null;
+        let mapaTareas = {};
+        tareasAsignadasServidor.forEach(t => {
+            if (!mapaTareas[t.fechaRealizacion]) mapaTareas[t.fechaRealizacion] = [];
+            mapaTareas[t.fechaRealizacion].push(t.name);
+        });
+
+        function renderCalendar() {
+            grid.querySelectorAll('.day-cell').forEach(el => el.remove());
+            const mes = fechaActual.getMonth();
+            const anio = fechaActual.getFullYear();
+            monthYearText.textContent = `${meses[mes]} ${anio}`;
+
+            const primerDiaMes = new Date(anio, mes, 1).getDay();
+            const diaInicio = primerDiaMes === 0 ? 6 : primerDiaMes - 1;
+            const diasEnMes = new Date(anio, mes + 1, 0).getDate();
+
+            for (let i = 0; i < diaInicio; i++) {
+                const empty = document.createElement('div');
+                empty.classList.add('day-cell', 'empty');
+                grid.appendChild(empty);
+            }
+
+            for (let dia = 1; dia <= diasEnMes; dia++) {
+                const diaDiv = document.createElement('div');
+                diaDiv.classList.add('day-cell');
+                diaDiv.textContent = dia;
+
+                const fechaElegidaStr = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+
+                if (mapaTareas[fechaElegidaStr]) {
+                    const badge = document.createElement('div');
+                    badge.classList.add('task-badge');
+                    badge.innerText = mapaTareas[fechaElegidaStr].length;
+                    diaDiv.appendChild(badge);
+                }
+
+                diaDiv.addEventListener('click', () => {
+                    diaSeleccionadoGlobal = fechaElegidaStr;
+                    
+                    // Mostrar los títulos en la lista
+                    const listaUl = document.getElementById('listaTareasDia');
+                    listaUl.innerHTML = "";
+                    if (mapaTareas[fechaElegidaStr]) {
+                        mapaTareas[fechaElegidaStr].forEach(nom => {
+                            const li = document.createElement('li');
+                            li.innerText = nom;
+                            listaUl.appendChild(li);
+                        });
+                    } else {
+                        listaUl.innerHTML = "<li>Sin tareas asignadas</li>";
+                    }
+
+                    document.getElementById('fechaModalTexto').innerText = fechaElegidaStr;
+                    document.getElementById('panelAsignacion').style.display = 'block';
+                });
+
+                grid.appendChild(diaDiv);
+            }
+        }
+
+        function confirmarAsignacion() {
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+            
+            const partesFecha = diaSeleccionadoGlobal.split('-');
+            const fechaElegidaDate = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
+
+            if (fechaElegidaDate < hoy) {
+                alert("AVISO: Este día ya ha pasado. No puedes asignar tareas a fechas anteriores.");
+                return;
+            }
+
+            const select = document.getElementById('selectTarea');
+            const tareaId = select.value;
+            if (!tareaId) { alert("Selecciona una tarea."); return; }
+
+            const nombreTarea = select.options[select.selectedIndex].text;
+            const formData = new FormData();
+            formData.append('tareaId', tareaId);
+            formData.append('fecha', diaSeleccionadoGlobal);
+
+            fetch('/api/asignar-tarea', { method: 'POST', body: formData })
+            .then(res => {
+                if (res.ok) {
+                    if (!mapaTareas[diaSeleccionadoGlobal]) mapaTareas[diaSeleccionadoGlobal] = [];
+                    mapaTareas[diaSeleccionadoGlobal].push(nombreTarea);
+                    renderCalendar(); 
+                    // Actualizar lista en el panel tras asignar
+                    const li = document.createElement('li');
+                    li.innerText = nombreTarea;
+                    const listaUl = document.getElementById('listaTareasDia');
+                    if(listaUl.innerText === "Sin tareas asignadas") listaUl.innerHTML = "";
+                    listaUl.appendChild(li);
+                    select.options[select.selectedIndex].remove();
+                } else {
+                    alert("Error al guardar.");
+                }
+            });
+        }
+
+        function cerrarModal() { 
+            document.getElementById('panelAsignacion').style.display = 'none'; 
+        }
+        
+        document.getElementById('prevMonth').onclick = () => { fechaActual.setMonth(fechaActual.getMonth() - 1); renderCalendar(); };
+        document.getElementById('nextMonth').onclick = () => { fechaActual.setMonth(fechaActual.getMonth() + 1); renderCalendar(); };
+
+        renderCalendar();
+    </script>
+</body>
+</html>
