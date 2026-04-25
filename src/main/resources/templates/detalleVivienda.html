@@ -5,135 +5,323 @@
     <title>CheckMate - Gestión de Vivienda</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        .info-box {
-            background: #fff;
-            padding: 12px 20px; 
-            border-radius: 12px;
-            margin-bottom: 10px; 
-            border: 1px solid #eee;
+        body {
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .vivienda-header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .vivienda-header h1 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 2.5em;
+        }
 
         .vivienda-desc {
-            font-size: 0.9em;
-            color: #777;
-            font-style: italic;
-            margin: 8px 0 0 0;
-            padding-top: 8px;
-            border-top: 1px dotted #ddd; 
+            color: #666;
+            font-size: 1.1em;
+            margin: 10px 0 0 0;
         }
-        
-        .btn-action {
+
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs-header {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            background: white;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab-btn {
+            padding: 18px 20px;
+            border: none;
+            background: white;
+            color: #666;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab-btn:hover {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .tab-btn.active {
+            color: #9b59d0;
+            border-bottom-color: #9b59d0;
+        }
+
+        .tab-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .content-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .content-item {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #9b59d0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .item-desc {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .item-status {
             display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .btn-add-new {
+            display: inline-block;
+            background-color: #9b59d0;
             color: white;
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
-            transition: 0.3s;
-            margin-bottom: 15px;
-            width: 80%;
-            box-sizing: border-box;
-        }
-        .btn-purple {
-            background-color: #9b59d0;
-        }
-        .btn-purple:hover {
-            background-color: #8449b8;
-            transform: translateY(-2px);
-        }
-        .btn-blue {
-            background-color: #3498db;
-        }
-        .btn-blue:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-        .btn-green {
-            background-color: #4CAF50; 
-        }
-        .btn-green:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-        }
-       .btn-back {
-            display: inline-block;
-            background-color: #da6ac7; 
-            padding: 12px 20px; 
-            border-radius: 6px; 
-            text-decoration: none;
-            font-weight: bold; 
-            font-size: 14px;
+            font-size: 0.95em;
             transition: 0.3s;
             border: none;
             cursor: pointer;
-            width: 80%; 
-            box-sizing: border-box;
+            margin-top: 15px;
         }
-        
+
+        .btn-add-new:hover {
+            background-color: #8449b8;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            background-color: #da6ac7;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95em;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
         .btn-back:hover {
-            background-color: #e983d8; 
+            background-color: #e983d8;
             transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
 
-<div class="card" style="width: 500px; margin: 50px auto; text-align: center;">
-    <h1>Vivienda <span th:text="${viviendaNombre}"></span></h1>
-    
-    <div class="info-box">
-    <p style="margin: 0; font-weight: bold; color: #555;">Panel de Gestión</p>
-    
-    <p th:if="${viviendaDescripcion != null and !viviendaDescripcion.isEmpty()}" 
-       th:text="${viviendaDescripcion}"
-       class="vivienda-desc">
-    </p>
-    </div>
-
-    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-action btn-purple">
-        ➕ Añadir Nueva Tarea
-    </a>
-    <h2>Tareas</h2>
-
-    <div th:each="tarea : ${tareas}" class="info-box">
-
-        <p><b th:text="${tarea.nombre}"></b></p>
-        <p th:text="${tarea.descripcion}"></p>
-
-        <p>
-            Estado:
-            <span th:text="${tarea.completada} ? 'Completada' : 'Pendiente'"></span>
+<div class="container">
+    <div class="vivienda-header">
+        <h1 th:text="${viviendaNombre}"></h1>
+        <p th:if="${viviendaDescripcion != null and !viviendaDescripcion.isEmpty()}" 
+           th:text="${viviendaDescripcion}"
+           class="vivienda-desc">
         </p>
-
-        <form th:if="${!tarea.completada}"
-            th:action="@{/tareas/{id}/completar(id=${tarea.id})}"
-            method="post">
-
-            <input type="hidden" name="roommateId" value="1">
-
-            <button type="submit">✔ Marcar como hecha</button>
-        </form>
-
     </div>
 
-    <a th:href="@{/vivienda/{id}/listTareas(id=${viviendaId})}" class="btn-action btn-purple">
-        📋 Ver Tareas de la Vivienda
-    </a>
-    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-action btn-blue">
-        👤 Añadir Roommate
-    </a>
-    <a th:href="@{/vivienda/{id}/roommates(id=${viviendaId})}" class="btn-action btn-blue">
-    👥 Ver Roommates de la Vivienda
-    </a>
-    
-    
-    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+    <div class="tabs-container">
+        <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchTab(event, 'roommates')">
+                Roommates
+            </button>
+            <button class="tab-btn" onclick="switchTab(event, 'tareas')">
+                Tareas
+            </button>
+            <button class="tab-btn" onclick="switchTab(event, 'vivienda')">
+                Vivienda
+            </button>
+        </div>
 
-    <a th:href="@{/listar}" class="btn-back">
-        Volver al listado de viviendas
-    </a>
+        <div id="roommates" class="tab-content active">
+            <div th:if="${roommates != null and roommates.size() > 0}">
+                <ul class="content-list">
+                    <li th:each="roommate : ${roommates}" class="content-item">
+                        <div class="item-info">
+                            <div class="item-name" th:text="${roommate.nombre}"></div>
+                            <div class="item-desc" th:if="${roommate.apellido}" th:text="${roommate.apellido}"></div>
+                        </div>
+                    </li>
+                </ul>
+                <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new">
+                    Añadir Roommate
+                </a>
+            </div>
+            <div th:if="${roommates == null or roommates.size() == 0}">
+                <div class="empty-state">
+                    No hay roommates registrados
+                </div>
+                <div style="text-align: center;">
+                    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new">
+                        Añadir Roommate
+                    </a>
+                </div>
+            </div>
+        </div>
 
+        <div id="tareas" class="tab-content">
+            <div th:if="${tareas != null and tareas.size() > 0}">
+                <ul class="content-list">
+                    <li th:each="tarea : ${tareas}" class="content-item">
+                        <div class="item-info">
+                            <div class="item-name" th:text="${tarea.nombre}"></div>
+                            <div class="item-desc" th:text="${tarea.descripcion}"></div>
+                        </div>
+                        <span class="item-status" 
+                              th:classappend="${tarea.completada} ? 'status-completed' : 'status-pending'"
+                              th:text="${tarea.completada} ? 'Completada' : 'Pendiente'">
+                        </span>
+                    </li>
+                </ul>
+                <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">
+                    Añadir Tarea
+                </a>
+            </div>
+            <div th:if="${tareas == null or tareas.size() == 0}">
+                <div class="empty-state">
+                    No hay tareas registradas
+                </div>
+                <div style="text-align: center;">
+                    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">
+                        Añadir Tarea
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="vivienda" class="tab-content">
+            <div style="padding: 20px; text-align: center;">
+                <p style="color: #999; margin: 0;">
+                    Información de la vivienda
+                </p>
+                <p style="color: #666; font-size: 1.1em; margin: 10px 0 20px 0;">
+                    <strong th:text="${viviendaNombre}"></strong>
+                </p>
+                <p th:if="${viviendaDescripcion != null and !viviendaDescripcion.isEmpty()}" 
+                   th:text="${viviendaDescripcion}"
+                   style="color: #666; margin: 10px 0;">
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a th:href="@{/listar}" class="btn-back">
+            Volver al listado de viviendas
+        </a>
+    </div>
 </div>
+
+<script>
+    function switchTab(evt, tabName) {
+        var i, tabcontent, tabbuttons;
+        
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        
+        tabbuttons = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tabbuttons.length; i++) {
+            tabbuttons[i].classList.remove("active");
+        }
+        
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
 </body>
 </html>
