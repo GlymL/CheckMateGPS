@@ -364,7 +364,7 @@ public String mostrarPantallaAsignar(Model model) {
         }
     }
 
-    @GetMapping("/tarea/{id}/descripcion")
+    @GetMapping("/tarea/{id}/ver-descripcion")
     public String verDescripcionTarea(@PathVariable("id") Long id, Model model) {
         
         Optional<Tarea> tareaOpt = tareaRepository.findById(id);
