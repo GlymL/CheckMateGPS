@@ -399,7 +399,7 @@ public String mostrarPantallaAsignar(Model model) {
         // CM12 
     @GetMapping("/vivienda/{id}/calendario")
     public String verCalendario(@PathVariable Long id, Model model) {
-        List<Tarea> tareas = tareaRepository.findbyViviendaId(id);
+        List<Tarea> tareas = tareaRepository.findByViviendaId(id);
         Calendario calendario = new Calendario(tareas);
         model.addAttribute("calendario", calendario);
         model.addAttribute("viviendaId", id);

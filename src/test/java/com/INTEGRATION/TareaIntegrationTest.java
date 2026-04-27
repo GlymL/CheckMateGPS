@@ -10,14 +10,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import org.springframework.transaction.annotation.Transactional;
 
 import application.Application;
+import application.entities.Roommate;
 import application.entities.Tarea;
 import application.entities.Vivienda;
 import application.repositories.RoommateRepository;
@@ -61,13 +64,12 @@ public class TareaIntegrationTest {
         String idReal = String.valueOf(viviendaGuardada.getId());
 
         mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar salon")
+                .param("name", "Limpiar salon")
                 .param("descripcion", "Aspirar y limpiar el polvo.")
                 .param("viviendaId", idReal))
-                .andExpect(status().is3xxRedirection()) 
-                .andExpect(redirectedUrl("/listar"));   
-        
-       
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/vivienda/" + viviendaGuardada.getId() + "/listTareas"));  
+                   
     }
 
     @Test
@@ -76,7 +78,7 @@ public class TareaIntegrationTest {
         String idReal = String.valueOf(viviendaGuardada.getId());
 
         mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "   ") 
+                .param("name", "   ") 
                 .param("descripcion", "Una descripcion valida")
                 .param("viviendaId", idReal))
                 .andExpect(status().isOk()) 
@@ -90,7 +92,7 @@ public class TareaIntegrationTest {
         String idReal = String.valueOf(viviendaGuardada.getId());
 
         mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar@Salon!!!") 
+                .param("name", "Limpiar@Salon!!!") 
                 .param("descripcion", "Una descripcion valida")
                 .param("viviendaId", idReal))
                 .andExpect(status().isOk())
@@ -104,7 +106,7 @@ public class TareaIntegrationTest {
         String idReal = String.valueOf(viviendaGuardada.getId());
 
         mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar salon")
+                .param("name", "Limpiar salon")
                 .param("descripcion", "Limpiar salon <script>alert('hack')</script>") 
                 .param("viviendaId", idReal))
                 .andExpect(status().isOk())
@@ -115,37 +117,54 @@ public class TareaIntegrationTest {
     @Test
     @DisplayName("Prueba extra: Error si la vivienda indicada no existe")
     void createTarea_ViviendaNotFound() throws Exception {
-        
-        String idInexistente = "999999999"; 
-
         mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Bajar la basura")
-                .param("viviendaId", idInexistente))
-                .andExpect(status().isOk())
-                .andExpect(view().name("crearTarea"))
-                .andExpect(model().attribute("error", "Vivienda no encontrada."));
+        .param("name", "Bajar la basura")
+        .param("viviendaId", "999999999"))
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/listar"));
     }
     @Test
-@DisplayName("CM1-7: Marcar tarea como completada correctamente")
-void completeTarea_success() throws Exception {
+    @DisplayName("CM1-7: Marcar tarea como completada correctamente")
+    void completeTarea_success() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("Casa Test");
+        vivienda = viviendaRepository.save(vivienda);
+        
+        Roommate r = new Roommate("Juan", vivienda);
+        r = roommateRepository.save(r);
 
-    Vivienda vivienda = new Vivienda();
-    vivienda.setName("Casa Test");
-    vivienda = viviendaRepository.save(vivienda);
-    
-    Tarea tarea = new Tarea();
-    tarea.setName("Limpiar cocina");
-    tarea.setDescripcion("Limpiar fogones");
-    tarea.setVivienda(vivienda);
-    tarea.setCompletada(false);
-    tarea = tareaRepository.save(tarea);
-    
-        mockMvc.perform(post("/tarea/" + tarea.getId() + "/completar"))
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Limpiar cocina");
+        tarea.setDescripcion("Limpiar fogones");
+        tarea.setVivienda(vivienda);
+        tarea.setCompletada(false);
+        tarea = tareaRepository.save(tarea);
+        tarea.setAsignadoA(r);
+        mockMvc.perform(post("/tareas/" + tarea.getId() + "/completar"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/listar"));
+            .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
         Optional<Tarea> tareaActualizada = tareaRepository.findById(tarea.getId());
         assert(tareaActualizada).isPresent();
         assert(tareaActualizada.get().getCompletada());
+    } 
+    //CM12
+    @Test
+    @DisplayName("Ver tareas en un calendario test")
+    void verCalendario_ConTareas() throws Exception {
+        mockMvc.perform(get("/vivienda/" + viviendaGuardada.getId() + "/calendario"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("calendario"))
+                .andExpect(model().attributeExists("calendario"));
+    }
+
+    @Test
+    @DisplayName("Debe mostrar calendario vacío si no existen tareas")
+    void verCalendario_SinTareas() throws Exception {
+        mockMvc.perform(get("/vivienda/" + viviendaGuardada.getId() + "/calendario"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("calendario"))
+                .andExpect(model().attribute("viviendaId", viviendaGuardada.getId()));
     }
 }
