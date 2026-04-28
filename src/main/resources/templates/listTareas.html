@@ -196,22 +196,31 @@
             transition: 0.2s;
             white-space: nowrap;
         }
-        .btn-desc {
-            display: inline-block; 
-            background-color: #9b59d0; 
-            color: white; 
-            text-decoration: none; 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-size: 0.85em; 
-            font-weight: bold; 
-            margin-top: 8px; 
-            margin-bottom: 4px;
+        .btn-action-sm:hover { background: var(--accent-pink); transform: translateY(-1px); }
+
+        
+        .btn-back-global {
+            width: 100%;
+            margin-top: 40px;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            background: rgba(255,255,255,0.08);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
             transition: 0.3s;
+            font-family: 'Nunito', sans-serif;
         }
-        .btn-desc:hover {
-            background-color: #8449b8;
-        }
+        .btn-back-global:hover { background: rgba(255,255,255,0.15); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+        
+        .tasks-grid::-webkit-scrollbar { width: 8px; }
+        .tasks-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .tasks-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .tasks-grid::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
     </style>
 </head>
 <body>
@@ -257,30 +266,8 @@
             <span class="detail-icon">📅</span>
             <span th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></span>
         </div>
-    <div class="scroll-container">
-        <div th:each="tarea : ${vivienda.tareas}" class="task-box">
-        
-            <div class="task-info">
-                <b th:text="${tarea.getName()}">Nombre de Tarea</b>
-    
-                <div>
-                    <a th:href="@{'/tarea/' + ${tarea.id} + '/ver-descripcion'}" class="btn-desc">
-                        👁️ Ver Descripción
-                    </a>
-                </div>
-
-                <div class="task-meta">
-                    <span th:if="${tarea.asignadoA != null}">
-                        👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
-                    </span>
-                    <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
-                        ⚠️ Sin asignar
-                    </span>
-
-                    <div th:if="${tarea.fechaRealizacion != null}" style="margin-top: 5px; color: #2980b9;">
-                        📅 Fecha: <strong th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></strong>
-                    </div>
-                </div>
+    </div>
+</div>
 
             <div class="actions-column">
                 <span th:class="${tarea.completada} ? 'badge badge-done' : 'badge badge-pending'" 

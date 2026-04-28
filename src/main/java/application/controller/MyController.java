@@ -361,58 +361,32 @@ public String mostrarPantallaAsignar(Model model) {
         redirectAttributes.addFlashAttribute("successMsg", "Fecha asignada correctamente.");
         return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
+    @PostMapping("/assignRoommate/submit")
+    public String assignRoommate(
+        @RequestParam(value = "roommateId", required = false) Long roommateId,
+        @RequestParam("taskId") Long taskId,
+        @RequestParam("viviendaId") Long viviendaId,
+        RedirectAttributes redirectAttributes) {
 
     
-    @GetMapping("/vivienda/{id}/estado-tareas")
-    public String verEstadoTareas(@PathVariable("id") Long id, Model model) {
-        
-        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
-
-        if (viviendaOpt.isPresent()) {
-            Vivienda vivienda = viviendaOpt.get();
-            
-            // Se obtienen las tareas y se ordenan: pendientes primero (false), completadas después (true)
-            java.util.List<Tarea> tareasOrdenadas = vivienda.getTareas().stream()
-                .sorted((t1, t2) -> {
-                    
-                    boolean completada1 = Boolean.TRUE.equals(t1.getCompletada());
-                    boolean completada2 = Boolean.TRUE.equals(t2.getCompletada());
-                    
-                    // Se comparan los booleanos para que las pendientes salgan arriba
-                    return Boolean.compare(completada1, completada2);
-                })
-                .collect(java.util.stream.Collectors.toList());
-
-            // 2. Se pasa la lista ya ordenada y el ID al HTML
-            model.addAttribute("tareas", tareasOrdenadas);
-            model.addAttribute("viviendaId", id);
-            
-            
-            return "estadoTareas"; 
-        } else {
-            
-            return "redirect:/listar";
-        }
+    if (roommateId == null) {
+        redirectAttributes.addFlashAttribute("errorMsg", "Error: Debe seleccionar un roommate para asignar la tarea.");
+        return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
 
-    @GetMapping("/tarea/{id}/ver-descripcion")
-    public String verDescripcionTarea(@PathVariable("id") Long id, Model model) {
-        
-        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+    Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
+    Optional<Roommate> roommateOpt = roommateRepository.findById(roommateId);
 
-        if (tareaOpt.isPresent()) {
-            Tarea tarea = tareaOpt.get();
-            
-            // Pasamos la tarea a la vista
-            model.addAttribute("tarea", tarea);
-            
-            // Pasamos también el ID de la vivienda para que el botón de "Volver" funcione
-            model.addAttribute("viviendaId", tarea.getVivienda().getId());
-            
-            return "descripcion"; 
-        } else {
-            return "redirect:/listar";
-        }
+    if (tareaOpt.isPresent() && roommateOpt.isPresent()) {
+        Tarea tarea = tareaOpt.get();
+        tarea.setAsignadoA(roommateOpt.get());
+        tareaRepository.save(tarea);
+        redirectAttributes.addFlashAttribute("successMsg", "Responsable asignado correctamente.");
+    } else {
+        redirectAttributes.addFlashAttribute("errorMsg", "Error al procesar la asignación.");
+    }
+
+    return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
     // CM4
     @PostMapping("/tareas/{id}/completar")
