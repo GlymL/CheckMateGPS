@@ -89,8 +89,9 @@
 
         .task-title-area {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
             margin-bottom: 15px;
         }
 
@@ -102,17 +103,42 @@
 
         .desc-link {
             font-size: 0.7rem;
-            color: white;
-            text-decoration: none;
-            background: rgba(255,255,255,0.1);
+            color: rgba(255, 255, 255, 0.6);
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 4px 10px;
             border-radius: 6px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: 0.2s;
+            box-shadow: none;
+            outline: none;
         }
-        .desc-link:hover { background: var(--accent-purple); }
+        .desc-link:hover { background: rgba(255, 255, 255, 0.1); 
+            color: white;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: none;
+        }
+
+        .btn-close-modal {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: none; /* Sin brillos */
+        }
+        .btn-close-modal:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
 
         .task-details-row {
             display: flex;
@@ -224,6 +250,34 @@
         .tasks-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
         .tasks-grid::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
+        /* --- ESTILOS DEL MODAL (Ventana Emergente) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            animation: modalAparece 0.3s ease-out;
+        }
+        @keyframes modalAparece {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
     </style>
 </head>
 <body>
@@ -250,13 +304,14 @@
             <div class="task-main-info">
     <div class="task-title-area">
         <h3 class="task-title" th:text="${tarea.name}">Nombre de la Tarea</h3>
-    </div>
-
-    <div th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" 
-         style="margin-bottom: 12px; margin-top: -5px;">
-        <p th:text="${tarea.descripcion}" 
-           style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin: 0; line-height: 1.4;">
-        </p>
+        
+        <button th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" 
+            class="desc-link"
+            th:data-title="${tarea.name}"
+            th:data-desc="${tarea.descripcion}"
+            onclick="abrirModal(this.getAttribute('data-title'), this.getAttribute('data-desc'))">
+            Ver descripción
+        </button>
     </div>
 
     <div class="task-details-row">
@@ -317,6 +372,39 @@
         Volver al Panel Principal
     </button>
 </div>
+<div id="modalDescripcion" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <h2 id="modalTitulo" style="color: var(--accent-pink); font-size: 1.8rem; margin-top: 0;">Título</h2>
+        
+        <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: left;">
+            <p id="modalTexto" style="margin: 0; color: rgba(255,255,255,0.9); line-height: 1.5; font-size: 1.05rem;"></p>
+        </div>
+        
+        <button class="btn-close-global" onclick="cerrarModal()">
+            Cerrar
+        </button>
+    </div>
+</div>
+
+<script>
+    function abrirModal(titulo, descripcion) {
+        document.getElementById('modalTitulo').innerText = titulo;
+        document.getElementById('modalTexto').innerText = descripcion;
+        document.getElementById('modalDescripcion').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalDescripcion').style.display = 'none';
+    }
+
+    // Cerrar el modal si haces clic fuera de la caja
+    window.onclick = function(event) {
+        var modal = document.getElementById('modalDescripcion');
+        if (event.target == modal) {
+            cerrarModal();
+        }
+    }
+</script>
 
 </body>
 </html>
