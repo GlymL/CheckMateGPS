@@ -227,14 +227,14 @@ class SystemTest {
         roommateRepository.save(roommate);
 
         Tarea tareaCompletada = new Tarea();
-        tareaCompletada.setName("Tarea Completada");
+        tareaCompletada.setName("Tarea completada");
         tareaCompletada.setVivienda(vivienda);
         tareaCompletada.setCompletada(true);
         tareaCompletada.setAsignadoA(roommate);
         tareaRepository.save(tareaCompletada);
 
         Tarea tareaPendiente = new Tarea();
-        tareaPendiente.setName("Tarea Pendiente");
+        tareaPendiente.setName("Tarea pendiente");
         tareaPendiente.setVivienda(vivienda);
         tareaPendiente.setCompletada(false);
         tareaRepository.save(tareaPendiente);
