@@ -217,51 +217,43 @@ class SystemTest {
     }
 
     @Test
-    @DisplayName("SISTEMA-TAREA-CM8: Ver estado de tareas con lista llena y ordenada")
-    void fullFlow_verEstadoTareas_ok() throws Exception {
+    @DisplayName("SISTEMA-TAREA-CM11: Consultar tarea con descripción")
+    void fullFlow_verDescripcion_ok() throws Exception {
         Vivienda vivienda = new Vivienda();
-        vivienda.setName("CasaTest CM8");
+        vivienda.setName("CasaTest CM11");
         viviendaRepository.save(vivienda);
 
-        Roommate roommate = new Roommate("userCM8", vivienda);
-        roommateRepository.save(roommate);
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea Con Desc");
+        tarea.setDescripcion("Esta es la descripción detallada de la prueba.");
+        tarea.setVivienda(vivienda);
+        tareaRepository.save(tarea);
 
-        Tarea tareaCompletada = new Tarea();
-        tareaCompletada.setName("Tarea Completada");
-        tareaCompletada.setVivienda(vivienda);
-        tareaCompletada.setCompletada(true);
-        tareaCompletada.setAsignadoA(roommate);
-        tareaRepository.save(tareaCompletada);
-
-        Tarea tareaPendiente = new Tarea();
-        tareaPendiente.setName("Tarea Pendiente");
-        tareaPendiente.setVivienda(vivienda);
-        tareaPendiente.setCompletada(false);
-        tareaRepository.save(tareaPendiente);
-
-        vivienda.getTareas().add(tareaCompletada);
-        vivienda.getTareas().add(tareaPendiente);
-
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/vivienda/" + vivienda.getId() + "/estado-tareas"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/tarea/" + tarea.getId() + "/descripcion"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("estadoTareas"))
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("tareas"))
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("Tarea Pendiente")))
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("Tarea Completada")));
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("descripcion"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("tarea"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("Esta es la descripción detallada de la prueba.")));
     }
 
     @Test
-    @DisplayName("SISTEMA-TAREA-CM8: Ver estado de tareas vacío")
-    void fullFlow_verEstadoTareas_vacio() throws Exception {
+    @DisplayName("SISTEMA-TAREA-CM11: Consultar tarea sin descripción")
+    void fullFlow_verDescripcion_vacia() throws Exception {
         Vivienda vivienda = new Vivienda();
-        vivienda.setName("CasaTest CM8 Vacia");
+        vivienda.setName("CasaTest CM11 Vacia");
         viviendaRepository.save(vivienda);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/vivienda/" + vivienda.getId() + "/estado-tareas"))
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea Sin Desc");
+        tarea.setDescripcion(null); 
+        tarea.setVivienda(vivienda);
+        tareaRepository.save(tarea);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/tarea/" + tarea.getId() + "/descripcion"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("estadoTareas"))
-                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("No hay tareas en la vivienda seleccionada.")));
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("descripcion"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("La tarea seleccionada no tiene descripción.")));
     }
 }
