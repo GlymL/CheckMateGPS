@@ -215,4 +215,47 @@ class SystemTest {
         Tarea tareaNoActualizada = tareaRepository.findById(tarea.getId()).get();
         assertThat(tareaNoActualizada.getFechaRealizacion()).isNull();
     }
+
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM12: Ver tareas en un calendario")
+    void fullFlow_verCalendario_conTareas() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM12");
+        viviendaRepository.save(vivienda);
+
+        Roommate roommate = new Roommate("userCM12", vivienda);
+        roommateRepository.save(roommate);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Limpiar ventanas CM12");
+        tarea.setDescripcion("Con limpiacristales");
+        tarea.setVivienda(vivienda);
+        tarea.setAsignadoA(roommate);
+        tarea.setCompletada(false);
+        
+        java.time.LocalDate fecha = java.time.LocalDate.now().plusDays(1);
+        tarea.setFechaRealizacion(fecha);
+        tareaRepository.save(tarea);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/vivienda/" + vivienda.getId() + "/calendario"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("calendario"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("calendario"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("Limpiar ventanas CM12")));
+    }
+
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM12: Ver calendario en blanco sin tareas")
+    void fullFlow_verCalendario_vacio() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM12 Vacia");
+        viviendaRepository.save(vivienda);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/vivienda/" + vivienda.getId() + "/calendario"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("calendario"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("calendario"));
+    }
 }

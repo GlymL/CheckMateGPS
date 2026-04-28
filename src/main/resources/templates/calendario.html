@@ -522,12 +522,9 @@
         <div class="calendar-header">
             <h1><i class="fas fa-calendar-alt"></i> Calendario de Tareas</h1>
             <div class="vivienda-selector">
-                <select id="viviendaSelect" onchange="cambiarVivienda()">
-                    <option value="">-- Selecciona una vivienda --</option>
-                    <option value="villa">Villa Marina</option>
-                    <option value="departamento">Departamento Centro</option>
-                    <option value="casa">Casa Principal</option>
-                </select>
+                <button class="nav-button" th:onclick="|window.location.href='/vivienda/' + ${viviendaId} + '/listTareas'|">
+                    <i class="fas fa-arrow-left"></i> Volver a la lista
+                </button>
             </div>
         </div>
 
@@ -594,60 +591,35 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
-        let selectedViviendaId = null;
         
-        const tareasBase = {
-            villa: {
-                "2026-04-21": [
-                    {id: 1, nombre: "Limpiar cocina", descripcion: "Limpiar superficies y electrodomésticos", completada: false, roommate: "Juan"},
-                    {id: 2, nombre: "Comprar comida", descripcion: null, completada: false, roommate: null}
-                ],
-                "2026-04-22": [
-                    {id: 3, nombre: "Pasar aspiradora", descripcion: "Toda la casa", completada: false, roommate: "María"}
-                ],
-                "2026-04-25": [
-                    {id: 4, nombre: "Lavar platos", descripcion: null, completada: true, roommate: "Carlos"}
-                ]
-            },
-            departamento: {
-                "2026-04-23": [
-                    {id: 5, nombre: "Limpiar baños", descripcion: "Baños principal y secundario", completada: false, roommate: "Ana"}
-                ],
-                "2026-04-24": [
-                    {id: 6, nombre: "Sacar basura", descripcion: null, completada: false, roommate: null},
-                    {id: 7, nombre: "Lavar ropa común", descripcion: null, completada: false, roommate: "Pedro"}
-                ]
-            },
-            casa: {
-                "2026-04-20": [
-                    {id: 8, nombre: "Riego de plantas", descripcion: "Plantas de la sala y jardín", completada: false, roommate: "Laura"}
-                ],
-                "2026-04-21": [
-                    {id: 9, nombre: "Limpiar entrada", descripcion: null, completada: false, roommate: null}
-                ],
-                "2026-04-26": [
-                    {id: 10, nombre: "Cambiar sábanas", descripcion: "Todas las camas", completada: false, roommate: "Sofia"}
-                ]
-            }
-        };
+        let selectedViviendaId = /*[[${viviendaId}]]*/ 1;
+        
+        const tareasBase = {};
+        tareasBase[selectedViviendaId] = {};
 
-        function cambiarVivienda() {
-            const select = document.getElementById('viviendaSelect');
-            selectedViviendaId = select.value;
+        /*[# th:each="entry : ${calendario.all}"]*/
+            var fechaStr = /*[[${entry.key}]]*/ '2026-04-20';
+            tareasBase[selectedViviendaId][fechaStr] = [];
+            
+            /*[# th:each="tarea : ${entry.value}"]*/
+                tareasBase[selectedViviendaId][fechaStr].push({
+                    id: /*[[${tarea.id}]]*/ 1,
+                    nombre: /*[[${tarea.name}]]*/ 'Tarea',
+                    descripcion: /*[[${tarea.descripcion}]]*/ null,
+                    completada: /*[[${tarea.completada}]]*/ false,
+                    roommate: /*[[${tarea.asignadoA != null ? tarea.asignadoA.nombreReal : null}]]*/ null
+                });
+            /*[/]*/
+        /*[/]*/
 
-            if (!selectedViviendaId) {
-                document.getElementById('calendarSection').style.display = 'none';
-                document.getElementById('emptyState').style.display = 'block';
-                return;
-            }
-
+        window.addEventListener('load', function() {
             document.getElementById('calendarSection').style.display = 'block';
             document.getElementById('emptyState').style.display = 'none';
             renderizarCalendario();
-        }
+        });
 
         function renderizarCalendario() {
             const primerDia = new Date(currentYear, currentMonth, 1);
@@ -673,7 +645,12 @@
                 const esHoy = hoy.getDate() === dia && 
                              hoy.getMonth() === currentMonth && 
                              hoy.getFullYear() === currentYear;
-                calendarDays.appendChild(crearElementoDia(dia, false, new Date(currentYear, currentMonth, dia), esHoy));
+                
+                const mesFormateado = String(currentMonth + 1).padStart(2, '0');
+                const diaFormateado = String(dia).padStart(2, '0');
+                const fechaStringLocal = `${currentYear}-${mesFormateado}-${diaFormateado}`;
+                
+                calendarDays.appendChild(crearElementoDia(dia, false, fechaStringLocal, esHoy));
             }
 
             const diasRestantes = 42 - (diaInicio + diasTotal);
@@ -682,16 +659,12 @@
             }
         }
 
-        function crearElementoDia(dia, esOtroMes, fecha, esHoy = false) {
+        function crearElementoDia(dia, esOtroMes, fechaStrLocal, esHoy = false) {
             const dayElement = document.createElement('div');
             dayElement.className = 'day';
             
-            if (esOtroMes) {
-                dayElement.classList.add('other-month');
-            }
-            if (esHoy) {
-                dayElement.classList.add('today');
-            }
+            if (esOtroMes) dayElement.classList.add('other-month');
+            if (esHoy) dayElement.classList.add('today');
 
             const dayNumber = document.createElement('div');
             dayNumber.className = 'day-number';
@@ -701,34 +674,28 @@
             const dayTasks = document.createElement('div');
             dayTasks.className = 'day-tasks';
 
-            if (!esOtroMes && fecha && selectedViviendaId) {
-                const fechaStr = fecha.toISOString().split('T')[0];
-                const tareas = (tareasBase[selectedViviendaId] && tareasBase[selectedViviendaId][fechaStr]) || [];
+            if (!esOtroMes && fechaStrLocal && selectedViviendaId) {
+                const tareas = (tareasBase[selectedViviendaId] && tareasBase[selectedViviendaId][fechaStrLocal]) || [];
 
                 if (tareas.length > 0) {
                     tareas.forEach(tarea => {
                         const taskTag = document.createElement('div');
                         taskTag.className = 'task-tag';
-                        if (!tarea.roommate) {
-                            taskTag.classList.add('no-roommate');
-                        }
-                        if (tarea.completada) {
-                            taskTag.classList.add('completed');
-                        }
+                        if (!tarea.roommate) taskTag.classList.add('no-roommate');
+                        if (tarea.completada) taskTag.classList.add('completed');
+                        
                         taskTag.textContent = tarea.nombre;
                         taskTag.style.cursor = 'pointer';
                         taskTag.onclick = (e) => {
                             e.stopPropagation();
-                            mostrarDetallesTareas(fechaStr, tareas);
+                            mostrarDetallesTareas(fechaStrLocal, tareas);
                         };
                         dayTasks.appendChild(taskTag);
                     });
                 }
 
                 dayElement.onclick = () => {
-                    if (tareas.length > 0) {
-                        mostrarDetallesTareas(fechaStr, tareas);
-                    }
+                    if (tareas.length > 0) mostrarDetallesTareas(fechaStrLocal, tareas);
                 };
             }
 
@@ -749,19 +716,15 @@
             tareas.forEach(tarea => {
                 const taskDiv = document.createElement('div');
                 taskDiv.className = 'task-item';
-                if (!tarea.roommate) {
-                    taskDiv.classList.add('no-roommate');
-                }
-                if (tarea.completada) {
-                    taskDiv.classList.add('completed');
-                }
+                if (!tarea.roommate) taskDiv.classList.add('no-roommate');
+                if (tarea.completada) taskDiv.classList.add('completed');
 
                 let html = `
                     <p class="task-title">${tarea.nombre}</p>
                     <p class="task-description">${tarea.descripcion || 'Sin descripción'}</p>
                     <div class="task-meta-info">
                         ${tarea.roommate ? `<span class="badge">Asignado a: ${tarea.roommate}</span>` : 
-                            '<span class="badge no-roommate"><i class="fas fa-exclamation"></i> Sin roommate asignado</span>'}
+                            '<span class="badge no-roommate"><i class="fas fa-exclamation"></i> Sin roommate</span>'}
                         <span class="badge ${tarea.completada ? 'completada' : 'pendiente'}">
                             ${tarea.completada ? 'Completada' : 'Pendiente'}
                         </span>
@@ -781,30 +744,18 @@
 
         function mesAnterior() {
             currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
             renderizarCalendario();
         }
 
         function mesSiguiente() {
             currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
             renderizarCalendario();
         }
 
         document.getElementById('taskModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                cerrarModal();
-            }
-        });
-
-        window.addEventListener('load', function() {
-            document.getElementById('emptyState').style.display = 'block';
+            if (event.target === this) cerrarModal();
         });
     </script>
 </body>
