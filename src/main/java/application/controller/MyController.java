@@ -280,22 +280,29 @@ public String mostrarPantallaAsignar(Model model) {
     
 
     @GetMapping("/vivienda/{id}/listTareas")
-    public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
+public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
+    
+    java.util.List<Roommate> listaDeRoommates = roommateRepository.findByViviendaId(id);
+    Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+
+    if (viviendaOpt.isPresent()) {
         
-        java.util.List<Roommate> listaDeRoommates = roommateRepository.findByViviendaId(id);
+        List<Tarea> tareas = tareaRepository.findByViviendaId(id);
+        
+        
+        tareas.sort((t1, t2) -> Boolean.compare(t1.getCompletada(), t2.getCompletada()));
 
-        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
+        model.addAttribute("roommates", listaDeRoommates); 
+        model.addAttribute("viviendaId", id);
+        model.addAttribute("vivienda", viviendaOpt.get());
+        
+        model.addAttribute("tareasOrdenadas", tareas); 
 
-        if (viviendaOpt.isPresent()) {
-            model.addAttribute("roommates", listaDeRoommates); 
-            model.addAttribute("viviendaId", id);
-            model.addAttribute("vivienda", viviendaOpt.get());
-
-            return "listTareas";
-        } else {
-            return "redirect:/listar";
-        }
+        return "listTareas";
+    } else {
+        return "redirect:/listar";
     }
+}
 
     @PostMapping("/assignDate/submit")
     public String assignDate(
@@ -359,44 +366,28 @@ public String mostrarPantallaAsignar(Model model) {
     return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
     // CM4
-    @PostMapping("/tareas/{id}/completar")
-    public String completarTarea(
-            @PathVariable("id") Long id,
-            @RequestParam(value = "roommateId", required = false) Long roommateId,
-            RedirectAttributes redirectAttributes) {
+    @PostMapping("/tarea/cambiarEstado")
+public String cambiarEstado(
+        @RequestParam("taskId") Long taskId,
+        @RequestParam("viviendaId") Long viviendaId,
+        RedirectAttributes redirectAttributes) {
 
-        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
+    Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
 
-        if (tareaOpt.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Tarea no encontrada");
-            return "redirect:/listar";
-        }
-
+    if (tareaOpt.isPresent()) {
         Tarea tarea = tareaOpt.get();
-        Long viviendaId = tarea.getVivienda().getId();
-
-        // CM4-2
-        if (tarea.getCompletada()) {
-            redirectAttributes.addFlashAttribute("error", "La tarea ya está realizada");
-            return "redirect:/vivienda/" + viviendaId;
-        }
-
-        // CM4-3
-        if (tarea.getAsignadoA() == null) {
-            redirectAttributes.addFlashAttribute("warning", 
-                "La tarea no tiene roommate asignado. ¿Deseas marcarla igualmente?");
-
-            return "redirect:/vivienda/" + viviendaId;
-        }
-
-        // CM4-1
-        tarea.setCompletada(true);
+        tarea.setCompletada(!tarea.getCompletada());
         tareaRepository.save(tarea);
 
-        redirectAttributes.addFlashAttribute("success", "Tarea completada correctamente");
-        return "redirect:/vivienda/" + viviendaId;
+        String msg = tarea.getCompletada() ? "¡Tarea COMPLETADA!" : "Tarea marcada como PENDIENTE";
+        redirectAttributes.addFlashAttribute("successMsg", msg);
+        
+        
+        return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
 
+    return "redirect:/listar"; 
+}
     @GetMapping("/tarea/{id}/ver-descripcion")
     public String verDescripcionTarea(@PathVariable("id") Long id, Model model) {
         
