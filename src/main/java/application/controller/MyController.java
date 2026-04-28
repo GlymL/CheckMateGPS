@@ -156,22 +156,28 @@ public String listarRoommates(@PathVariable("id") Long id, Model model) {
 } 
 
     @GetMapping("/vivienda/{id}")
-    public String verVivienda(@PathVariable("id") Long id, Model model) {       
-  // 1. Buscar la vivienda 
+    public String verVivienda(@PathVariable("id") Long id, Model model) {  
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
         
-        // 2. Comprobar si la vivienda existe
         if (viviendaOpt.isPresent()) {
-            Vivienda vivienda = viviendaOpt.get(); // Extraemos el objeto real
+            Vivienda vivienda = viviendaOpt.get(); 
             
-          
             model.addAttribute("viviendaNombre", vivienda.getName()); 
             model.addAttribute("viviendaDescripcion", vivienda.getDescription());
             model.addAttribute("viviendaId", id); 
             
+            model.addAttribute("roommates", vivienda.getRoommates());
+            
+            java.util.List<Tarea> tareasOrdenadas = new java.util.ArrayList<>(vivienda.getTareas());
+            tareasOrdenadas.sort((t1, t2) -> Boolean.compare(t1.getCompletada(), t2.getCompletada()));
+            model.addAttribute("tareas", tareasOrdenadas);
+
+            java.util.List<Tarea> tareasParaCalendario = tareaRepository.findByViviendaId(id);
+            Calendario calendario = new Calendario(tareasParaCalendario);
+            model.addAttribute("calendario", calendario);
+            
             return "detalleVivienda"; 
         } else {
-            // Si el ID no existe, lo devolvemos a la lista 
             return "redirect:/";
         }
     }
@@ -244,7 +250,7 @@ public String listarRoommates(@PathVariable("id") Long id, Model model) {
 
         tareaRepository.save(tareaTemporal); 
         
-        return "redirect:/vivienda/" + viviendaId + "/listTareas"; 
+        return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
     }
 
   
@@ -357,7 +363,7 @@ public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
         tareaRepository.save(tarea);
 
         redirectAttributes.addFlashAttribute("successMsg", "Fecha asignada correctamente.");
-        return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
     }
     @PostMapping("/assignRoommate/submit")
     public String assignRoommate(
@@ -369,7 +375,7 @@ public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
     
     if (roommateId == null) {
         redirectAttributes.addFlashAttribute("errorMsg", "Error: Debe seleccionar un roommate para asignar la tarea.");
-        return "redirect:/vivienda/" + viviendaId + "/listTareas";
+       
     }
 
     Optional<Tarea> tareaOpt = tareaRepository.findById(taskId);
@@ -384,7 +390,7 @@ public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
         redirectAttributes.addFlashAttribute("errorMsg", "Error al procesar la asignación.");
     }
 
-    return "redirect:/vivienda/" + viviendaId + "/listTareas";
+    return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
     }
     // CM4
     @PostMapping("/tarea/cambiarEstado")
@@ -404,15 +410,15 @@ public String cambiarEstado(
         redirectAttributes.addFlashAttribute("successMsg", msg);
         
         
-        return "redirect:/vivienda/" + viviendaId + "/listTareas";
+        return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
     }
 
     return "redirect:/"; 
 }
         // CM12 
     @GetMapping("/vivienda/{id}/calendario")
-    public String verCalendario(@PathVariable Long id, Model model) {
-        List<Tarea> tareas = tareaRepository.findByViviendaId(id);
+    public String verCalendario(@PathVariable("id") Long id, Model model) {
+        java.util.List<Tarea> tareas = tareaRepository.findByViviendaId(id);
         Calendario calendario = new Calendario(tareas);
         model.addAttribute("calendario", calendario);
         model.addAttribute("viviendaId", id);

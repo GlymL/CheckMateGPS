@@ -5,245 +5,274 @@
     <title>CheckMate - Gestión de Vivienda</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #2a1a6e 0%, #7b2f9e 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: white;
-        }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #2a1a6e 0%, #7b2f9e 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: white;
+    }
 
-        body::before, body::after {
-            content: '';
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.35;
-            pointer-events: none;
-            z-index: -1;
-        }
-        body::before {
-            width: 500px;
-            height: 500px;
-            background: #e060a0;
-            top: -150px;
-            right: -100px;
-        }
-        body::after {
-            width: 400px;
-            height: 400px;
-            background: #4040cc;
-            bottom: -120px;
-            left: -80px;
-        }
+    body::before, body::after {
+        content: '';
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: -1;
+    }
+    body::before {
+        width: 500px;
+        height: 500px;
+        background: #e060a0;
+        top: -150px;
+        right: -100px;
+    }
+    body::after {
+        width: 400px;
+        height: 400px;
+        background: #4040cc;
+        bottom: -120px;
+        left: -80px;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0;
-        }
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0;
+    }
 
-        .vivienda-header {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 20px 60px rgba(0, 0, 0, 0.35);
-            text-align: center;
-        }
+    .vivienda-header {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        padding: 20px; 
+        margin-bottom: 15px; 
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
 
-        .vivienda-header h1 {
-            margin: 0 0 10px 0;
-            color: white;
-            font-size: 2.5em;
-            font-weight: 700;
-        }
+    .vivienda-header h1 {
+        margin: 0 0 5px 0;
+        color: white;
+        font-size: 1.8em; 
+        font-weight: 700;
+    }
 
-        .vivienda-desc {
-            color: rgba(255, 255, 255, 0.65);
-            font-size: 1.1em;
-            margin: 10px 0 0 0;
-        }
+    .vivienda-desc {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 1.1em;
+        margin: 10px 0 0 0;
+    }
 
-        .tabs-container {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 20px 60px rgba(0, 0, 0, 0.35);
-        }
+    .tabs-container {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
 
-        .tabs-header {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0;
-            background: transparent;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
+    .tabs-header {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        background: transparent;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
 
-        .tab-btn {
-            padding: 18px 20px;
-            border: none;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            position: relative;
-            top: 2px;
-        }
+    .tab-btn {
+        padding: 18px 20px;
+        border: none;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 3px solid transparent;
+        position: relative;
+        top: 2px;
+    }
 
-        .tab-btn:hover {
-            color: rgba(255, 255, 255, 0.9);
-        }
+    .tab-btn:hover {
+        color: rgba(255, 255, 255, 0.9);
+    }
 
-        .tab-btn.active {
-            color: #e060a0;
-            border-bottom-color: #e060a0;
-        }
+    .tab-btn.active {
+        color: #e060a0;
+        border-bottom-color: #e060a0;
+    }
 
-        .tab-content {
-            padding: 25px;
-            display: none;
-            color: white;
-        }
+    .tab-content {
+        padding: 25px;
+        display: none;
+        color: white;
+    }
 
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
 
-        .content-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .content-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-        .content-item {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border-left: 4px solid #e060a0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
+    .content-item {
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border-left: 4px solid #e060a0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
 
-        .content-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(4px);
-        }
+    .content-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(4px);
+    }
 
-        .content-item:last-child {
-            margin-bottom: 0;
-        }
+    .content-item:last-child {
+        margin-bottom: 0;
+    }
 
-        .item-info {
-            flex: 1;
-        }
+    .item-info {
+        flex: 1;
+    }
 
-        .item-name {
-            font-weight: bold;
-            color: white;
-            margin-bottom: 4px;
-        }
+    .item-name {
+        font-weight: bold;
+        color: white;
+        margin-bottom: 4px;
+    }
 
-        .item-desc {
-            color: rgba(255, 255, 255, 0.65);
-            font-size: 0.9em;
-        }
+    .item-desc {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.9em;
+    }
 
-        .item-status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
+    .item-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+    }
 
-        .status-pending {
-            background-color: rgba(255, 193, 7, 0.3);
-            color: #ffd54f;
-            border: 1px solid rgba(255, 193, 7, 0.5);
-        }
+    .status-pending {
+        background-color: #FFC107 !important; /* Amarillo */
+        color: white !important;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
 
-        .status-completed {
-            background-color: rgba(76, 175, 80, 0.3);
-            color: #81c784;
-            border: 1px solid rgba(76, 175, 80, 0.5);
-        }
+    .status-completed {
+        background-color: #4CAF50 !important; /* Verde */
+        color: white !important;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
 
-        .empty-state {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.65);
-            padding: 40px 20px;
-            font-style: italic;
-        }
+    .empty-state {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.65);
+        padding: 40px 20px;
+        font-style: italic;
+    }
 
-        .btn-add-new {
-            display: inline-block;
-            background: linear-gradient(135deg, #e060a0 0%, #9b59d0 100%);
-            color: white;
-            padding: 12px 28px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            margin-top: 15px;
-            box-shadow: 0 8px 24px rgba(224, 96, 160, 0.4);
-        }
+    .btn-add-new {
+        display: inline-block;
+        background: linear-gradient(135deg, #e060a0 0%, #9b59d0 100%);
+        color: white;
+        padding: 12px 28px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.95em;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        margin-top: 15px;
+        box-shadow: 0 8px 24px rgba(224, 96, 160, 0.4);
+    }
 
-        .btn-add-new:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(224, 96, 160, 0.6);
-        }
+    .btn-add-new:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(224, 96, 160, 0.6);
+    }
 
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-        }
+    .footer {
+        text-align: center;
+        margin-top: 30px;
+    }
 
-        .btn-back {
-            display: inline-block;
-            background: linear-gradient(135deg, #9b59d0 0%, #6b3fa0 100%);
-            color: white;
-            padding: 12px 28px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(155, 89, 208, 0.4);
-        }
+    .btn-back {
+        display: inline-block;
+        background: linear-gradient(135deg, #9b59d0 0%, #6b3fa0 100%);
+        color: white;
+        padding: 12px 28px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.95em;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(155, 89, 208, 0.4);
+    }
 
-        .btn-back:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(155, 89, 208, 0.6);
-        }
-    </style>
+    .btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(155, 89, 208, 0.6);
+    }
+
+    .scroll-container {
+        max-height: 280px; 
+        overflow-y: auto;
+        padding-right: 15px; 
+        margin-bottom: 15px;
+    }
+
+    /* Estilización de la barra de scroll */
+    .scroll-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .scroll-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: rgba(155, 89, 208, 0.6); 
+        border-radius: 4px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(155, 89, 208, 1);
+    }
+</style>
 </head>
 <body>
 
@@ -258,73 +287,148 @@
 
     <div class="tabs-container">
         <div class="tabs-header">
-            <button class="tab-btn active" onclick="switchTab(event, 'roommates')">
+            <button th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-btn' : 'tab-btn active'}" onclick="switchTab(event, 'roommates')">
                 Roommates
             </button>
-            <button class="tab-btn" onclick="switchTab(event, 'tareas')">
+            <button th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-btn active' : 'tab-btn'}" onclick="switchTab(event, 'tareas')">
                 Tareas
+            </button>
+            <button th:class="${(param.tab != null and param.tab[0] == 'calendario') ? 'tab-btn active' : 'tab-btn'}" onclick="switchTab(event, 'calendario')">
+                Calendario
             </button>
             <button class="tab-btn" onclick="switchTab(event, 'vivienda')">
                 Vivienda
             </button>
         </div>
 
-        <div id="roommates" class="tab-content active">
-            <div th:if="${roommates != null and roommates.size() > 0}">
-                <ul class="content-list">
-                    <li th:each="roommate : ${roommates}" class="content-item">
-                        <div class="item-info">
-                            <div class="item-name" th:text="${roommate.nombreReal}"></div>
+        <div id="roommates" th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-content' : 'tab-content active'}" th:style="${param.tab != null and param.tab[0] == 'tareas' ? 'display: none;' : 'display: block;'}">
+            <div th:if="${roommates != null and !roommates.isEmpty()}">
+                <div class="scroll-container">
+                    <div th:each="roommate : ${roommates}" class="roommate-box" style="display: flex; justify-content: space-between; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <div class="roommate-info">
+                            <span>👤 </span>
+                            <b th:text="${roommate.nombreReal}">Nombre del Roommate</b>
                         </div>
-                    </li>
-                </ul>
-                <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new">
-                    Añadir Roommate
-                </a>
-            </div>
-            <div th:if="${roommates == null or roommates.size() == 0}">
-                <div class="empty-state">
-                    No hay roommates registrados
+                        <span style="font-size: 0.8em; color: #9b59d0; font-weight: bold;">Activo</span>
+                    </div>
                 </div>
-                <div style="text-align: center; padding: 20px 0;">
-                    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new">
+                
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 0;">
+                    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new" style="background-color: #9b59d0; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+                        Añadir Roommate
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${roommates == null or roommates.isEmpty()}">
+                <div class="empty-state" style="color: #888; padding: 20px; text-align: center;">
+                    No hay ningún compañero registrado todavía.
+                </div>
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 0;">
+                    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new" style="background-color: #9b59d0; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
                         Añadir Roommate
                     </a>
                 </div>
             </div>
         </div>
 
-        <div id="tareas" class="tab-content">
-            <div th:if="${tareas != null and tareas.size() > 0}">
-                <ul class="content-list">
-                    <li th:each="tarea : ${tareas}" class="content-item">
-                        <div class="item-info">
-                            <div class="item-name" th:text="${tarea.nombre}"></div>
-                            <div class="item-desc" th:text="${tarea.descripcion}"></div>
+        <div id="tareas" th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-content active' : 'tab-content'}" th:style="${param.tab != null and param.tab[0] == 'tareas' ? 'display: block;' : 'display: none;'}">
+            <div th:if="${tareas != null and !tareas.isEmpty()}">
+                <div class="scroll-container">
+                    
+                    <div th:each="tarea : ${tareas}" class="roommate-box" style="padding: 15px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #9b59d0;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 th:text="${tarea.name}" style="margin: 0; color: white; font-size: 1.2em;">NOMBRE TAREA</h3>
+                                <form th:action="@{/tarea/cambiarEstado}" method="post" style="margin: 0;">
+    <input type="hidden" name="taskId" th:value="${tarea.id}">
+    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+    
+    <button type="submit" th:if="${tarea.completada}" 
+            style="background-color: #4CAF50 !important; color: white !important; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; border: none; cursor: pointer; display: inline-block;">
+        COMPLETADA
+    </button>
+    
+    <button type="submit" th:unless="${tarea.completada}" 
+            style="background-color: #FFC107 !important; color: white !important; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; border: none; cursor: pointer; display: inline-block;">
+        PENDIENTE
+    </button>
+</form>
                         </div>
-                        <span class="item-status" 
-                              th:classappend="${tarea.completada} ? 'status-completed' : 'status-pending'"
-                              th:text="${tarea.completada} ? 'Completada' : 'Pendiente'">
-                        </span>
-                    </li>
-                </ul>
-                <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">
-                    Añadir Tarea
-                </a>
-            </div>
-            <div th:if="${tareas == null or tareas.size() == 0}">
-                <div class="empty-state">
-                    No hay tareas registradas
+
+                        <details style="margin-bottom: 15px;">
+                            <summary style="cursor: pointer; color: #aaa; font-size: 0.9em; padding: 5px; background: rgba(255,255,255,0.1); border-radius: 4px; text-align: center;">VER DESCRIPCIÓN</summary>
+                            <p th:text="${tarea.descripcion}" style="color: #ccc; font-size: 0.9em; padding: 10px; margin: 0; background: rgba(0,0,0,0.2); border-radius: 0 0 4px 4px;">Descripción aquí</p>
+                        </details>
+
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px;">
+                            
+                            <div style="flex: 1; min-width: 150px;">
+                                <div style="margin-bottom: 5px; font-size: 0.9em;">
+                                    <span style="color: #888;">👤 </span>
+                                    <span th:if="${tarea.asignadoA != null}" th:text="${tarea.asignadoA.nombreReal}" style="color: #9b59d0; font-weight: bold;">Responsable</span>
+                                    <span th:unless="${tarea.asignadoA != null}" style="color: #888; font-style: italic;">Sin asignar</span>
+                                </div>
+                                <div style="font-size: 0.9em;">
+                                    <span style="color: #888;">📅 </span>
+                                    <span th:if="${tarea.fechaRealizacion != null}" th:text="${tarea.fechaRealizacion}" style="color: #9b59d0; font-weight: bold;">Fecha</span>
+                                    <span th:unless="${tarea.fechaRealizacion != null}" style="color: #888; font-style: italic;">Sin fecha</span>
+                                </div>
+                            </div>
+
+                            <div th:if="${!tarea.completada}" style="display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 200px;">
+                                
+                                <form th:action="@{/assignRoommate/submit}" method="post" style="display: flex; gap: 5px;">
+                                    <input type="hidden" name="taskId" th:value="${tarea.id}">
+                                    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                                    <select name="roommateId" style="flex: 1; padding: 5px; border-radius: 4px; background: rgba(0,0,0,0.3); color: white; border: 1px solid #555;">
+                                        <option value="" disabled selected>Responsable...</option>
+                                        <option th:each="rm : ${roommates}" th:value="${rm.id}" th:text="${rm.nombreReal}"></option>
+                                    </select>
+                                    <button type="submit" style="background-color: #c471ed; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Asignar</button>
+                                </form>
+
+                                <form th:action="@{/assignDate/submit}" method="post" style="display: flex; gap: 5px;">
+                                    <input type="hidden" name="taskId" th:value="${tarea.id}">
+                                    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                                    <input type="date" name="fecha" required style="flex: 1; padding: 5px; border-radius: 4px; background: rgba(0,0,0,0.3); color: white; border: 1px solid #555; color-scheme: dark;">
+                                    <button type="submit" style="background-color: #c471ed; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">🗓️ Fecha</button>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-                <div style="text-align: center; padding: 20px 0;">
-                    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">
+                
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 0;">
+                    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new" style="background-color: #c471ed; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                        Añadir Tarea
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${tareas == null or tareas.isEmpty()}">
+                <div class="empty-state" style="color: #888; padding: 20px; text-align: center;">
+                    No hay tareas registradas todavía.
+                </div>
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 0;">
+                    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new" style="background-color: #c471ed; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
                         Añadir Tarea
                     </a>
                 </div>
             </div>
         </div>
 
-        <div id="vivienda" class="tab-content">
+        <div id="calendario" th:class="${(param.tab != null and param.tab[0] == 'calendario') ? 'tab-content active' : 'tab-content'}" th:style="${(param.tab != null and param.tab[0] == 'calendario') ? 'display: block;' : 'display: none;'}">
+            
+            <iframe th:src="@{/vivienda/{id}/calendario(id=${viviendaId})}" 
+                    style="width: 100%; height: 350px; border: none; border-radius: 12px; background: transparent;">
+            </iframe>
+
+        </div>
+
+        <div id="vivienda" class="tab-content" style="display: none;">
             <div style="padding: 20px; text-align: center;">
                 <p style="color: rgba(255, 255, 255, 0.65); margin: 0;">
                     Información de la vivienda
@@ -338,13 +442,14 @@
                 </p>
             </div>
         </div>
-    </div>
 
-    <div class="footer">
+        <div style="text-align: center; padding-top: 5px; padding-bottom: 10px;">
         <a th:href="@{/}" class="btn-back">
             Volver al listado de viviendas
         </a>
     </div>
+    
+
 </div>
 
 <script>
@@ -354,6 +459,7 @@
         tabcontent = document.getElementsByClassName("tab-content");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].classList.remove("active");
+            tabcontent[i].style.display = "none";
         }
         
         tabbuttons = document.getElementsByClassName("tab-btn");
@@ -362,7 +468,9 @@
         }
         
         document.getElementById(tabName).classList.add("active");
+        document.getElementById(tabName).style.display = "block";
         evt.currentTarget.classList.add("active");
+
     }
 </script>
 
