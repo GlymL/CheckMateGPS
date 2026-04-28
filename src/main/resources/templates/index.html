@@ -1,268 +1,72 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheckMate - Mis Viviendas</title>
+    <title>CheckMate</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body {
-            padding-top: 40px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            box-sizing: border-box;
-            overflow: hidden;
-            background-color: #1a1a2e;
-        }
-
-        /* --- LOGO FLOTANTE --- */
-        .logo-container {
-            position: absolute;
-            top: 25px;
-            left: 40px;
-            z-index: 1000;
-        }
-
-        .header-logo-img {
-            height: 65px;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
-            transition: transform 0.3s ease;
-        }
-        
-        .header-logo-img:hover { transform: scale(1.05); }
-
-        /* --- CONTENIDO PRINCIPAL --- */
-        .dashboard-content {
-            width: 90%;
-            max-width: 800px; 
-            margin-top: 80px; 
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 120px);
-        }
-
-        .btn-create-main {
-            width: 100%;
-            background: linear-gradient(135deg, var(--pink-hot, #e060a0) 0%, var(--purple-light, #9b59d0) 100%);
-            color: white;
-            border: none;
-            padding: 16px 20px;
-            border-radius: 18px; 
-            font-family: 'Nunito', sans-serif;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px; 
-            box-shadow: 0 6px 20px rgba(224, 96, 160, 0.2);
-            flex-shrink: 0;
-        }
-
-        .btn-create-main:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(224, 96, 160, 0.4);
-        }
-
-        .list-title {
-            color: rgba(255,255,255,0.6);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            font-weight: 800;
-            padding-left: 5px;
-            flex-shrink: 0;
-        }
-
-        /* --- CONTENEDOR DE LA LISTA --- */
-        .viviendas-list {
-            flex-grow: 1; 
-            overflow-y: auto; 
-            overflow-x: hidden;
-            padding: 20px;
-            background: rgba(15, 15, 25, 0.4); 
-            border-radius: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 30px; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2); 
-        }
-
-        /* --- BARRA DE SCROLL --- */
-        .viviendas-list::-webkit-scrollbar { width: 10px; }
-        .viviendas-list::-webkit-scrollbar-track { background: transparent !important; margin: 15px; }
-        .viviendas-list::-webkit-scrollbar-thumb { 
-            background: rgba(255, 255, 255, 0.15); 
-            border-radius: 10px;
-            border: 3px solid transparent; 
-            background-clip: padding-box;
-        }
-
-        /* --- TARJETAS Y AVATARES --- */
-        .vivienda-card {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            padding: 18px 20px;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: white;
-            transition: all 0.2s;
-            border-radius: 14px;
-            margin-bottom: 12px;
-        }
-        .vivienda-card:hover {
-            background: rgba(255, 255, 255, 0.12); 
-            transform: translateX(4px);
-        }
-
-        .vivienda-avatar {
-            width: 50px;
-            height: 50px;
-            margin-right: 18px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .vivienda-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid rgba(224, 96, 160, 0.3);
-        }
-
-        .vivienda-initial {
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #e060a0;
-            font-weight: 800;
-            font-size: 20px;
-            text-transform: uppercase;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-        }
-
-        .vivienda-info { flex-grow: 1; }
-        .vivienda-info h3 { margin: 0 0 4px 0; font-size: 17px; font-weight: 700; }
-        .vivienda-info p { margin: 0; font-size: 13px; color: rgba(255,255,255,0.5); }
-        .vivienda-arrow { color: rgba(255,255,255,0.3); font-size: 16px; margin-left: 15px; }
-
-        /* --- MODAL --- */
-        .modal-content-glass {
-            width: 450px;
-            margin: 50px auto;
-            padding: 35px;
-            border-radius: 24px;
-            background: rgba(20, 20, 30, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-        .close-btn { position: absolute; top: 20px; right: 25px; cursor: pointer; font-size: 22px; color: rgba(255,255,255,0.5); transition: 0.3s; }
-        .form-label { display: block; margin-bottom: 8px; font-size: 12px; text-transform: uppercase; color: rgba(255,255,255,0.8); font-weight: bold; }
-        .form-input { width: 100%; box-sizing: border-box; padding: 14px; margin-bottom: 20px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; outline: none; }
-    </style>
 </head>
 <body>
 
-    <div class="logo-container">
-        <a href="/">
-            <img src="/images/logo.svg" alt="Logo CheckMate" class="header-logo-img">
-        </a>
+
+<div class="card">
+    <h1>Crea una vivienda!</h1>
+
+    <div th:if="${errorMessage}" style="color:red; margin-bottom:10px;">
+        <p th:text="${errorMessage}"></p>
     </div>
 
-    <div class="dashboard-content">
+    <button onclick="openMenu()">Pulsa este botón para crear tu vivienda</button>
+    
+    <a href="/listar" style="display: block; margin-top: 15px; padding: 16px 30px; text-decoration: none; text-align: center; border-radius: 14px; font-weight: 700; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3);">
+        🏠 Ver viviendas registradas
+    </a>
+   
+</div>
 
-        <button class="btn-create-main" onclick="openMenu()">Crear Vivienda</button>
 
-        <p class="list-title">Mis viviendas</p>
 
-        <div class="viviendas-list">
-            <div th:if="${#lists.isEmpty(viviendas)}" style="color: rgba(255,255,255,0.5); padding: 30px; font-style: italic; text-align: center;">
-                Aún no tienes ninguna vivienda creada.
-            </div>
 
-            <a th:each="vivienda : ${viviendas}" th:href="@{'/vivienda/' + ${vivienda.id}}" class="vivienda-card">
-                
-                <div class="vivienda-avatar">
-                    <img th:if="${vivienda.image != null}" 
-                         th:src="@{'/vivienda/foto/' + ${vivienda.id}}" 
-                         class="vivienda-img">
-                    
-                    <div th:unless="${vivienda.image != null}" class="vivienda-initial">
-                        <span th:text="${#strings.substring(vivienda.name, 0, 1)}">H</span>
-                    </div>
-                </div>
+<div class="modal" id="houseMenu" style="display: none; background: rgba(0,0,0,0.1) !important;">
+    <div class="modal-content" style="width: 400px; margin: 50px auto; padding: 25px;">
+        
+        <span class="close" onclick="closeMenu()">✖</span>
 
-                <div class="vivienda-info">
-                    <h3 th:text="${vivienda.name}">Nombre Vivienda</h3>
-                    <p th:if="${vivienda.description != null and !vivienda.description.isEmpty()}" th:text="${vivienda.description}"></p>
-                    <p th:unless="${vivienda.description != null and !vivienda.description.isEmpty()}">Sin descripción.</p>
-                </div>
-                <div class="vivienda-arrow">❯</div>
-            </a>
-        </div>
+        <h2 style="text-align: center; margin-bottom: 20px;">Crear Vivienda</h2>
+
+        <form action="/submit" method="post" enctype="multipart/form-data">
+
+            <label>Nombre de la Vivienda (Obligatorio)<br></label>
+            <input type="text" name="houseName" required
+                   pattern="^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]+$" 
+                   oninvalid="this.setCustomValidity('El formato del nombre es incorrecto.')" 
+                   oninput="this.setCustomValidity('')"
+                   style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 15px; background-color: white; border: 1px solid #ccc; border-radius: 6px; color: black;">
+
+            <label>Descripción<br></label>
+            <textarea name="description" required
+                      oninput="validarDescripcion(this)"
+                      oninvalid="if(this.value===''){this.setCustomValidity('Por favor, añade una descripción.')}"
+                      style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 15px; background-color: white; border: 1px solid #ccc; border-radius: 6px; height: 80px; resize: none; color: black;"></textarea>
+
+            <label>Foto de la Vivienda<br></label>
+            <input type="file" name="image" accept=".png, .jpeg"
+                   style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 20px; background-color: white; border: 1px solid #ccc; border-radius: 6px; color: black;">
+
+            <button type="submit" style="background-color: #9b59d0; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; box-shadow: none;">
+                Crear Vivienda
+            </button>
+
+            <button type="button" onclick="closeMenu()" style="background-color: #666; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: none;">
+                Cancelar
+            </button>
+
+        </form>
+
     </div>
+</div>
 
-    <div class="modal" id="houseMenu" style="display: none; background: rgba(0,0,0,0.6) !important; backdrop-filter: blur(8px);">
-        <div class="modal-content-glass">
-            <span class="close-btn" onclick="closeMenu()">✖</span>
-            <h2 style="text-align: center; margin-bottom: 30px; margin-top: 0; font-weight: 900;">Crear Vivienda</h2>
-            <div th:if="${errorMessage}" style="background: rgba(255,99,132,0.1); border: 1px solid #ff6384; color: #ffccd5; padding: 10px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; text-align: center;">
-                <span th:text="${errorMessage}"></span>
-            </div>
-            <form action="/submit" method="post" enctype="multipart/form-data">
-                <label class="form-label">Nombre de la Vivienda</label>
-                <input type="text" name="houseName" required pattern="^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ]+$" class="form-input">
-                
-                <label class="form-label">Descripción</label>
-                <textarea name="description" required class="form-input" style="height: 80px; resize: none;"></textarea>
-                
-                <label class="form-label">Foto de la Vivienda (Opcional)</label>
-                <input type="file" name="image" accept="image/png, image/jpeg" class="form-input" style="padding: 10px;">
-                
-                <button type="submit" class="btn-save" style="width: 100%; padding: 16px; border-radius: 14px; border: none; background: linear-gradient(135deg, #e060a0, #9b59d0); color: white; font-weight: bold; cursor: pointer;">Guardar Vivienda</button>
-                <button type="button" class="btn-cancel" onclick="closeMenu()" style="width: 100%; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); padding: 14px; border-radius: 12px; margin-top: 10px; cursor: pointer;">Cancelar</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="/js/index.js" th:src="@{/js/index.js}"></script>
-    <script th:if="${openModal}">
-        document.addEventListener("DOMContentLoaded", function() {
-            if (typeof openMenu === "function") {
-                openMenu();
-            } else {
-                document.getElementById('houseMenu').style.display = 'block';
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form[action="/submit"]');
-            
-            form.addEventListener('submit', function(event) {
-                const fileInput = document.querySelector('input[name="image"]');
-                
-                if (fileInput.files.length > 0) {
-                    const fileSizeMB = fileInput.files[0].size / (1024 * 1024);
-                    
-                    if (fileSizeMB > 2) {
-                        alert("El archivo es demasiado grande. El máximo permitido es 2MB.");
-                        event.preventDefault(); 
-                    }
-                }
-            });
-        });
-    </script>
 </body>
+<script src="/js/index.js" th:src="@{/js/index.js}"></script>
 </html>
