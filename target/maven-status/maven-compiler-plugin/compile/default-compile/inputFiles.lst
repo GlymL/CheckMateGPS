@@ -1,11 +1,10 @@
-C:\CheckMateGPS\src\main\java\application\Application.java
-C:\CheckMateGPS\src\main\java\application\controller\MyController.java
-C:\CheckMateGPS\src\main\java\application\entities\Calendario.java
-C:\CheckMateGPS\src\main\java\application\entities\Roommate.java
-C:\CheckMateGPS\src\main\java\application\entities\Tarea.java
-C:\CheckMateGPS\src\main\java\application\entities\Vivienda.java
-C:\CheckMateGPS\src\main\java\application\exceptions\Existing.java
-C:\CheckMateGPS\src\main\java\application\repositories\RoommateRepository.java
-C:\CheckMateGPS\src\main\java\application\repositories\TareaRepository.java
-C:\CheckMateGPS\src\main\java\application\repositories\TareaService.java
-C:\CheckMateGPS\src\main\java\application\repositories\ViviendaRepository.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\Application.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\controller\MyController.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\entities\Roommate.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\entities\Tarea.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\entities\Vivienda.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\exceptions\Existing.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\repositories\RoommateRepository.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\repositories\TareaRepository.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\repositories\TareaService.java
+C:\Users\mmore\Proyecto GPS\CheckMateGPS\src\main\java\application\repositories\ViviendaRepository.java

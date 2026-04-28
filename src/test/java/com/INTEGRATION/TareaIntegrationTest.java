@@ -130,22 +130,19 @@ public class TareaIntegrationTest {
     @Test
     @DisplayName("CM1-7: Marcar tarea como completada correctamente")
     void completeTarea_success() throws Exception {
-        Vivienda vivienda = new Vivienda();
-        vivienda.setName("Casa Test");
-        vivienda = viviendaRepository.save(vivienda);
-        
-        Roommate r = new Roommate("Juan", vivienda);
-        r = roommateRepository.save(r);
 
-
-        Tarea tarea = new Tarea();
-        tarea.setName("Limpiar cocina");
-        tarea.setDescripcion("Limpiar fogones");
-        tarea.setVivienda(vivienda);
-        tarea.setCompletada(false);
-        tarea = tareaRepository.save(tarea);
-        tarea.setAsignadoA(r);
-        mockMvc.perform(post("/tareas/" + tarea.getId() + "/completar"))
+    Vivienda vivienda = new Vivienda();
+    vivienda.setName("Casa Test");
+    vivienda = viviendaRepository.save(vivienda);
+    
+    Tarea tarea = new Tarea();
+    tarea.setName("Limpiar cocina");
+    tarea.setDescripcion("Limpiar fogones");
+    tarea.setVivienda(vivienda);
+    tarea.setCompletada(false);
+    tarea = tareaRepository.save(tarea);
+    
+        mockMvc.perform(post("/tarea/" + tarea.getId() + "/completar"))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
@@ -213,5 +210,49 @@ public class TareaIntegrationTest {
                     
                     assert(content.contains("La tarea seleccionada no tiene descripción."));
                 });
+    }
+
+    @Test
+    @DisplayName("CM8-1: Visualizar lista de tareas con sus detalles (nombre, estado, asignado)")
+    void viewTareas_Success() throws Exception {
+        
+        application.entities.Roommate rm = new application.entities.Roommate("Pepe Test", viviendaGuardada);
+        roommateRepository.save(rm);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea CM8");
+        tarea.setDescripcion("Prueba de listado");
+        tarea.setVivienda(viviendaGuardada);
+        tarea.setAsignadoA(rm);
+        tarea.setCompletada(false);
+        tareaRepository.save(tarea);
+
+        
+        mockMvc.perform(get("/vivienda/" + viviendaGuardada.getId() + "/listTareas"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listTareas"))
+                
+                .andExpect(model().attributeExists("vivienda"))
+                .andExpect(model().attributeExists("roommates"))
+                .andExpect(model().attribute("viviendaId", viviendaGuardada.getId()));
+        
+        
+    }
+
+    @Test
+    @DisplayName("CM8-2: Mostrar mensaje cuando no hay tareas en la vivienda")
+    void viewTareas_EmptyList() throws Exception {
+        
+        Vivienda viviendaVacia = new Vivienda();
+        viviendaVacia.setName("Casa Vacía");
+        viviendaVacia = viviendaRepository.save(viviendaVacia);
+
+        
+        mockMvc.perform(get("/vivienda/" + viviendaVacia.getId() + "/listTareas"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("listTareas"))
+                .andExpect(model().attributeExists("vivienda"));
+        
+        
     }
 }
