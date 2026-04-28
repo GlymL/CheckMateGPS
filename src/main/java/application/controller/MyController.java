@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -37,33 +38,62 @@ public class MyController {
     private TareaRepository tareaRepository;
 
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        List<Vivienda> viviendas = viviendaRepository.findAll();
+        
+        model.addAttribute("viviendas", viviendas);
+        
         return "index";
     }
 
+    @GetMapping("/vivienda/foto/{id}")
+    @ResponseBody
+    public byte[] getFoto(@PathVariable Long id) {
+        return viviendaRepository.findById(id)
+            .map(Vivienda::getImage)
+            .orElse(null);
+    }
+
     @PostMapping("/submit")
-    public String submitHouse(
-            @RequestParam String houseName,
-            @RequestParam String description,
-            @RequestParam MultipartFile image,
-            RedirectAttributes redirectAttributes) {
+        public String submitHouse(
+        @RequestParam String houseName,
+        @RequestParam String description,
+        @RequestParam MultipartFile image,
+        RedirectAttributes redirectAttributes) {
 
         try {
-            Vivienda nuevaVivienda = new Vivienda(houseName, description, image);
-            viviendaRepository.save(nuevaVivienda);
-            return "redirect:/result";
-            
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            Vivienda nuevaVivienda = new Vivienda(houseName, description);
+
+            if (image != null && !image.isEmpty()) {
+                String type = image.getContentType();
+        
+        
+            if (type == null || (!type.equals("image/jpeg") && !type.equals("image/png"))) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Formato de imagen no válido. Solo se admiten archivos .png o .jpeg.");
+                redirectAttributes.addFlashAttribute("openModal", true);
+                return "redirect:/"; // Cortamos aquí y volvemos a casa con el mensaje
+            }
+
+            if (image.getSize() > 2 * 1024 * 1024) {
+                redirectAttributes.addFlashAttribute("errorMessage", "La imagen es demasiado grande (máx 2MB).");
+                redirectAttributes.addFlashAttribute("openModal", true);
             return "redirect:/";
-            
-        } catch (Exception e) {
-           
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "El nombre de una vivienda no puede existir ya, por favor, introduzca uno nuevo.");
-            return "redirect:/";
+            }
+
+            nuevaVivienda.setImage(image.getBytes());
         }
+
+        viviendaRepository.save(nuevaVivienda);
+        return "redirect:/result";
+
+    } catch (Exception e) {
+    
+        redirectAttributes.addFlashAttribute("errorMessage", "El nombre de una vivienda no puede existir ya.");
+        redirectAttributes.addFlashAttribute("openModal", true);
+        return "redirect:/";
     }
+}
+
 
     @GetMapping("/result")
     public String resultPage() {
