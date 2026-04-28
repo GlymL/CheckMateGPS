@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
 
@@ -26,8 +27,9 @@ public class Vivienda {
     
     private String description;
     
-    @Transient 
-    private MultipartFile image;
+    @Lob 
+    @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.BINARY)
+    private byte[] image;
 
     @OneToMany(mappedBy = "vivienda", cascade = CascadeType.ALL)
     private List<Roommate> roommates = new ArrayList<>();
@@ -39,14 +41,12 @@ public class Vivienda {
     public Vivienda() {
     }
 
-    public Vivienda(String name, String desc, MultipartFile image) {
+    public Vivienda(String name, String desc) {
         validateName(name);
         validateDescription(desc);
-        validateImage(image);
         
         this.name = name;
         this.description = desc;
-        this.image = image;
     }
 
     private void validateName(String name) {
@@ -64,15 +64,6 @@ public class Vivienda {
         }
         if (!desc.matches("^[a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ.,!?;:'\"()\\-\\n\\r]+$")) {
             throw new IllegalArgumentException("La descripción contiene caracteres no válidos. Revisa el formato.");
-        }
-    }
-
-    private void validateImage(MultipartFile image) {
-        if (image != null && !image.isEmpty()) {
-            String contentType = image.getContentType();
-            if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-                throw new IllegalArgumentException("Formato de imagen no válido. Solo se admiten archivos .png o .jpeg.");
-            }
         }
     }
 
@@ -101,11 +92,11 @@ public class Vivienda {
         this.description = description;
     }
 
-    public MultipartFile getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(MultipartFile image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 

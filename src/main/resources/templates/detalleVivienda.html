@@ -274,8 +274,7 @@
                 <ul class="content-list">
                     <li th:each="roommate : ${roommates}" class="content-item">
                         <div class="item-info">
-                            <div class="item-name" th:text="${roommate.nombre}"></div>
-                            <div class="item-desc" th:if="${roommate.apellido}" th:text="${roommate.apellido}"></div>
+                            <div class="item-name" th:text="${roommate.nombreReal}"></div>
                         </div>
                     </li>
                 </ul>
@@ -342,7 +341,7 @@
     </div>
 
     <div class="footer">
-        <a th:href="@{/listar}" class="btn-back">
+        <a th:href="@{/}" class="btn-back">
             Volver al listado de viviendas
         </a>
     </div>

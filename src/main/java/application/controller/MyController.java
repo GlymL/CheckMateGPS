@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -37,47 +38,67 @@ public class MyController {
     private TareaRepository tareaRepository;
 
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        List<Vivienda> viviendas = viviendaRepository.findAll();
+        
+        model.addAttribute("viviendas", viviendas);
         return "index";
     }
 
+    @GetMapping("/vivienda/foto/{id}")
+    @ResponseBody
+    public byte[] getFoto(@PathVariable Long id) {
+        return viviendaRepository.findById(id)
+            .map(Vivienda::getImage)
+            .orElse(null);
+    }
+
     @PostMapping("/submit")
-    public String submitHouse(
-            @RequestParam String houseName,
-            @RequestParam String description,
-            @RequestParam MultipartFile image,
-            RedirectAttributes redirectAttributes) {
+        public String submitHouse(
+        @RequestParam String houseName,
+        @RequestParam String description,
+        @RequestParam MultipartFile image,
+        RedirectAttributes redirectAttributes) {
 
         try {
-            Vivienda nuevaVivienda = new Vivienda(houseName, description, image);
-            viviendaRepository.save(nuevaVivienda);
-            return "redirect:/result";
-            
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            Vivienda nuevaVivienda = new Vivienda(houseName, description);
+
+            if (image != null && !image.isEmpty()) {
+                String type = image.getContentType();
+        
+        
+            if (type == null || (!type.equals("image/jpeg") && !type.equals("image/png"))) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Formato de imagen no válido. Solo se admiten archivos .png o .jpeg.");
+                redirectAttributes.addFlashAttribute("openModal", true);
+                return "redirect:/"; // Cortamos aquí y volvemos a casa con el mensaje
+            }
+
+            if (image.getSize() > 2 * 1024 * 1024) {
+                redirectAttributes.addFlashAttribute("errorMessage", "La imagen es demasiado grande (máx 2MB).");
+                redirectAttributes.addFlashAttribute("openModal", true);
             return "redirect:/";
-            
-        } catch (Exception e) {
-           
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "El nombre de una vivienda no puede existir ya, por favor, introduzca uno nuevo.");
-            return "redirect:/";
+            }
+
+            nuevaVivienda.setImage(image.getBytes());
         }
+
+        viviendaRepository.save(nuevaVivienda);
+        return "redirect:/result";
+
+    } catch (Exception e) {
+    
+        redirectAttributes.addFlashAttribute("errorMessage", "El nombre de una vivienda no puede existir ya.");
+        redirectAttributes.addFlashAttribute("openModal", true);
+        return "redirect:/";
     }
+}
+
 
     @GetMapping("/result")
     public String resultPage() {
         return "result";
     }
 
-    
-    @GetMapping("/listar")
-    public String listarViviendas(Model model) {
-        try {
-            model.addAttribute("listaCasas", viviendaRepository.findAll());
-        } catch (Exception e) {}
-        return "listarViviendas"; 
-    }
   
     @GetMapping("/vivienda/{id}/nuevo-roommate")
     public String mostrarFormularioRoommate(@PathVariable("id") Long id, Model model) {
@@ -104,7 +125,7 @@ public class MyController {
        
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
         if (viviendaOpt.isEmpty()) {
-            return "redirect:/listar"; 
+            return "redirect:/"; 
         }
         Vivienda viviendaEncontrada = viviendaOpt.get();
 
@@ -131,7 +152,7 @@ public String listarRoommates(@PathVariable("id") Long id, Model model) {
         return "listRoommates"; // Nombre del nuevo HTML
     }
     
-    return "redirect:/listar";
+    return "redirect:/";
 } 
 
     @GetMapping("/vivienda/{id}")
@@ -145,13 +166,13 @@ public String listarRoommates(@PathVariable("id") Long id, Model model) {
             
           
             model.addAttribute("viviendaNombre", vivienda.getName()); 
-           model.addAttribute("viviendaDescripcion", vivienda.getDescription());
+            model.addAttribute("viviendaDescripcion", vivienda.getDescription());
             model.addAttribute("viviendaId", id); 
             
             return "detalleVivienda"; 
         } else {
             // Si el ID no existe, lo devolvemos a la lista 
-            return "redirect:/listar";
+            return "redirect:/";
         }
     }
 
@@ -160,7 +181,7 @@ public String listarRoommates(@PathVariable("id") Long id, Model model) {
        Optional<Vivienda> viviendaOpt = viviendaRepository.findById(id);
        
        if (viviendaOpt.isEmpty()) {
-           return "redirect:/listar"; 
+           return "redirect:/"; 
        }
        
        Tarea tarea = new Tarea();
@@ -183,7 +204,7 @@ public String listarRoommates(@PathVariable("id") Long id, Model model) {
         
         Optional<Vivienda> viviendaOpt = viviendaRepository.findById(viviendaId);
         if (viviendaOpt.isEmpty()) {
-            return "redirect:/listar";
+            return "redirect:/";
         }
         Vivienda vivienda = viviendaOpt.get();
         String viviendaNombre = vivienda.getName(); 
@@ -268,7 +289,7 @@ public String mostrarPantallaAsignar(Model model) {
             tarea.setAsignadoA(roommate); 
             tareaRepository.save(tarea);
             
-            return "redirect:/listar"; 
+            return "redirect:/"; 
         }
 
         model.addAttribute("errorAsignacion", "La tarea o el roommate seleccionado no existe.");
@@ -300,7 +321,7 @@ public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
 
         return "listTareas";
     } else {
-        return "redirect:/listar";
+        return "redirect:/";
     }
 }
 
@@ -386,27 +407,8 @@ public String cambiarEstado(
         return "redirect:/vivienda/" + viviendaId + "/listTareas";
     }
 
-    return "redirect:/listar"; 
+    return "redirect:/"; 
 }
-    @GetMapping("/tarea/{id}/ver-descripcion")
-    public String verDescripcionTarea(@PathVariable("id") Long id, Model model) {
-        
-        Optional<Tarea> tareaOpt = tareaRepository.findById(id);
-
-        if (tareaOpt.isPresent()) {
-            Tarea tarea = tareaOpt.get();
-            
-            // Pasamos la tarea a la vista
-            model.addAttribute("tarea", tarea);
-            
-            // Pasamos también el ID de la vivienda para que el botón de "Volver" funcione
-            model.addAttribute("viviendaId", tarea.getVivienda().getId());
-            
-            return "descripcion"; 
-        } else {
-            return "redirect:/listar";
-        }
-    }
         // CM12 
     @GetMapping("/vivienda/{id}/calendario")
     public String verCalendario(@PathVariable Long id, Model model) {

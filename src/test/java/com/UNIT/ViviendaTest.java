@@ -3,9 +3,10 @@ package com.UNIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.multipart.MultipartFile;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import org.springframework.web.multipart.MultipartFile;
 
 import application.entities.Vivienda;
 
@@ -17,32 +18,28 @@ class ViviendaTest {
         // 1. Arrange
         String nombreValido = "Piso Estudiantes 1";
         String descValida = "Piso muy luminoso, exterior.";
-        MultipartFile mockFoto = mock(MultipartFile.class);
-        when(mockFoto.isEmpty()).thenReturn(true);
    
         // 2. Act
-        Vivienda vivienda = new Vivienda(nombreValido, descValida, mockFoto);
+        Vivienda vivienda = new Vivienda(nombreValido, descValida);
        
         // 3. Assert 
         assertThat(vivienda.getName()).isEqualTo(nombreValido);
         assertThat(vivienda.getDescription()).isEqualTo(descValida);
+        assertThat(vivienda.getImage()).isNull();
     }
 
     @Test
     void validarFoto_createViviendaCorrectlyWithImagePNG() {
 
         // 1. Arrange 
-        String nombreValido = "Chalet UCM";
-        String descValida = "Chalet con piscina.";
-        MultipartFile mockFoto = mock(MultipartFile.class);
-        when(mockFoto.isEmpty()).thenReturn(false); 
-        when(mockFoto.getContentType()).thenReturn("image/png"); 
+        Vivienda vivienda = new Vivienda("Chalet UCM", "Chalet con piscina.");
+        byte[] fotoBytes = new byte[]{1, 2, 3, 4};
        
         // 2. Act
-        Vivienda vivienda = new Vivienda(nombreValido, descValida, mockFoto);
+        vivienda.setImage(fotoBytes);
      
         // 3. Assert
-        assertThat(vivienda.getImage()).isNotNull();
+        assertThat(vivienda.getImage()).containsExactly(1, 2, 3, 4);
     }
 
     @Test
@@ -51,10 +48,9 @@ class ViviendaTest {
         // 1. Arrange 
         String nombreInvalido = "   "; 
         String descValida = "Descripción correcta.";
-        MultipartFile mockFoto = mock(MultipartFile.class);
      
         // 2 y 3. Act y Assert 
-        assertThatThrownBy(() -> new Vivienda(nombreInvalido, descValida, mockFoto))
+        assertThatThrownBy(() -> new Vivienda(nombreInvalido, descValida))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Faltan datos obligatorios");
     }
@@ -65,39 +61,21 @@ class ViviendaTest {
         // 1. Arrange 
         String nombreInvalido = "Nombre incorrecto@!"; 
         String descValida = "Descripción correcta.";
-        MultipartFile mockFoto = mock(MultipartFile.class);
-        when(mockFoto.isEmpty()).thenReturn(true);
         
         // 2 y 3. Act y Assert 
-        assertThatThrownBy(() -> new Vivienda(nombreInvalido, descValida, mockFoto))
+        assertThatThrownBy(() -> new Vivienda(nombreInvalido, descValida))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El nombre no cumple el formato");
     }
 
-    @Test
-    void validateImage_throwsExceptionByIncorrectPhotoFormat() {
 
-        // 1. Arrange 
-        String nombreValido = "Nombre correcto";
-        String descValida = "Descripción correcta.";
-        MultipartFile mockFoto = mock(MultipartFile.class);
-        when(mockFoto.isEmpty()).thenReturn(false);
-        when(mockFoto.getContentType()).thenReturn("application/pdf"); 
-
-        // 2 y 3. Act y Assert 
-        assertThatThrownBy(() -> new Vivienda(nombreValido, descValida, mockFoto))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Formato de imagen no válido");
-    }
 
     @Test
     void equals_returnsTrueIfTheyHaveTheSameName() {
 
         // 1. Arrange 
-        MultipartFile mockFoto = mock(MultipartFile.class);
-        when(mockFoto.isEmpty()).thenReturn(true);
-        Vivienda casa1 = new Vivienda("Mi Casa", "Desc 1", mockFoto);
-        Vivienda casa2 = new Vivienda("Mi Casa", "Desc distinta", mockFoto);
+        Vivienda casa1 = new Vivienda("Mi Casa", "Desc 1");
+        Vivienda casa2 = new Vivienda("Mi Casa", "Desc distinta");
         
         // 2. Act 
         boolean sonIguales = casa1.equals(casa2);
@@ -112,10 +90,9 @@ class ViviendaTest {
         // 1. Arrange 
         String nombreValido = "Nombre correcto";
         String descInvalida = "   "; // Descripción vacía o solo espacios
-        MultipartFile mockFoto = mock(MultipartFile.class);
      
         // 2 y 3. Act y Assert 
-        assertThatThrownBy(() -> new Vivienda(nombreValido, descInvalida, mockFoto))
+        assertThatThrownBy(() -> new Vivienda(nombreValido, descInvalida))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Faltan datos obligatorios");
     }
@@ -126,11 +103,9 @@ class ViviendaTest {
         // 1. Arrange 
         String nombreValido = "Nombre correcto";
         String descInvalida = "Descripción incorrecta < > { }"; 
-        MultipartFile mockFoto = mock(MultipartFile.class);
-        when(mockFoto.isEmpty()).thenReturn(true);
         
         // 2 y 3. Act y Assert 
-        assertThatThrownBy(() -> new Vivienda(nombreValido, descInvalida, mockFoto))
+        assertThatThrownBy(() -> new Vivienda(nombreValido, descInvalida))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("La descripción contiene caracteres no válidos");
     }
@@ -139,10 +114,8 @@ class ViviendaTest {
     void hashCode_generateDifferentHashForDifferentDwellings() {
 
         // 1. Arrange
-        MultipartFile mockFoto = mock(MultipartFile.class);
-        when(mockFoto.isEmpty()).thenReturn(true);
-        Vivienda casa1 = new Vivienda("Casa Madrid", "Desc", mockFoto);
-        Vivienda casa2 = new Vivienda("Casa Barcelona", "Desc", mockFoto);
+        Vivienda casa1 = new Vivienda("Casa Madrid", "Desc");
+        Vivienda casa2 = new Vivienda("Casa Barcelona", "Desc");
         
         // 2. Act
         int hash1 = casa1.hashCode();
