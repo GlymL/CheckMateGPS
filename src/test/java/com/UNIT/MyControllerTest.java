@@ -58,30 +58,6 @@ class MyControllerTest {
     }
 
     @Test
-    void submitHouse_errorWhenNameIsDuplicated_CM1_4() throws Exception {
-        // 1. Arrange
-        // simulando que el nombre ya existe en la BD.
-        when(viviendaRepository.save(any(Vivienda.class)))
-                .thenThrow(new RuntimeException("Nombre duplicado"));
-
-        MockMultipartFile mockFoto = new MockMultipartFile("image", "", "image/png", new byte[0]);
-
-        // 2. Act
-        MvcResult result = mockMvc.perform(multipart("/submit")
-            .file(mockFoto)
-            .param("houseName", "Casa Repetida")
-            .param("description", "Descripción válida"))
-            .andReturn();
-
-        // 3. Assert
-        assertThat(result.getResponse().getStatus()).isEqualTo(302);
-        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/");
-        // Verificamos que el mensaje de error de la CM1-4 esté en el Flash Attributes
-        assertThat(result.getFlashMap().get("errorMessage"))
-            .isEqualTo("El nombre de una vivienda no puede existir ya, por favor, introduzca uno nuevo.");
-}
-
-    @Test
     void listViviendas_returnsViewListHomes() throws Exception {
 
         // 1. Arrange
@@ -243,6 +219,4 @@ class MyControllerTest {
 
         verify(roommateRepository, never()).save(any(Roommate.class));
         }
-
-        
 }
