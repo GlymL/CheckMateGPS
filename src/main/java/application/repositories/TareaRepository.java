@@ -9,5 +9,5 @@ import application.entities.Tarea;
 
 @Repository
 public interface TareaRepository extends JpaRepository<Tarea, Long> {
-    List<Tarea> findbyViviendaId(Long viviendaId);
+    List<Tarea> findByViviendaId(Long viviendaId);
 }
