@@ -2,117 +2,260 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>CheckMate - Lista de Tareas</title>
+    <title>CheckMate - Gestión de Tareas</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        .task-box {
-            background: #f9f9f9;
-            border: 1px solid #eee;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-purple: #9b59d0;
+            --accent-pink: #e060a0;
+            --success-green: #2ecc71;
+            --warning-orange: #e67e22;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4b1a7a 0%, #25103f 100%);
+            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative; 
+        }
+
+        
+        .app-logo-corner {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            height: 60px; 
+            width: auto;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); 
+            transition: 0.3s;
+        }
+        .app-logo-corner:hover {
+            transform: scale(1.05);
+        }
+
+        .main-container {
+            width: 90%;
+            max-width: 950px; 
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            margin-top: 50px; 
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        h2 { font-weight: 900; font-size: 2.4rem; margin: 0; letter-spacing: -0.5px; }
+        .subtitle { color: rgba(255,255,255,0.6); font-size: 0.95rem; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;}
+
+        
+        .tasks-grid {
+            max-height: 550px;
+            overflow-y: auto;
+            padding-right: 15px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .task-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            text-align: left;
-        }
-        .task-info b {
-            font-size: 1.1em;
-            color: #333;
-        }
-        .task-info p {
-            margin: 5px 0 0 0;
-            font-size: 0.9em;
-            color: #666;
-        }
-        .task-meta {
-            margin-top: 10px;
-            font-size: 0.85em;
-            color: #555;
-            background: #fff;
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px dashed #ccc;
-            display: inline-block;
-        }
-        .status-container {
-            text-align: right;
-            min-width: 100px;
-        }
-      
-        .badge-pendiente {
-            background: #e67e22; 
-            color: white;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .badge-completada {
-            background: #2ecc71; 
-            color: white;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .scroll-container {
-            max-height: 350px; 
-            overflow-y: auto;  
-            padding-right: 10px; 
-            margin-bottom: 20px;
+            align-items: flex-start; 
+            gap: 20px;
+            transition: 0.3s;
         }
 
-       
-        .scroll-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scroll-container::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 10px;
-        }
-        .scroll-container::-webkit-scrollbar-thumb {
-            background: #c1c1c1; 
-            border-radius: 10px;
-        }
-        .scroll-container::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8; 
-        }
+        .task-card:hover { background: rgba(255, 255, 255, 0.07); transform: translateY(-2px); }
 
-        .date-assign-form {
-            margin-top: 10px;
+        .task-main-info { flex: 1; }
+
+        .task-title-area {
             display: flex;
             align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .desc-link {
+            font-size: 0.7rem;
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: 0.2s;
+        }
+        .desc-link:hover { background: var(--accent-purple); }
+
+        .task-details-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .detail-item { display: flex; align-items: center; gap: 8px; }
+        .detail-icon { opacity: 0.7; font-size: 1.1rem; }
+
+        
+        .badge {
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-pending { background: var(--warning-orange); box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3); }
+        .badge-done { background: var(--success-green); box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3); }
+
+        
+        .actions-column {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
+            gap: 15px;
+            min-width: 260px; 
+        }
+
+        
+        .task-actions-stack {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(0,0,0,0.15);
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .action-form-inline {
+            display: flex;
             gap: 8px;
+            width: 100%;
         }
-        .input-date {
-            padding: 4px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.85em;
+
+        
+        .input-glass {
+            flex-grow: 1;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: white;
+            padding: 8px;
+            font-size: 0.85rem;
+            font-family: 'Nunito', sans-serif;
         }
-        .btn-date {
-            background: #9b59d0;
+        .input-glass:focus { outline: none; border-color: var(--accent-purple); background: rgba(255,255,255,0.12); }
+        
+        
+        select.input-glass {
+            cursor: pointer;
+            color: rgba(255,255,255,0.9);
+        }
+        select.input-glass option { background: #25103f; color: white; } 
+
+        .btn-action-sm {
+            background: var(--accent-purple);
             color: white;
             border: none;
-            padding: 5px 8px;
-            border-radius: 4px;
+            padding: 8px 14px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85em;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .btn-desc {
+            display: inline-block; 
+            background-color: #9b59d0; 
+            color: white; 
+            text-decoration: none; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 0.85em; 
+            font-weight: bold; 
+            margin-top: 8px; 
+            margin-bottom: 4px;
+            transition: 0.3s;
+        }
+        .btn-desc:hover {
+            background-color: #8449b8;
         }
     </style>
 </head>
 <body>
 
-    <div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
-    
-        <h2>Tareas de la Vivienda 📋</h2>
-        <p style="color: #666; margin-bottom: 20px;">Todas las tareas creadas para esta casa.</p>
+<img src="/images/logo_checkmate.png" th:src="@{/images/image_4.png}" alt="CheckMate Logo" class="app-logo-corner">
 
-        <div th:if="${errorMsg}" style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9em;">
-            ⚠️ <span th:text="${errorMsg}"></span>
+<div class="main-container">
+    <div class="header-section">
+        <h2>Tareas de la Vivienda 📋</h2>
+        <p class="subtitle" th:text="'Vivienda: ' + ${vivienda.name}">Panel de control</p>
+    </div>
+
+    <div th:if="${errorMsg}" style="background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: white; padding: 15px; border-radius: 12px; margin-bottom: 25px; font-size: 0.95rem; text-align: center; font-weight: 600;">
+        ⚠️ <span th:text="${errorMsg}"></span>
+    </div>
+    <div th:if="${successMsg}" style="background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: white; padding: 15px; border-radius: 12px; margin-bottom: 25px; font-size: 0.95rem; text-align: center; font-weight: 600;">
+        ✅ <span th:text="${successMsg}"></span>
+    </div>
+
+    <div class="tasks-grid">
+        <div th:each="tarea : ${vivienda.tareas}" class="task-card">
+            
+            <div class="task-main-info">
+    <div class="task-title-area">
+        <h3 class="task-title" th:text="${tarea.name}">Nombre de la Tarea</h3>
+    </div>
+
+    <div th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" 
+         style="margin-bottom: 12px; margin-top: -5px;">
+        <p th:text="${tarea.descripcion}" 
+           style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin: 0; line-height: 1.4;">
+        </p>
+    </div>
+
+    <div class="task-details-row">
+        <div class="detail-item">
+            <span class="detail-icon">👤</span>
+            <strong th:if="${tarea.asignadoA != null}" th:text="${tarea.asignadoA.nombreReal}"></strong>
+            <span th:if="${tarea.asignadoA == null and !tarea.completada}" style="opacity: 0.4; font-style: italic;">Sin asignar</span>
+            </div>
+
+        <div th:if="${tarea.fechaRealizacion != null}" class="detail-item">
+            <span class="detail-icon">📅</span>
+            <span th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></span>
         </div>
     <div class="scroll-container">
         <div th:each="tarea : ${vivienda.tareas}" class="task-box">
@@ -120,54 +263,66 @@
             <div class="task-info">
                 <b th:text="${tarea.getName()}">Nombre de Tarea</b>
     
-                <p th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}" th:text="${tarea.descripcion}"></p>
-                <p th:if="${tarea.descripcion == null or tarea.descripcion.isEmpty()}" style="font-style: italic; color: #aaa; font-size: 0.85em;">Sin descripción</p>
+                <div>
+                    <a th:href="@{'/tarea/' + ${tarea.id} + '/ver-descripcion'}" class="btn-desc">
+                        👁️ Ver Descripción
+                    </a>
+                </div>
 
                 <div class="task-meta">
                     <span th:if="${tarea.asignadoA != null}">
                         👤 Asignada a: <strong th:text="${tarea.asignadoA.nombreReal}"></strong>
                     </span>
                     <span th:if="${tarea.asignadoA == null}" style="color: #e74c3c;">
-                         ⚠️ Sin asignar
+                        ⚠️ Sin asignar
                     </span>
-        
+
                     <div th:if="${tarea.fechaRealizacion != null}" style="margin-top: 5px; color: #2980b9;">
-                    📅 Fecha: <strong th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></strong>
+                        📅 Fecha: <strong th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></strong>
                     </div>
                 </div>
 
-                <form th:if="${!tarea.completada}" th:action="@{/assignDate/submit}" method="post" class="date-assign-form">
-                    <input type="hidden" name="taskId" th:value="${tarea.id}">
-                    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+            <div class="actions-column">
+                <span th:class="${tarea.completada} ? 'badge badge-done' : 'badge badge-pending'" 
+                      th:text="${tarea.completada} ? 'Completada' : 'Pendiente'">
+                </span>
 
-                    <input type="date" name="fecha" required class="input-date">
-                    <button type="submit" class="btn-date">📅 Asignar Fecha</button>
-                </form>
-            </div>
+                <div th:if="${!tarea.completada}" class="task-actions-stack">
+                    
+                    <form th:action="@{/assignRoommate/submit}" method="post" class="action-form-inline">
+                        <input type="hidden" name="taskId" th:value="${tarea.id}">
+                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                        
+                        <select name="roommateId" required class="input-glass">
+                            <option value="" disabled selected>👤 Responsable...</option>
+                            <option th:each="rm : ${roommates}" 
+                                    th:value="${rm.id}" 
+                                    th:text="${rm.nombreReal}"></option>
+                        </select>
+                        <button type="submit" class="btn-action-sm">Asignar</button>
+                    </form>
 
-            <div class="status-container">
-            
-                <span th:if="${!tarea.completada}" class="badge-pendiente">Pendiente</span>
-            
-                <div th:if="${tarea.completada}">
-                    <span class="badge-completada">Completada</span>
-                
-                    <div th:if="${tarea.asignadoA != null}" style="font-size: 0.75em; color: #7f8c8d; margin-top: 5px;">
-                        por <span th:text="${tarea.asignadoA.nombreReal}"></span>
-                    </div>
+                    <form th:action="@{/assignDate/submit}" method="post" class="action-form-inline">
+                        <input type="hidden" name="taskId" th:value="${tarea.id}">
+                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                        
+                        <input type="date" name="fecha" required class="input-glass">
+                        <button type="submit" class="btn-action-sm">📅 Fecha</button>
+                    </form>
                 </div>
-            
             </div>
         </div>
-    </div>
-        <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="color: #888; padding: 20px;">
-            Aún no hay tareas creadas en esta casa. ¡Añade la primera!
-        </div>
 
-        <button th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-top: 15px;">
-            Volver al Panel
-        </button>
+        <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="text-align: center; padding: 50px 20px; color: rgba(255,255,255,0.3); border: 2px dashed rgba(255,255,255,0.1); border-radius: 15px;">
+            <p style="font-size: 1.1rem; margin: 0;">No hay tareas registradas en esta vivienda.</p>
+            <p style="font-size: 0.85rem; margin-top: 5px;">¡Añade la primera desde el panel!</p>
+        </div>
     </div>
+
+    <button class="btn-back-global" th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|">
+        Volver al Panel Principal
+    </button>
+</div>
 
 </body>
 </html>

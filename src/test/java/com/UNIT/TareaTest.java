@@ -15,10 +15,15 @@ import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import application.controller.MyController;
@@ -59,7 +64,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("descripcion", "Limpiar los fogones y la encimera")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -83,7 +88,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "")
+                .param("name", "")
                 .param("descripcion", "Descripción válida")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -109,7 +114,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Tarea@#$%")
+                .param("name", "Tarea@#$%")
                 .param("descripcion", "Descripción válida")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -135,7 +140,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("descripcion", "Descripción con caracteres ilegales @#$%")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -157,7 +162,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("descripcion", "Limpiar los fogones")
                 .param("vivienda.id", "99"))
                 .andReturn();
@@ -183,7 +188,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("vivienda.id", "1"))
                 .andReturn();
 
@@ -206,7 +211,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Hacer compras")
+                .param("name", "Hacer compras")
                 .param("descripcion", "Comprar leche, pan y huevos. No olvidar el queso!")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -235,7 +240,7 @@ class TareaTest {
     when(tareaRepository.save(any(Tarea.class))).thenReturn(tarea);
     
     // Act
-    MvcResult result = mockMvc.perform(post("/tarea/1/completar"))
+    MvcResult result = mockMvc.perform(post("/tareas/1/completar"))
             .andReturn();
     
     // Assert
@@ -310,4 +315,5 @@ class TareaTest {
         // Verificamos que no se guarda nada
         verify(tareaRepository, never()).save(any());
     }
+    
 }

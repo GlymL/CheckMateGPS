@@ -18,12 +18,19 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import application.controller.MyController;
 import application.entities.Roommate;
+import application.entities.Tarea;
 import application.entities.Vivienda;
 import application.repositories.RoommateRepository;
+import application.repositories.TareaRepository;
 import application.repositories.ViviendaRepository;
 class MyControllerTest {
         @Mock
@@ -31,6 +38,9 @@ class MyControllerTest {
 
         @Mock
         private RoommateRepository roommateRepository;
+
+        @Mock
+        private TareaRepository tareaRepository;
 
         @InjectMocks
         private MyController controller;
@@ -56,6 +66,30 @@ class MyControllerTest {
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
         assertThat(result.getModelAndView().getViewName()).isEqualTo("index");
     }
+
+    @Test
+    void submitHouse_errorWhenNameIsDuplicated_CM1_4() throws Exception {
+        // 1. Arrange
+        // simulando que el nombre ya existe en la BD.
+        when(viviendaRepository.save(any(Vivienda.class)))
+                .thenThrow(new RuntimeException("Nombre duplicado"));
+
+        MockMultipartFile mockFoto = new MockMultipartFile("image", "", "image/png", new byte[0]);
+
+        // 2. Act
+        MvcResult result = mockMvc.perform(multipart("/submit")
+            .file(mockFoto)
+            .param("houseName", "Casa Repetida")
+            .param("description", "Descripción válida"))
+            .andReturn();
+
+        // 3. Assert
+        assertThat(result.getResponse().getStatus()).isEqualTo(302);
+        assertThat(result.getResponse().getRedirectedUrl()).isEqualTo("/");
+        // Verificamos que el mensaje de error de la CM1-4 esté en el Flash Attributes
+        assertThat(result.getFlashMap().get("errorMessage"))
+            .isEqualTo("El nombre de una vivienda no puede existir ya, por favor, introduzca uno nuevo.");
+}
 
     @Test
     void listViviendas_returnsViewListHomes() throws Exception {
@@ -219,4 +253,71 @@ class MyControllerTest {
 
         verify(roommateRepository, never()).save(any(Roommate.class));
         }
+
+        
+    // CM11-1
+    @Test
+    void verDescripcionTarea_withDescription_success() throws Exception {
+        // Arrange
+        Vivienda vivienda = new Vivienda();
+        vivienda.setId(10L); 
+
+        Tarea tarea = new Tarea();
+        tarea.setId(1L);
+        tarea.setName("Limpiar el baño");
+        tarea.setDescripcion("Usar lejía y limpiar los espejos a fondo.");
+        tarea.setVivienda(vivienda);
+
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+
+        // Act & Assert
+        mockMvc.perform(get("/tarea/1/ver-descripcion"))
+                .andExpect(status().isOk()) 
+                .andExpect(view().name("descripcion"))
+                .andExpect(model().attributeExists("tarea"))
+                .andExpect(model().attributeExists("viviendaId"))
+                .andExpect(model().attribute("viviendaId", 10L));
+        
+        verify(tareaRepository).findById(1L);
+    }
+
+    // CM11-2
+    @Test
+    void verDescripcionTarea_withoutDescription_success() throws Exception {
+        // Arrange
+        Vivienda vivienda = new Vivienda();
+        vivienda.setId(10L);
+
+        Tarea tarea = new Tarea();
+        tarea.setId(2L);
+        tarea.setName("Bajar la basura");
+        tarea.setDescripcion(null); // Sin descripción
+        tarea.setVivienda(vivienda);
+
+        when(tareaRepository.findById(2L)).thenReturn(Optional.of(tarea));
+
+        // Act & Assert
+        mockMvc.perform(get("/tarea/2/ver-descripcion"))
+                .andExpect(status().isOk()) 
+                .andExpect(view().name("descripcion")) 
+                .andExpect(model().attributeExists("tarea"))
+                .andExpect(model().attributeExists("viviendaId"))
+                .andExpect(model().attribute("viviendaId", 10L));
+                
+        verify(tareaRepository).findById(2L);
+    }
+
+    //Tarea no encontrada
+    @Test
+    void verDescripcionTarea_tareaDoesNotExist_redirectsToListar() throws Exception {
+        // Arrange
+        when(tareaRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        mockMvc.perform(get("/tarea/99/ver-descripcion"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/listar"));
+                
+        verify(tareaRepository).findById(99L);
+    }
 }
