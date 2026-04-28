@@ -135,7 +135,10 @@
             letter-spacing: 0.5px;
         }
         .badge-pending { background: var(--warning-orange); box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3); }
-        .badge-done { background: var(--success-green); box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3); }
+        .badge-done { 
+            background: var(--success-green) !important; 
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3); 
+        }
 
         
         .actions-column {
@@ -241,7 +244,8 @@
     </div>
 
     <div class="tasks-grid">
-        <div th:each="tarea : ${vivienda.tareas}" class="task-card">
+        <div th:each="tarea : ${tareasOrdenadas}" class="task-card">
+            
             
             <div class="task-main-info">
     <div class="task-title-area">
@@ -260,7 +264,7 @@
             <span class="detail-icon">👤</span>
             <strong th:if="${tarea.asignadoA != null}" th:text="${tarea.asignadoA.nombreReal}"></strong>
             <span th:if="${tarea.asignadoA == null and !tarea.completada}" style="opacity: 0.4; font-style: italic;">Sin asignar</span>
-            </div>
+        </div>
 
         <div th:if="${tarea.fechaRealizacion != null}" class="detail-item">
             <span class="detail-icon">📅</span>
@@ -270,34 +274,37 @@
 </div>
 
             <div class="actions-column">
-                <span th:class="${tarea.completada} ? 'badge badge-done' : 'badge badge-pending'" 
-                      th:text="${tarea.completada} ? 'Completada' : 'Pendiente'">
-                </span>
+    
+    <form th:action="@{/tarea/cambiarEstado}" method="post">
+        <input type="hidden" name="taskId" th:value="${tarea.id}">
+        <input type="hidden" name="viviendaId" th:value="${vivienda.id}"> 
+    
+        <button type="submit" 
+                th:class="${tarea.completada} ? 'badge badge-done' : 'badge badge-pending'" 
+                style="cursor: pointer; border: none; outline: none; transition: all 0.2s; font-family: 'Nunito', sans-serif;">
+            <span th:text="${tarea.completada} ? 'COMPLETADA' : 'PENDIENTE'"></span>
+        </button>
+    </form>
 
-                <div th:if="${!tarea.completada}" class="task-actions-stack">
-                    
-                    <form th:action="@{/assignRoommate/submit}" method="post" class="action-form-inline">
-                        <input type="hidden" name="taskId" th:value="${tarea.id}">
-                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
-                        
-                        <select name="roommateId" required class="input-glass">
-                            <option value="" disabled selected>👤 Responsable...</option>
-                            <option th:each="rm : ${roommates}" 
-                                    th:value="${rm.id}" 
-                                    th:text="${rm.nombreReal}"></option>
-                        </select>
-                        <button type="submit" class="btn-action-sm">Asignar</button>
-                    </form>
+    <div th:if="${!tarea.completada}" class="task-actions-stack" style="margin-top: 10px;">
+        <form th:action="@{/assignRoommate/submit}" method="post" class="action-form-inline">
+            <input type="hidden" name="taskId" th:value="${tarea.id}">
+            <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+            <select name="roommateId" required class="input-glass">
+                <option value="" disabled selected>Responsable...</option>
+                <option th:each="rm : ${roommates}" th:value="${rm.id}" th:text="${rm.nombreReal}"></option>
+            </select>
+            <button type="submit" class="btn-action-sm">Asignar</button>
+        </form>
 
-                    <form th:action="@{/assignDate/submit}" method="post" class="action-form-inline">
-                        <input type="hidden" name="taskId" th:value="${tarea.id}">
-                        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
-                        
-                        <input type="date" name="fecha" required class="input-glass">
-                        <button type="submit" class="btn-action-sm">📅 Fecha</button>
-                    </form>
-                </div>
-            </div>
+        <form th:action="@{/assignDate/submit}" method="post" class="action-form-inline">
+            <input type="hidden" name="taskId" th:value="${tarea.id}">
+            <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+            <input type="date" name="fecha" required class="input-glass">
+            <button type="submit" class="btn-action-sm">📅 Fecha</button>
+        </form>
+    </div>
+</div>
         </div>
 
         <div th:if="${#lists.isEmpty(vivienda.tareas)}" style="text-align: center; padding: 50px 20px; color: rgba(255,255,255,0.3); border: 2px dashed rgba(255,255,255,0.1); border-radius: 15px;">
