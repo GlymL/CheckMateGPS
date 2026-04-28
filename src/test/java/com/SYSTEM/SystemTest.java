@@ -215,4 +215,44 @@ class SystemTest {
         Tarea tareaNoActualizada = tareaRepository.findById(tarea.getId()).get();
         assertThat(tareaNoActualizada.getFechaRealizacion()).isNull();
     }
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM11: Consultar tarea con descripción")
+    void fullFlow_verDescripcion_ok() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM11");
+        viviendaRepository.save(vivienda);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea Con Desc");
+        tarea.setDescripcion("Esta es la descripción detallada de la prueba.");
+        tarea.setVivienda(vivienda);
+        tareaRepository.save(tarea);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/tarea/" + tarea.getId() + "/descripcion"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("descripcion"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.model().attributeExists("tarea"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("Esta es la descripción detallada de la prueba.")));
+    }
+
+    @Test
+    @DisplayName("SISTEMA-TAREA-CM11: Consultar tarea sin descripción")
+    void fullFlow_verDescripcion_vacia() throws Exception {
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest CM11 Vacia");
+        viviendaRepository.save(vivienda);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Tarea Sin Desc");
+        tarea.setDescripcion(null); 
+        tarea.setVivienda(vivienda);
+        tareaRepository.save(tarea);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/tarea/" + tarea.getId() + "/descripcion"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.view().name("descripcion"))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content().string(org.hamcrest.Matchers.containsString("La tarea seleccionada no tiene descripción.")));
+    }
 }
