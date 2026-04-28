@@ -18,12 +18,19 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import application.controller.MyController;
 import application.entities.Roommate;
+import application.entities.Tarea;
 import application.entities.Vivienda;
 import application.repositories.RoommateRepository;
+import application.repositories.TareaRepository;
 import application.repositories.ViviendaRepository;
 class MyControllerTest {
         @Mock
@@ -31,6 +38,9 @@ class MyControllerTest {
 
         @Mock
         private RoommateRepository roommateRepository;
+
+        @Mock
+        private TareaRepository tareaRepository;
 
         @InjectMocks
         private MyController controller;
@@ -245,4 +255,69 @@ class MyControllerTest {
         }
 
         
+    // CM11-1
+    @Test
+    void verDescripcionTarea_withDescription_success() throws Exception {
+        // Arrange
+        Vivienda vivienda = new Vivienda();
+        vivienda.setId(10L); 
+
+        Tarea tarea = new Tarea();
+        tarea.setId(1L);
+        tarea.setName("Limpiar el baño");
+        tarea.setDescripcion("Usar lejía y limpiar los espejos a fondo.");
+        tarea.setVivienda(vivienda);
+
+        when(tareaRepository.findById(1L)).thenReturn(Optional.of(tarea));
+
+        // Act & Assert
+        mockMvc.perform(get("/tarea/1/ver-descripcion"))
+                .andExpect(status().isOk()) 
+                .andExpect(view().name("descripcion"))
+                .andExpect(model().attributeExists("tarea"))
+                .andExpect(model().attributeExists("viviendaId"))
+                .andExpect(model().attribute("viviendaId", 10L));
+        
+        verify(tareaRepository).findById(1L);
+    }
+
+    // CM11-2
+    @Test
+    void verDescripcionTarea_withoutDescription_success() throws Exception {
+        // Arrange
+        Vivienda vivienda = new Vivienda();
+        vivienda.setId(10L);
+
+        Tarea tarea = new Tarea();
+        tarea.setId(2L);
+        tarea.setName("Bajar la basura");
+        tarea.setDescripcion(null); // Sin descripción
+        tarea.setVivienda(vivienda);
+
+        when(tareaRepository.findById(2L)).thenReturn(Optional.of(tarea));
+
+        // Act & Assert
+        mockMvc.perform(get("/tarea/2/ver-descripcion"))
+                .andExpect(status().isOk()) 
+                .andExpect(view().name("descripcion")) 
+                .andExpect(model().attributeExists("tarea"))
+                .andExpect(model().attributeExists("viviendaId"))
+                .andExpect(model().attribute("viviendaId", 10L));
+                
+        verify(tareaRepository).findById(2L);
+    }
+
+    //Tarea no encontrada
+    @Test
+    void verDescripcionTarea_tareaDoesNotExist_redirectsToListar() throws Exception {
+        // Arrange
+        when(tareaRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        mockMvc.perform(get("/tarea/99/ver-descripcion"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/listar"));
+                
+        verify(tareaRepository).findById(99L);
+    }
 }

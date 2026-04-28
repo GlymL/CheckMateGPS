@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckMate - Estado de Tareas</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .modal-content {
+            width: 600px;
+            padding: 40px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06) inset, 0 20px 60px rgba(0, 0, 0, 0.35);
+            color: white;
+            position: relative;
+            text-align: center;
+            margin: 50px auto;
+        }
+
+        h2 {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 28px;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .table-container {
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container::-webkit-scrollbar { width: 6px; }
+        .table-container::-webkit-scrollbar-track { background: transparent; }
+        .table-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(30, 30, 48, 1.0); 
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: rgba(255, 255, 255, 0.05); }
+
+        .estado-pendiente {
+            color: var(--pink-hot, #e060a0);
+            font-weight: bold;
+        }
+
+        .estado-terminada {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .roommate-name {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .btn-main {
+            width: 100%;
+            background: linear-gradient(135deg, var(--pink-hot, #e060a0) 0%, var(--purple-light, #9b59d0) 100%);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            box-shadow: 0 6px 20px rgba(224, 96, 160, 0.3); 
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(224, 96, 160, 0.4);
+            filter: brightness(1.08);
+        }
+
+        .btn-main:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-content">
+    
+        <h2>Estado de Tareas 📊</h2>
+
+        <div th:if="${#lists.isEmpty(tareas)}" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.3); margin-bottom: 20px;">
+            <p style="color: rgba(255,255,255,0.8); margin: 0;">No hay tareas en la vivienda seleccionada.</p>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(tareas)}" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Roommate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="tarea : ${tareas}">
+                        <td th:text="${tarea.getName()}">Limpiar cocina</td>
+                        
+                        <td>
+                            <span th:if="${tarea.completada}" class="estado-terminada">Terminada</span>
+                            <span th:unless="${tarea.completada}" class="estado-pendiente">Pendiente</span>
+                        </td>
+                        
+                        <td class="roommate-name">
+                            <span th:if="${tarea.asignadoA != null}" th:text="${tarea.asignadoA.nombreReal}">Juan</span>
+                            <span th:if="${tarea.asignadoA == null}" style="color: rgba(255,255,255,0.4); font-style: italic;">Sin asignar</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button type="button" class="btn-main" th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|">
+            Volver al Panel
+        </button>
+
+    </div>
+
+</body>
+</html>
