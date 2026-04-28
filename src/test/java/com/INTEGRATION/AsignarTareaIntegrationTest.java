@@ -13,6 +13,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import java.time.LocalDate;
+import java.util.Optional;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import application.Application;
@@ -117,4 +122,66 @@ public class AsignarTareaIntegrationTest {
                 .andExpect(model().attributeExists("errorAsignacion"))
                 .andExpect(model().attribute("errorAsignacion", "Los datos son obligatorios."));
     }
+    
+    // CM7 
+    @Test
+    void assignDate_success() throws Exception {
+
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest");
+        vivienda = viviendaRepository.save(vivienda);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Limpiar");
+        tarea.setCompletada(false);
+        tarea.setVivienda(vivienda);
+        tarea = tareaRepository.save(tarea);
+        String fecha = LocalDate.now().plusDays(1).toString();
+
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fecha)
+                .param("taskId", tarea.getId().toString())
+                .param("viviendaId", vivienda.getId().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/vivienda/" + vivienda.getId() + "/listTareas"));
+
+        Optional<Tarea> tareaUpdated = tareaRepository.findById(tarea.getId());
+        assertThat(tareaUpdated.get().getFechaRealizacion()).isNotNull();
+    }
+    @Test
+    void assignDate_fechaPasada_error() throws Exception {
+
+        Vivienda vivienda = new Vivienda();
+        vivienda.setName("CasaTest");
+        vivienda = viviendaRepository.save(vivienda);
+
+        Tarea tarea = new Tarea();
+        tarea.setName("Limpiar");
+        tarea.setVivienda(vivienda);
+        tarea = tareaRepository.save(tarea);
+
+        String fecha = LocalDate.now().minusDays(1).toString();
+
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fecha)
+                .param("taskId", tarea.getId().toString())
+                .param("viviendaId", vivienda.getId().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attributeExists("errorMsg"));
+
+        Optional<Tarea> tareaUpdated = tareaRepository.findById(tarea.getId());
+        assertThat(tareaUpdated.get().getFechaRealizacion()).isNull();
+    }
+    @Test
+    void assignDate_tareaNoExiste_error() throws Exception {
+        
+        String fecha = LocalDate.now().plusDays(2).toString();
+        mockMvc.perform(post("/assignDate/submit")
+                .param("fecha", fecha)
+                .param("taskId", "999")
+                .param("viviendaId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("errorMsg", "Error: La tarea seleccionada no existe."));
+    }
+
 }

@@ -64,7 +64,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("descripcion", "Limpiar los fogones y la encimera")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -88,7 +88,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "")
+                .param("name", "")
                 .param("descripcion", "Descripción válida")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -114,7 +114,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Tarea@#$%")
+                .param("name", "Tarea@#$%")
                 .param("descripcion", "Descripción válida")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -140,7 +140,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("descripcion", "Descripción con caracteres ilegales @#$%")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -162,7 +162,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("descripcion", "Limpiar los fogones")
                 .param("vivienda.id", "99"))
                 .andReturn();
@@ -188,7 +188,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Limpiar cocina")
+                .param("name", "Limpiar cocina")
                 .param("vivienda.id", "1"))
                 .andReturn();
 
@@ -211,7 +211,7 @@ class TareaTest {
 
         
         MvcResult result = mockMvc.perform(post("/guardarTarea")
-                .param("nombre", "Hacer compras")
+                .param("name", "Hacer compras")
                 .param("descripcion", "Comprar leche, pan y huevos. No olvidar el queso!")
                 .param("vivienda.id", "1"))
                 .andReturn();
@@ -240,7 +240,7 @@ class TareaTest {
     when(tareaRepository.save(any(Tarea.class))).thenReturn(tarea);
     
     // Act
-    MvcResult result = mockMvc.perform(post("/tarea/1/completar"))
+    MvcResult result = mockMvc.perform(post("/tareas/1/completar"))
             .andReturn();
     
     // Assert

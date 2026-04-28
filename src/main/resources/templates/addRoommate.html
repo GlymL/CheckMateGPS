@@ -4,37 +4,111 @@
     <meta charset="UTF-8">
     <title>CheckMate - Añadir Compañero</title>
     <link rel="stylesheet" href="/css/style.css">
-   
+    <style>
+        /* Estilos heredados del diseño de tareas para mantener consistencia */
+        .form-box {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-label {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .btn-submit {
+            background-color: #3498db;
+            color: white;
+            width: 100%;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1em;
+        }
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+        .btn-cancel {
+            background-color: #666;
+            color: white;
+            width: 100%;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+            font-size: 1em;
+        }
+        .btn-cancel:hover {
+            background-color: #555;
+        }
+        .error-msg {
+            background: #f8d7da; 
+            color: #721c24; 
+            padding: 10px; 
+            border-radius: 6px; 
+            margin-bottom: 15px; 
+            font-size: 0.9em;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
 
-<div class="modal-content" style="width: 400px; margin: 50px auto; padding: 25px;">
-    
-<h2 style="text-align: center;">Añadir roommate 👤</h2>
-    
-    <div th:if="${error}" style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-weight: bold;" th:text="${error}"></div>
-
-    <form th:action="@{/add-roommate}" method="post">
+    <div class="modal-content" style="width: 500px; margin: 50px auto; padding: 25px; text-align: center;">
         
-        <input type="hidden" name="viviendaId" th:value="${viviendaId}">
-
-        <label>Nombre:<br></label>
-        <input type="text" name="nombreReal" required
-               pattern="^[a-zA-Z áéíóúÁÉÍÓÚñÑ]+$"
-               oninvalid="if(this.validity.valueMissing) { this.setCustomValidity('Por favor, indica el nombre.'); } else if(this.validity.patternMismatch) { this.setCustomValidity('Solo se permiten letras y espacios.'); }"
-               oninput="this.setCustomValidity('')"
-               style="width: 100%; box-sizing: border-box; padding: 10px; margin-top: 5px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px;">
-
-        <button type="submit" style="background-color: #3498db; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;">
-            Añadir a la vivienda
-        </button>
+        <h2>Añadir roommate 👤</h2>
+        <p style="color: #666; margin-bottom: 20px;">Registra a un nuevo compañero en esta vivienda.</p>
         
-        <button type="button" th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" style="background-color: #666; color: white; width: 100%; border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s;">
-            Cancelar
+        <div th:if="${error}" class="error-msg">
+            ⚠️ <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/add-roommate}" method="post">
+            <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+
+            <div class="form-box">
+                <label class="form-label">Nombre:</label>
+                <input type="text" name="nombreReal" required class="form-input" placeholder="Ej. Juan Pérez"
+                       pattern="^[a-zA-Z áéíóúÁÉÍÓÚñÑ]+$"
+                       oninvalid="if(this.validity.valueMissing) { this.setCustomValidity('Por favor, indica el nombre.'); } else if(this.validity.patternMismatch) { this.setCustomValidity('Solo se permiten letras y espacios.'); }"
+                       oninput="this.setCustomValidity('')">
+
+                <button type="submit" class="btn-submit">
+                    ➕ Añadir a la vivienda
+                </button>
+            </div>
+        </form>
+
+        <button type="button" th:onclick="|window.location.href='/vivienda/' + '${viviendaId}'|" class="btn-cancel">
+            Cancelar y Volver
         </button>
 
-    </form>
-</div>
+    </div>
 
 </body>
+</html>
 </html>

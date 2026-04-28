@@ -3,7 +3,6 @@ package com.SYSTEM;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -88,12 +87,11 @@ class SystemTest {
                 .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
 
-        assertThat(tareaRepository.count()).isEqualTo(1);
-        Tarea tareaGuardada = tareaRepository.findAll().get(0);
-        assertThat(tareaGuardada.getName()).isEqualTo("Limpiar cocina");
-        assertThat(tareaGuardada.getDescripcion()).isEqualTo("Limpiar nevera y fregar los platos");
+        Tarea tareaGuardada = tareaRepository.findById(tarea.getId()).get();
+        assertThat(tareaGuardada.getName()).isEqualTo("Limpiar baño");
+        assertThat(tareaGuardada.getDescripcion()).isNull();
         assertThat(tareaGuardada.getVivienda().getId()).isEqualTo(vivienda.getId());
-        assertThat(tareaGuardada.getCompletada()).isFalse();
+        assertThat(tareaGuardada.getCompletada()).isTrue();
     }
 
 
@@ -116,17 +114,15 @@ class SystemTest {
         tarea.setCompletada(true); // Ya está completada de antes
         tareaRepository.save(tarea);
 
-
         mockMvc.perform(post("/tareas/" + tarea.getId() + "/completar")
                 .param("roommateId", String.valueOf(roommate.getId())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attributeExists("error"))
+                .andExpect(flash().attribute("error", "La tarea ya está realizada"))
                 .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
-
-        boolean sigueCompletada = tareaRepository.findById(tarea.getId()).get().getCompletada();
-       
-        assertThat(sigueCompletada).isTrue();
+        Tarea tareaGuardada = tareaRepository.findById(tarea.getId()).get();
+        assertThat(tareaGuardada.getAsignadoA().getId())
+            .isEqualTo(roommate.getId());
     }
 
 
@@ -145,21 +141,20 @@ class SystemTest {
         Tarea tarea = new Tarea();
         tarea.setName("Bajar basura");
         tarea.setVivienda(vivienda);
-        tarea.setAsignadoA(null); // Tarea sin nadie asignado
+        tarea.setAsignadoA(null); 
         tarea.setCompletada(false);
         tareaRepository.save(tarea);
-
 
         mockMvc.perform(post("/tareas/" + tarea.getId() + "/completar")
                 .param("roommateId", String.valueOf(roommate.getId())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attributeExists("error"))
+                .andExpect(flash().attribute("error", "La tarea no tiene roommate asignado"))
                 .andExpect(redirectedUrl("/vivienda/" + vivienda.getId()));
 
-        assertThat(tareaRepository.count()).isEqualTo(1);
-        Tarea tareaGuardada = tareaRepository.findAll().get(0);
-        assertThat(tareaGuardada.getName()).isEqualTo("Tarea sin descripción");
-        assertThat(tareaGuardada.getDescripcion()).isNullOrEmpty();
+        Tarea tareaGuardada = tareaRepository.findById(tarea.getId()).get();
+
+        assertThat(tareaGuardada.getCompletada()).isFalse();
+        assertThat(tareaGuardada.getAsignadoA()).isNull();
     }
 
     @Test
