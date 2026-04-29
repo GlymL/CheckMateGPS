@@ -33,54 +33,6 @@
             overflow-x: hidden;
         }
 
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.35;
-            pointer-events: none;
-        }
-        
-        body::before {
-            width: 500px;
-            height: 500px;
-            background: var(--pink-hot);
-            top: -150px;
-            right: -100px;
-            animation: float1 8s ease-in-out infinite;
-        }
-        
-        body::after {
-            width: 400px;
-            height: 400px;
-            background: #4040cc;
-            bottom: -120px;
-            left: -80px;
-            animation: float2 10s ease-in-out infinite;
-        }
-
-        @keyframes float1 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-30px, 30px) scale(1.05); }
-        }
-
-        @keyframes float2 {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(20px, -20px) scale(1.08); }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
         .calendar-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -104,53 +56,6 @@
             font-size: 2.5em;
             font-weight: 800;
             margin: 0;
-        }
-
-        .vivienda-selector {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .vivienda-selector select {
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 250px;
-        }
-
-        .vivienda-selector select:hover,
-        .vivienda-selector select:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.5);
-            outline: none;
-        }
-
-        .vivienda-selector select option {
-            background: #3d2b8e;
-            color: white;
-        }
-
-        .error-message {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            color: #ff6b6b;
-            margin-bottom: 20px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .error-message.show {
-            display: flex;
         }
 
         .calendar-nav {
@@ -222,12 +127,11 @@
         }
 
         .day {
-            aspect-ratio: 1 / 1;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 8px;
-            min-height: 100px;
+            min-height: 85px;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -260,10 +164,6 @@
             margin-bottom: 4px;
         }
 
-        .day.other-month .day-number {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
         .day-tasks {
             flex: 1;
             overflow-y: auto;
@@ -293,149 +193,6 @@
             text-decoration: line-through;
         }
 
-        .empty-calendar {
-            text-align: center;
-            padding: 60px 20px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .empty-calendar i {
-            font-size: 3em;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        .empty-calendar p {
-            font-size: 1.1em;
-            margin: 0;
-        }
-
-        .modal-calendar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .modal-calendar.show {
-            display: flex;
-        }
-
-        .modal-calendar-content {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 70vh;
-            overflow-y: auto;
-            color: white;
-            animation: slideIn 0.3s ease;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 15px;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-family: 'Nunito', sans-serif;
-            font-size: 1.5em;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
-
-        .close-modal:hover {
-            opacity: 1;
-        }
-
-        .task-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 3px solid #9b59d0;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .task-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .task-item.no-roommate {
-            border-left-color: #ffa500;
-        }
-
-        .task-item.completed {
-            opacity: 0.6;
-            border-left-style: dashed;
-        }
-
-        .task-title {
-            font-weight: 700;
-            margin: 0 0 5px 0;
-            color: white;
-        }
-
-        .task-description {
-            font-size: 0.9em;
-            color: rgba(255, 255, 255, 0.7);
-            margin: 5px 0;
-        }
-
-        .task-meta-info {
-            display: flex;
-            gap: 10px;
-            font-size: 0.8em;
-            color: rgba(255, 255, 255, 0.6);
-            flex-wrap: wrap;
-            margin-top: 8px;
-        }
-
-        .badge {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 3px 8px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .badge.completada {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-        }
-
-        .badge.pendiente {
-            background: rgba(255, 165, 0, 0.2);
-            color: #ffa500;
-        }
-
-        .badge.no-roommate {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-        }
-
         .calendar-legend {
             margin-top: 25px;
             padding: 15px 20px;
@@ -462,81 +219,58 @@
             border-radius: 4px;
         }
 
-        .legend-color.task {
-            background: linear-gradient(135deg, #9b59d0, #e060a0);
+        .legend-color.task { background: linear-gradient(135deg, #9b59d0, #e060a0); }
+        .legend-color.no-roommate { background: rgba(255, 165, 0, 0.6); }
+        .legend-color.today { background: transparent; border: 2px solid #9b59d0; }
+
+        .modal-calendar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); display: none;
+            justify-content: center; align-items: center; z-index: 2000;
         }
 
-        .legend-color.no-roommate {
-            background: rgba(255, 165, 0, 0.6);
+        .modal-calendar.show { display: flex; }
+
+        .modal-calendar-content {
+            background: rgba(30, 30, 50, 0.95); backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 16px;
+            padding: 30px; max-width: 500px; width: 90%; max-height: 70vh;
+            overflow-y: auto; color: white;
         }
 
-        .legend-color.today {
-            background: transparent;
-            border: 2px solid #9b59d0;
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px;
         }
 
-        @media (max-width: 768px) {
-            .calendar-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        .close-modal { background: none; border: none; color: white; font-size: 1.5em; cursor: pointer; }
 
-            .calendar-header h1 {
-                font-size: 2em;
-            }
-
-            .vivienda-selector {
-                flex-direction: column;
-            }
-
-            .vivienda-selector select {
-                min-width: auto;
-                width: 100%;
-            }
-
-            .day {
-                min-height: 80px;
-                padding: 6px;
-            }
-
-            .weekdays {
-                gap: 5px;
-            }
-
-            .days {
-                gap: 5px;
-            }
-
-            .calendar-legend {
-                gap: 15px;
-            }
-
-            .month-year {
-                font-size: 1.1em;
-            }
+        .task-item {
+            background: rgba(255, 255, 255, 0.05); border-left: 3px solid #9b59d0;
+            padding: 12px; margin: 10px 0; border-radius: 8px;
         }
+
+        .task-item.no-roommate { border-left-color: #ffa500; }
+        .task-item.completed { opacity: 0.6; }
+
+        .task-title { font-weight: 700; margin-bottom: 5px; }
+        .task-description { font-size: 0.9em; color: rgba(255, 255, 255, 0.7); }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.1); padding: 3px 8px;
+            border-radius: 4px; display: inline-block; font-size: 0.8em; margin-top: 5px;
+        }
+        .badge.completada { color: #2ecc71; }
+        .badge.pendiente { color: #ffa500; }
     </style>
 </head>
 <body>
-    <div th:fragment="miCalendario" class="calendar-container">
+    <div class="calendar-container">
         <div class="calendar-header">
             <h1><i class="fas fa-calendar-alt"></i> Calendario de Tareas</h1>
-            <div class="vivienda-selector">
-                <select id="viviendaSelect" onchange="cambiarVivienda()">
-                    <option value="">-- Selecciona una vivienda --</option>
-                    <option value="villa">Villa Marina</option>
-                    <option value="departamento">Departamento Centro</option>
-                    <option value="casa">Casa Principal</option>
-                </select>
-            </div>
         </div>
 
-        <div id="errorMessage" class="error-message">
-            <i class="fas fa-exclamation-circle"></i>
-            <span id="errorText"></span>
-        </div>
-
-        <div id="calendarSection" style="display: none;">
+        <div id="calendarSection">
             <div class="calendar-nav">
                 <button class="nav-button" onclick="mesAnterior()">
                     <i class="fas fa-chevron-left"></i> Anterior
@@ -567,19 +301,12 @@
                 </div>
                 <div class="legend-item">
                     <div class="legend-color no-roommate"></div>
-                    <span>Sin roommate asignado</span>
+                    <span>Sin roommate</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color today"></div>
                     <span>Hoy</span>
                 </div>
-            </div>
-        </div>
-
-        <div id="emptyState">
-            <div class="empty-calendar">
-                <i class="fas fa-inbox"></i>
-                <p>Selecciona una vivienda para ver las tareas en el calendario</p>
             </div>
         </div>
     </div>
@@ -594,65 +321,37 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
-        let selectedViviendaId = null;
         
-        const tareasBase = {
-            villa: {
-                "2026-04-21": [
-                    {id: 1, nombre: "Limpiar cocina", descripcion: "Limpiar superficies y electrodomésticos", completada: false, roommate: "Juan"},
-                    {id: 2, nombre: "Comprar comida", descripcion: null, completada: false, roommate: null}
-                ],
-                "2026-04-22": [
-                    {id: 3, nombre: "Pasar aspiradora", descripcion: "Toda la casa", completada: false, roommate: "María"}
-                ],
-                "2026-04-25": [
-                    {id: 4, nombre: "Lavar platos", descripcion: null, completada: true, roommate: "Carlos"}
-                ]
-            },
-            departamento: {
-                "2026-04-23": [
-                    {id: 5, nombre: "Limpiar baños", descripcion: "Baños principal y secundario", completada: false, roommate: "Ana"}
-                ],
-                "2026-04-24": [
-                    {id: 6, nombre: "Sacar basura", descripcion: null, completada: false, roommate: null},
-                    {id: 7, nombre: "Lavar ropa común", descripcion: null, completada: false, roommate: "Pedro"}
-                ]
-            },
-            casa: {
-                "2026-04-20": [
-                    {id: 8, nombre: "Riego de plantas", descripcion: "Plantas de la sala y jardín", completada: false, roommate: "Laura"}
-                ],
-                "2026-04-21": [
-                    {id: 9, nombre: "Limpiar entrada", descripcion: null, completada: false, roommate: null}
-                ],
-                "2026-04-26": [
-                    {id: 10, nombre: "Cambiar sábanas", descripcion: "Todas las camas", completada: false, roommate: "Sofia"}
-                ]
-            }
-        };
+        const tareasPorFecha = {};
 
-        function cambiarVivienda() {
-            const select = document.getElementById('viviendaSelect');
-            selectedViviendaId = select.value;
-
-            if (!selectedViviendaId) {
-                document.getElementById('calendarSection').style.display = 'none';
-                document.getElementById('emptyState').style.display = 'block';
-                return;
-            }
-
-            document.getElementById('calendarSection').style.display = 'block';
-            document.getElementById('emptyState').style.display = 'none';
-            renderizarCalendario();
-        }
+        /*[# th:if="${tareas != null}"]*/
+            /*[# th:each="tarea : ${tareas}"]*/
+                /*[# th:if="${tarea.fechaRealizacion != null}"]*/
+                    // Formateamos la fecha de Java a String yyyy-MM-dd
+                    var fString = /*[[${#temporals.format(tarea.fechaRealizacion, 'yyyy-MM-dd')}]]*/ '';
+                    
+                    if (!tareasPorFecha[fString]) {
+                        tareasPorFecha[fString] = [];
+                    }
+                    
+                    tareasPorFecha[fString].push({
+                        id: /*[[${tarea.id}]]*/ 0,
+                        nombre: /*[[${tarea.name}]]*/ '',
+                        descripcion: /*[[${tarea.descripcion}]]*/ '',
+                        completada: /*[[${tarea.completada}]]*/ false,
+                        roommate: /*[[${tarea.asignadoA != null ? tarea.asignadoA.nombreReal : null}]]*/ null
+                    });
+                /*[/]*/
+            /*[/]*/
+        /*[/]*/
 
         function renderizarCalendario() {
             const primerDia = new Date(currentYear, currentMonth, 1);
             const ultimoDia = new Date(currentYear, currentMonth + 1, 0);
-            const diaInicio = primerDia.getDay();
+            const diaInicio = primerDia.getDay(); // 0 es Domingo
             const diasTotal = ultimoDia.getDate();
 
             const opciones = { year: 'numeric', month: 'long' };
@@ -662,22 +361,26 @@
             const calendarDays = document.getElementById('calendarDays');
             calendarDays.innerHTML = '';
 
+            // Días mes anterior
             const ultimoDiaAnterior = new Date(currentYear, currentMonth, 0).getDate();
             for (let i = diaInicio - 1; i >= 0; i--) {
                 const dia = ultimoDiaAnterior - i;
                 calendarDays.appendChild(crearElementoDia(dia, true, null));
             }
 
+            // Días mes actual
             const hoy = new Date();
             for (let dia = 1; dia <= diasTotal; dia++) {
+                const fechaIterada = new Date(currentYear, currentMonth, dia);
                 const esHoy = hoy.getDate() === dia && 
                              hoy.getMonth() === currentMonth && 
                              hoy.getFullYear() === currentYear;
-                calendarDays.appendChild(crearElementoDia(dia, false, new Date(currentYear, currentMonth, dia), esHoy));
+                calendarDays.appendChild(crearElementoDia(dia, false, fechaIterada, esHoy));
             }
 
-            const diasRestantes = 42 - (diaInicio + diasTotal);
-            for (let dia = 1; dia <= diasRestantes; dia++) {
+            // Rellenar hasta completar 42 celdas
+            const celdasUsadas = diaInicio + diasTotal;
+            for (let dia = 1; dia <= (42 - celdasUsadas); dia++) {
                 calendarDays.appendChild(crearElementoDia(dia, true, null));
             }
         }
@@ -685,13 +388,8 @@
         function crearElementoDia(dia, esOtroMes, fecha, esHoy = false) {
             const dayElement = document.createElement('div');
             dayElement.className = 'day';
-            
-            if (esOtroMes) {
-                dayElement.classList.add('other-month');
-            }
-            if (esHoy) {
-                dayElement.classList.add('today');
-            }
+            if (esOtroMes) dayElement.classList.add('other-month');
+            if (esHoy) dayElement.classList.add('today');
 
             const dayNumber = document.createElement('div');
             dayNumber.className = 'day-number';
@@ -701,35 +399,26 @@
             const dayTasks = document.createElement('div');
             dayTasks.className = 'day-tasks';
 
-            if (!esOtroMes && fecha && selectedViviendaId) {
-                const fechaStr = fecha.toISOString().split('T')[0];
-                const tareas = (tareasBase[selectedViviendaId] && tareasBase[selectedViviendaId][fechaStr]) || [];
+            if (!esOtroMes && fecha) {
+                const y = fecha.getFullYear();
+                const m = String(fecha.getMonth() + 1).padStart(2, '0');
+                const d = String(fecha.getDate()).padStart(2, '0');
+                const fStr = `${y}-${m}-${d}`;
+
+                const tareas = tareasPorFecha[fStr] || [];
+
+                tareas.forEach(tarea => {
+                    const taskTag = document.createElement('div');
+                    taskTag.className = 'task-tag';
+                    if (!tarea.roommate) taskTag.classList.add('no-roommate');
+                    if (tarea.completada) taskTag.classList.add('completed');
+                    taskTag.textContent = tarea.nombre;
+                    dayTasks.appendChild(taskTag);
+                });
 
                 if (tareas.length > 0) {
-                    tareas.forEach(tarea => {
-                        const taskTag = document.createElement('div');
-                        taskTag.className = 'task-tag';
-                        if (!tarea.roommate) {
-                            taskTag.classList.add('no-roommate');
-                        }
-                        if (tarea.completada) {
-                            taskTag.classList.add('completed');
-                        }
-                        taskTag.textContent = tarea.nombre;
-                        taskTag.style.cursor = 'pointer';
-                        taskTag.onclick = (e) => {
-                            e.stopPropagation();
-                            mostrarDetallesTareas(fechaStr, tareas);
-                        };
-                        dayTasks.appendChild(taskTag);
-                    });
+                    dayElement.onclick = () => mostrarDetallesTareas(fStr, tareas);
                 }
-
-                dayElement.onclick = () => {
-                    if (tareas.length > 0) {
-                        mostrarDetallesTareas(fechaStr, tareas);
-                    }
-                };
             }
 
             dayElement.appendChild(dayTasks);
@@ -738,74 +427,38 @@
 
         function mostrarDetallesTareas(fecha, tareas) {
             const modal = document.getElementById('taskModal');
-            const fechaObj = new Date(fecha + 'T00:00:00');
-            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const fechaFormato = fechaObj.toLocaleDateString('es-ES', opciones);
-            document.getElementById('modalDate').textContent = fechaFormato.charAt(0).toUpperCase() + fechaFormato.slice(1);
-
+            document.getElementById('modalDate').textContent = "Tareas del " + fecha;
             const modalTasks = document.getElementById('modalTasks');
             modalTasks.innerHTML = '';
 
             tareas.forEach(tarea => {
                 const taskDiv = document.createElement('div');
                 taskDiv.className = 'task-item';
-                if (!tarea.roommate) {
-                    taskDiv.classList.add('no-roommate');
-                }
-                if (tarea.completada) {
-                    taskDiv.classList.add('completed');
-                }
+                if (!tarea.roommate) taskDiv.classList.add('no-roommate');
+                if (tarea.completada) taskDiv.classList.add('completed');
 
-                let html = `
+                taskDiv.innerHTML = `
                     <p class="task-title">${tarea.nombre}</p>
                     <p class="task-description">${tarea.descripcion || 'Sin descripción'}</p>
-                    <div class="task-meta-info">
-                        ${tarea.roommate ? `<span class="badge">Asignado a: ${tarea.roommate}</span>` : 
-                            '<span class="badge no-roommate"><i class="fas fa-exclamation"></i> Sin roommate asignado</span>'}
-                        <span class="badge ${tarea.completada ? 'completada' : 'pendiente'}">
-                            ${tarea.completada ? 'Completada' : 'Pendiente'}
-                        </span>
-                    </div>
+                    <span class="badge">${tarea.roommate ? '👤 ' + tarea.roommate : '⚠️ Sin roommate'}</span>
+                    <span class="badge ${tarea.completada ? 'completada' : 'pendiente'}">
+                        ${tarea.completada ? 'Completada' : 'Pendiente'}
+                    </span>
                 `;
-
-                taskDiv.innerHTML = html;
                 modalTasks.appendChild(taskDiv);
             });
-
             modal.classList.add('show');
         }
 
-        function cerrarModal() {
-            document.getElementById('taskModal').classList.remove('show');
-        }
+        function cerrarModal() { document.getElementById('taskModal').classList.remove('show'); }
+        function mesAnterior() { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderizarCalendario(); }
+        function mesSiguiente() { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } renderizarCalendario(); }
 
-        function mesAnterior() {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            renderizarCalendario();
-        }
-
-        function mesSiguiente() {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            renderizarCalendario();
-        }
-
-        document.getElementById('taskModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                cerrarModal();
-            }
+        document.getElementById('taskModal').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModal();
         });
 
-        window.addEventListener('load', function() {
-            document.getElementById('emptyState').style.display = 'block';
-        });
+        window.addEventListener('load', renderizarCalendario);
     </script>
 </body>
 </html>

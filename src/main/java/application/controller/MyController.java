@@ -342,21 +342,21 @@ public String viewAssignedTareas(@PathVariable("id") Long id, Model model) {
 
         if (tareaOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMsg", "Error: La tarea seleccionada no existe.");
-            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+            return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
         }
         Tarea tarea = tareaOpt.get();
         if (fecha == null) {
             redirectAttributes.addFlashAttribute("errorMsg", "Formato de fecha no válido.");
-            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+            return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
         }
 
         if (!fecha.isAfter(LocalDate.now())) {
             redirectAttributes.addFlashAttribute("errorMsg", "La fecha indicada no es válida. Debe ser posterior al día de hoy.");
-            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+            return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
         }
         if (Boolean.TRUE.equals(tarea.getCompletada())){
             redirectAttributes.addFlashAttribute("errorMsg", "La tarea ya está completada.");
-            return "redirect:/vivienda/" + viviendaId + "/listTareas";
+            return "redirect:/vivienda/" + viviendaId + "?tab=tareas";
         }
 
         tarea.setFechaRealizacion(fecha);
@@ -419,6 +419,7 @@ public String cambiarEstado(
     @GetMapping("/vivienda/{id}/calendario")
     public String verCalendario(@PathVariable("id") Long id, Model model) {
         java.util.List<Tarea> tareas = tareaRepository.findByViviendaId(id);
+        model.addAttribute("tareas", tareas);
         Calendario calendario = new Calendario(tareas);
         model.addAttribute("calendario", calendario);
         model.addAttribute("viviendaId", id);
