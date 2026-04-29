@@ -11,6 +11,9 @@
             min-height: 100vh;
             padding: 20px;
             color: white;
+            overflow-y: auto !important; 
+            height: auto;
+            
         }
 
         body::before, body::after {
@@ -48,17 +51,17 @@
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 20px 60px rgba(0, 0, 0, 0.35);
+            border-radius: 20px;
+            padding: 20px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset, 0 10px 30px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
 
         .vivienda-header h1 {
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
             color: white;
-            font-size: 2.5em;
+            font-size: 1.8em; 
             font-weight: 700;
         }
 
@@ -80,7 +83,7 @@
 
         .tabs-header {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 0;
             background: transparent;
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
@@ -121,74 +124,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .content-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .content-item {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border-left: 4px solid #e060a0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .content-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(4px);
-        }
-
-        .content-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .item-info {
-            flex: 1;
-        }
-
-        .item-name {
-            font-weight: bold;
-            color: white;
-            margin-bottom: 4px;
-        }
-
-        .item-desc {
-            color: rgba(255, 255, 255, 0.65);
-            font-size: 0.9em;
-        }
-
-        .item-status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background-color: rgba(255, 193, 7, 0.3);
-            color: #ffd54f;
-            border: 1px solid rgba(255, 193, 7, 0.5);
-        }
-
-        .status-completed {
-            background-color: rgba(76, 175, 80, 0.3);
-            color: #81c784;
-            border: 1px solid rgba(76, 175, 80, 0.5);
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .empty-state {
@@ -219,11 +156,6 @@
             box-shadow: 0 12px 32px rgba(224, 96, 160, 0.6);
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-        }
-
         .btn-back {
             display: inline-block;
             background: linear-gradient(135deg, #9b59d0 0%, #6b3fa0 100%);
@@ -243,6 +175,29 @@
             transform: translateY(-2px);
             box-shadow: 0 12px 32px rgba(155, 89, 208, 0.6);
         }
+
+        .scroll-container {
+        height: 310px;
+        overflow-y: auto;
+        padding-right: 15px; 
+        margin-bottom: 15px;
+    }
+
+        /* Estilización de la barra de scroll */
+        .scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(155, 89, 208, 0.6); 
+            border-radius: 4px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(155, 89, 208, 1);
+        }
     </style>
 </head>
 <body>
@@ -258,65 +213,136 @@
 
     <div class="tabs-container">
         <div class="tabs-header">
-            <button class="tab-btn active" onclick="switchTab(event, 'roommates')">
+            <button th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-btn' : 'tab-btn active'}" onclick="switchTab(event, 'roommates')">
                 Roommates
             </button>
-            <button class="tab-btn" onclick="switchTab(event, 'tareas')">
+            <button th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-btn active' : 'tab-btn'}" onclick="switchTab(event, 'tareas')">
                 Tareas
+            </button>
+            <button th:class="${(param.tab != null and param.tab[0] == 'calendario') ? 'tab-btn active' : 'tab-btn'}" onclick="switchTab(event, 'calendario')">
+                Calendario
             </button>
             <button class="tab-btn" onclick="switchTab(event, 'vivienda')">
                 Vivienda
             </button>
         </div>
 
-        <div id="roommates" class="tab-content active">
-            <div th:if="${roommates != null and roommates.size() > 0}">
-                <ul class="content-list">
-                    <li th:each="roommate : ${roommates}" class="content-item">
-                        <div class="item-info">
-                            <div class="item-name" th:text="${roommate.nombreReal}"></div>
+        <div id="roommates" th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-content' : 'tab-content active'}" th:style="${param.tab != null and param.tab[0] == 'tareas' ? 'display: none;' : 'display: block;'}">
+            <div th:if="${roommates != null and !roommates.isEmpty()}">
+                <div class="scroll-container">
+                    <div th:each="roommate : ${roommates}" class="roommate-box" style="display: flex; justify-content: space-between; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <div class="roommate-info">
+                            <span>👤 </span>
+                            <b th:text="${roommate.nombreReal}">Nombre del Roommate</b>
                         </div>
-                    </li>
-                </ul>
-                <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new">
-                    Añadir Roommate
-                </a>
-            </div>
-            <div th:if="${roommates == null or roommates.size() == 0}">
-                <div class="empty-state">
-                    No hay roommates registrados
+                        <span style="font-size: 0.8em; color: #9b59d0; font-weight: bold;">Activo</span>
+                    </div>
                 </div>
-                <div style="text-align: center; padding: 20px 0;">
-                    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new">
+                
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 0;">
+                    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new" style="background-color: #9b59d0; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
+                        Añadir Roommate
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${roommates == null or roommates.isEmpty()}">
+                <div class="empty-state" style="color: #888; padding: 20px; text-align: center;">
+                    No hay ningún compañero registrado todavía.
+                </div>
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 0;">
+                    <a th:href="@{/vivienda/{id}/nuevo-roommate(id=${viviendaId})}" class="btn-add-new" style="background-color: #9b59d0; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
                         Añadir Roommate
                     </a>
                 </div>
             </div>
         </div>
 
-        <div id="tareas" class="tab-content">
-            <div th:if="${tareas != null and tareas.size() > 0}">
-                <ul class="content-list">
-                    <li th:each="tarea : ${tareas}" class="content-item">
-                        <div class="item-info">
-                            <div class="item-name" th:text="${tarea.nombre}"></div>
-                            <div class="item-desc" th:text="${tarea.descripcion}"></div>
-                        </div>
-                        <span class="item-status" 
-                              th:classappend="${tarea.completada} ? 'status-completed' : 'status-pending'"
-                              th:text="${tarea.completada} ? 'Completada' : 'Pendiente'">
-                        </span>
-                    </li>
-                </ul>
-                <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">
-                    Añadir Tarea
-                </a>
+        <div id="tareas" th:class="${param.tab != null and param.tab[0] == 'tareas' ? 'tab-content active' : 'tab-content'}" th:style="${param.tab != null and param.tab[0] == 'tareas' ? 'display: block;' : 'display: none;'}">
+            
+            <div th:if="${errorMsg}" style="background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: white; padding: 15px; border-radius: 12px; margin-bottom: 25px; font-size: 0.95rem; text-align: center; font-weight: 600;">
+                ⚠️ <span th:text="${errorMsg}"></span>
             </div>
-            <div th:if="${tareas == null or tareas.size() == 0}">
-                <div class="empty-state">
-                    No hay tareas registradas
+            <div th:if="${successMsg}" style="background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: white; padding: 15px; border-radius: 12px; margin-bottom: 25px; font-size: 0.95rem; text-align: center; font-weight: 600;">
+                ✅ <span th:text="${successMsg}"></span>
+            </div>
+
+            <div th:if="${tareas != null and !tareas.isEmpty()}">
+                <div class="scroll-container" style="padding-right: 10px;">
+                    
+                    <div th:each="tarea : ${tareas}" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 25px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; transition: 0.3s; flex-wrap: wrap;">
+                        
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 15px;">
+                                <h3 th:text="${tarea.name}" style="font-size: 1.4rem; font-weight: 800; margin: 0; color: white;"></h3>
+                                
+                                <button th:if="${tarea.descripcion != null and !tarea.descripcion.isEmpty()}"
+                                        style="font-size: 0.7rem; color: rgba(255, 255, 255, 0.6); background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 6px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.2s;"
+                                        th:data-title="${tarea.name}" th:data-desc="${tarea.descripcion}"
+                                        onclick="abrirModal(this.getAttribute('data-title'), this.getAttribute('data-desc'))"
+                                        onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"
+                                        onmouseout="this.style.background='transparent'; this.style.color='rgba(255,255,255,0.6)'">
+                                    Ver descripción
+                                </button>
+                            </div>
+
+                            <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 0.95rem; color: rgba(255,255,255,0.85);">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="opacity: 0.7;">👤</span>
+                                    <strong th:if="${tarea.asignadoA != null}" th:text="${tarea.asignadoA.nombreReal}"></strong>
+                                    <span th:if="${tarea.asignadoA == null and !tarea.completada}" style="opacity: 0.4; font-style: italic;">Sin asignar</span>
+                                </div>
+                                <div th:if="${tarea.fechaRealizacion != null}" style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="opacity: 0.7;">📅</span>
+                                    <span th:text="${#temporals.format(tarea.fechaRealizacion, 'dd/MM/yyyy')}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 15px; min-width: 260px; flex: 1;">
+                            
+                            <form th:action="@{/tarea/cambiarEstado}" method="post">
+                                <input type="hidden" name="taskId" th:value="${tarea.id}">
+                                <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                                <button type="submit" th:style="${tarea.completada} ? 'background: #2ecc71; color: white; padding: 6px 16px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: none; cursor: pointer;' : 'background: #e67e22; color: white; padding: 6px 16px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: none; cursor: pointer;'">
+                                    <span th:text="${tarea.completada} ? 'COMPLETADA' : 'PENDIENTE'"></span>
+                                </button>
+                            </form>
+
+                            <div th:if="${!tarea.completada}" style="width: 100%; display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.15); padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05);">
+                                
+                                <form th:action="@{/assignRoommate/submit}" method="post" style="display: flex; gap: 8px; width: 100%;">
+                                    <input type="hidden" name="taskId" th:value="${tarea.id}">
+                                    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                                    <select name="roommateId" required style="flex-grow: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: white; padding: 8px; font-size: 0.85rem;">
+                                        <option value="" disabled selected style="color: black;">Responsable...</option>
+                                        <option th:each="rm : ${roommates}" th:value="${rm.id}" th:text="${rm.nombreReal}" style="color: black;"></option>
+                                    </select>
+                                    <button type="submit" style="background: #9b59d0; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.8rem;">Asignar</button>
+                                </form>
+
+                                <form th:action="@{/assignDate/submit}" method="post" style="display: flex; gap: 8px; width: 100%;">
+                                    <input type="hidden" name="taskId" th:value="${tarea.id}">
+                                    <input type="hidden" name="viviendaId" th:value="${viviendaId}">
+                                    <input type="date" name="fecha" required style="flex-grow: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: white; padding: 8px; font-size: 0.85rem; color-scheme: dark;">
+                                    <button type="submit" style="background: #9b59d0; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.8rem;">📅 Fecha</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="text-align: center; padding: 20px 0;">
+                
+                <div style="text-align: center; padding-top: 15px;">
+                    <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">Añadir Tarea</a>
+                </div>
+            </div>
+
+            <div th:if="${tareas == null or tareas.isEmpty()}">
+                <div class="empty-state" style="color: #888; padding: 20px; text-align: center;">
+                    No hay tareas registradas todavía.
+                </div>
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 0;">
                     <a th:href="@{/vivienda/{id}/nueva-tarea(id=${viviendaId})}" class="btn-add-new">
                         Añadir Tarea
                     </a>
@@ -324,11 +350,15 @@
             </div>
         </div>
 
-        <div id="vivienda" class="tab-content">
+        <div id="calendario" th:class="${(param.tab != null and param.tab[0] == 'calendario') ? 'tab-content active' : 'tab-content'}" th:style="${(param.tab != null and param.tab[0] == 'calendario') ? 'display: block;' : 'display: none;'}">
+            <iframe th:src="@{/vivienda/{id}/calendario(id=${viviendaId})}" 
+                    style="width: 100%; height: 450px; border: none; border-radius: 12px; background: transparent">
+            </iframe>
+        </div>
+
+        <div id="vivienda" class="tab-content" style="display: none;">
             <div style="padding: 20px; text-align: center;">
-                <p style="color: rgba(255, 255, 255, 0.65); margin: 0;">
-                    Información de la vivienda
-                </p>
+                <p style="color: rgba(255, 255, 255, 0.65); margin: 0;">Información de la vivienda</p>
                 <p style="color: white; font-size: 1.1em; margin: 10px 0 20px 0;">
                     <strong th:text="${viviendaNombre}"></strong>
                 </p>
@@ -338,12 +368,22 @@
                 </p>
             </div>
         </div>
-    </div>
 
-    <div class="footer">
-        <a th:href="@{/}" class="btn-back">
-            Volver al listado de viviendas
-        </a>
+        <div style="text-align: center; padding-top: 5px; padding-bottom: 10px;">
+            <a th:href="@{/}" class="btn-back">
+                Volver al listado de viviendas
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="modalDescripcion" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center;">
+    <div style="width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px; padding: 30px; box-shadow: 0 25px 60px rgba(0,0,0,0.5); text-align: center;">
+        <h2 id="modalTitulo" style="color: #e060a0; font-size: 1.8rem; margin-top: 0;">Título</h2>
+        <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: left;">
+            <p id="modalTexto" style="margin: 0; color: rgba(255,255,255,0.9); line-height: 1.5; font-size: 1.05rem;"></p>
+        </div>
+        <button onclick="document.getElementById('modalDescripcion').style.display='none'" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: white; cursor: pointer; font-weight: bold; transition: 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">Cerrar</button>
     </div>
 </div>
 
@@ -354,6 +394,7 @@
         tabcontent = document.getElementsByClassName("tab-content");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].classList.remove("active");
+            tabcontent[i].style.display = "none";
         }
         
         tabbuttons = document.getElementsByClassName("tab-btn");
@@ -362,7 +403,22 @@
         }
         
         document.getElementById(tabName).classList.add("active");
+        document.getElementById(tabName).style.display = "block";
         evt.currentTarget.classList.add("active");
+    }
+
+    function abrirModal(titulo, descripcion) {
+        document.getElementById('modalTitulo').innerText = titulo;
+        document.getElementById('modalTexto').innerText = descripcion;
+        document.getElementById('modalDescripcion').style.display = 'flex';
+    }
+
+    // Cerrar modal clicando fuera
+    window.onclick = function(event) {
+        var modal = document.getElementById('modalDescripcion');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
     }
 </script>
 
