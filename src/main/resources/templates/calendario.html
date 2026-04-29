@@ -152,9 +152,27 @@
         }
 
         .day.today {
-            background: linear-gradient(135deg, rgba(155, 89, 208, 0.2), rgba(224, 96, 160, 0.1));
-            border-color: rgba(155, 89, 208, 0.5);
-            border-width: 2px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            position: relative;
+        }
+
+        .day.today::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--pink-hot);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--pink-hot);
+        }
+
+        .day.today .day-number {
+            color: var(--pink-hot);
+            font-weight: 900;
+            font-size: 1.1em;
         }
 
         .day-number {
