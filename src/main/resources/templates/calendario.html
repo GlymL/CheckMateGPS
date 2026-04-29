@@ -34,11 +34,10 @@
         }
 
         .calendar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 5px;
         }
 
         .calendar-header {
@@ -99,15 +98,15 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 20px;
-            overflow-x: auto;
+            padding: 10px;
+            width: 100%;
         }
 
         .weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 5px;
+            width: 100%;
         }
 
         .weekday {
@@ -123,7 +122,7 @@
         .days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .day {
@@ -321,10 +320,6 @@
                     <div class="legend-color no-roommate"></div>
                     <span>Sin roommate</span>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-color today"></div>
-                    <span>Hoy</span>
-                </div>
             </div>
         </div>
     </div>
@@ -444,6 +439,7 @@
         }
 
         function mostrarDetallesTareas(fecha, tareas) {
+            tareas.sort((a, b) => a.completada - b.completada);
             const modal = document.getElementById('taskModal');
             document.getElementById('modalDate').textContent = "Tareas del " + fecha;
             const modalTasks = document.getElementById('modalTasks');

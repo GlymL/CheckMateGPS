@@ -11,6 +11,8 @@
             min-height: 100vh;
             padding: 20px;
             color: white;
+            overflow-y: auto !important; 
+            height: auto;
             
         }
 
@@ -350,7 +352,7 @@
 
         <div id="calendario" th:class="${(param.tab != null and param.tab[0] == 'calendario') ? 'tab-content active' : 'tab-content'}" th:style="${(param.tab != null and param.tab[0] == 'calendario') ? 'display: block;' : 'display: none;'}">
             <iframe th:src="@{/vivienda/{id}/calendario(id=${viviendaId})}" 
-                    style="width: 100%; height: 390px; border: none; border-radius: 12px; background: transparent; overflow: hidden;">
+                    style="width: 100%; height: 450px; border: none; border-radius: 12px; background: transparent">
             </iframe>
         </div>
 
